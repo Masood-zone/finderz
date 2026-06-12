@@ -1,56 +1,59 @@
-# Welcome to your Expo app 👋
+# FinderZ Mobile
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+FinderZ is an Expo SDK 55 housing-search app for tenants, landlords, and Super Administrators in Ghana.
 
-## Get started
+## Phase 1 Setup
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Install dependencies with pnpm:
 
 ```bash
-npm run reset-project
+pnpm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Start the app:
 
-### Other setup steps
+```bash
+pnpm start
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Useful scripts:
 
-## Learn more
+```bash
+pnpm typecheck
+pnpm lint
+pnpm db:auth-generate
+pnpm db:generate
+pnpm db:migrate
+pnpm db:seed
+pnpm db:check
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## Environment
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Copy `.env.example` to `.env` and fill in real values locally:
 
-## Join the community
+```bash
+DATABASE_URL=
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=
+EXPO_PUBLIC_API_URL=
+SUPER_ADMIN_NAME=
+SUPER_ADMIN_EMAIL=
+SUPER_ADMIN_PASSWORD=
+```
 
-Join our community of developers creating universal apps.
+Only `EXPO_PUBLIC_API_URL` is safe for mobile client code. `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and Super Administrator credentials are server-only and must stay out of Expo public variables.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+When running Expo Go on a physical phone, the phone cannot reach your computer through `localhost`. Use a reachable LAN address such as `http://192.168.x.x:8081` or a deployed API URL for `EXPO_PUBLIC_API_URL` and `BETTER_AUTH_URL`.
+
+## NativeWind
+
+This project uses NativeWind v5 preview. The v5 package requires Tailwind CSS greater than `4.1.11`, so Tailwind `4.3.1` is installed even though the initial Phase 1 brief mentioned Tailwind 3. NativeWind v4 is the compatible line for Tailwind 3.
+
+FinderZ design tokens are mapped in `tailwind.config.js`, and `src/components/ui/nativewind-smoke-test.tsx` confirms className styling without replacing completed UI.
+
+## Database
+
+Drizzle schema lives under `src/db/schema`, with relations in `src/db/relations.ts`.
+
+The seed script is idempotent. It inserts standard amenities and creates the Super Administrator through Better Auth before assigning the `SUPER_ADMIN` role on the server.

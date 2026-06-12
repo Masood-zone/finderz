@@ -1,0 +1,76 @@
+import {
+  boolean,
+  index,
+  integer,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
+import { user } from "./auth";
+
+export const landlordType = pgEnum("landlord_type", ["INDIVIDUAL", "AGENCY"]);
+export const verificationStatus = pgEnum("verification_status", ["PENDING", "APPROVED", "REJECTED"]);
+export const propertyType = pgEnum("property_type", ["APARTMENT", "HOUSE", "ROOM", "STUDIO", "HOSTEL", "COMMERCIAL"]);
+export const paymentPeriod = pgEnum("payment_period", ["MONTHLY", "QUARTERLY", "BIANNUALLY", "YEARLY"]);
+export const furnishingStatus = pgEnum("furnishing_status", ["FURNISHED", "SEMI_FURNISHED", "UNFURNISHED"]);
+export const approvalStatus = pgEnum("approval_status", ["PENDING", "APPROVED", "REJECTED"]);
+
+export const landlordProfiles = pgTable(
+  "landlord_profiles",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .unique()
+      .references(() => user.id, { onDelete: "cascade" }),
+    landlordType: landlordType("landlord_type").notNull().default("INDIVIDUAL"),
+    agencyName: text("agency_name"),
+    identityDocumentType: text("identity_document_type"),
+    identityDocumentUrl: text("identity_document_url"),
+    verificationStatus: verificationStatus("verification_status").notNull().default("PENDING"),
+    verificationNotes: text("verification_notes"),
+    verifiedAt: timestamp("verified_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("landlord_profiles_user_id_idx").on(table.userId)],
+);
+
+export const properties = pgTable(
+  "properties",
+  {
+    id: text("id").primaryKey(),
+    landlordId: text("landlord_id")
+      .notNull()
+      .references(() => landlordProfiles.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    propertyType: propertyType("property_type").notNull(),
+    region: text("region").notNull(),
+    city: text("city").notNull(),
+    area: text("area").notNull(),
+    landmark: text("landmark"),
+    address: text("address").notNull(),
+    latitude: text("latitude"),
+    longitude: text("longitude"),
+    rentAmount: integer("rent_amount").notNull(),
+    paymentPeriod: paymentPeriod("payment_period").notNull(),
+    bedrooms: integer("bedrooms").notNull().default(0),
+    bathrooms: integer("bathrooms").notNull().default(0),
+    furnishingStatus: furnishingStatus("furnishing_status").notNull().default("UNFURNISHED"),
+    isNegotiable: boolean("is_negotiable").notNull().default(false),
+    isAvailable: boolean("is_available").notNull().default(true),
+    approvalStatus: approvalStatus("approval_status").notNull().default("PENDING"),
+    rejectionReason: text("rejection_reason"),
+    availableFrom: timestamp("available_from", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("properties_landlord_id_idx").on(table.landlordId),
+    index("properties_location_idx").on(table.region, table.city, table.area),
+    index("properties_approval_status_idx").on(table.approvalStatus),
+    index("properties_available_idx").on(table.isAvailable),
+  ],
+);
