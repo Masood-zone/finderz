@@ -16,6 +16,12 @@ async function main() {
       and constraint_type in ('FOREIGN KEY', 'UNIQUE', 'PRIMARY KEY')
     order by table_name, constraint_name
   `;
+  const indexes = await sql`
+    select tablename, indexname
+    from pg_indexes
+    where schemaname = 'public'
+    order by tablename, indexname
+  `;
 
   console.log(
     JSON.stringify(
@@ -24,6 +30,7 @@ async function main() {
         connectedAt: connectivity?.now,
         tables: tables.map((row) => row.table_name),
         constraints,
+        indexes,
       },
       null,
       2,
