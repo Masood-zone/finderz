@@ -1,10 +1,15 @@
-import { create } from "axios";
+import { AxiosError, create } from "axios";
 import { authClient } from "@/lib/auth-client";
 import { getApiBaseUrl } from "@/lib/env";
+import type { ApiErrorBody } from "@/types/api";
 
 export const apiClient = create({
   baseURL: getApiBaseUrl(),
   timeout: 15_000,
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
 });
 
 apiClient.interceptors.request.use((config) => {
@@ -16,3 +21,20 @@ apiClient.interceptors.request.use((config) => {
 
   return config;
 });
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError<ApiErrorBody>) => {
+    if (error.response?.data) {
+      return Promise.reject(error.response.data);
+    }
+
+    return Promise.reject({
+      success: false,
+      error: {
+        code: "NETWORK_ERROR",
+        message: error.message || "Unable to reach FinderZ services.",
+      },
+    } satisfies ApiErrorBody);
+  },
+);

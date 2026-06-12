@@ -21,6 +21,11 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  session: {
+    expiresIn: 60 * 60 * 24 * 7,
+    updateAge: 60 * 60 * 24,
+    freshAge: 60 * 5,
+  },
   trustedOrigins: [
     serverEnv.BETTER_AUTH_URL,
     "finderz://",
