@@ -25,7 +25,7 @@ function getRoleHome(role: string) {
     return "/super-admin/dashboard";
   }
 
-  return "/tenant/dashboard";
+  return "/tenant/index";
 }
 
 export default function RoleSelectionScreen() {

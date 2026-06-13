@@ -3,8 +3,21 @@ import { assignRole } from "@/services/api/onboarding";
 import { getLandlordDashboard } from "@/services/api/landlord";
 import { getSuperAdminDashboard } from "@/services/api/super-admin";
 import { getTenantDashboard } from "@/services/api/tenant";
+import {
+  addTenantFavourite,
+  createTenantEnquiry,
+  getTenantEnquiries,
+  getTenantEnquiry,
+  getTenantFavourites,
+  getTenantFeed,
+  getTenantProfile,
+  getTenantProperty,
+  removeTenantFavourite,
+  searchTenantProperties,
+} from "@/services/api/tenant-app";
 import { getCurrentUser, updateProfile } from "@/services/api/users";
 import { queryKeys } from "./keys";
+import type { TenantEnquiryStatusFilter, TenantFilters } from "@/types/tenant";
 
 export function useCurrentUser() {
   return useQuery({
@@ -39,6 +52,84 @@ export function useTenantDashboard() {
   return useQuery({
     queryKey: queryKeys.tenantDashboard,
     queryFn: getTenantDashboard,
+  });
+}
+
+export function useTenantFeed() {
+  return useQuery({
+    queryKey: queryKeys.tenantFeed,
+    queryFn: getTenantFeed,
+  });
+}
+
+export function useTenantProperties(filters: TenantFilters) {
+  return useQuery({
+    queryKey: queryKeys.tenantProperties(filters),
+    queryFn: () => searchTenantProperties(filters),
+  });
+}
+
+export function useTenantProperty(propertyId: string) {
+  return useQuery({
+    queryKey: queryKeys.tenantProperty(propertyId),
+    queryFn: () => getTenantProperty(propertyId),
+    enabled: Boolean(propertyId),
+  });
+}
+
+export function useTenantFavourites() {
+  return useQuery({
+    queryKey: queryKeys.tenantFavourites,
+    queryFn: getTenantFavourites,
+  });
+}
+
+export function useTenantEnquiries(status: TenantEnquiryStatusFilter) {
+  return useQuery({
+    queryKey: queryKeys.tenantEnquiries(status),
+    queryFn: () => getTenantEnquiries(status),
+  });
+}
+
+export function useTenantEnquiry(enquiryId: string) {
+  return useQuery({
+    queryKey: queryKeys.tenantEnquiry(enquiryId),
+    queryFn: () => getTenantEnquiry(enquiryId),
+    enabled: Boolean(enquiryId),
+  });
+}
+
+export function useTenantProfile() {
+  return useQuery({
+    queryKey: queryKeys.tenantProfile,
+    queryFn: getTenantProfile,
+  });
+}
+
+export function useToggleTenantFavourite() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ propertyId, favourite }: { propertyId: string; favourite: boolean }) =>
+      favourite ? addTenantFavourite(propertyId) : removeTenantFavourite(propertyId),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.tenantFeed });
+      queryClient.invalidateQueries({ queryKey: queryKeys.tenantFavourites });
+      queryClient.invalidateQueries({ queryKey: queryKeys.tenantProperty(variables.propertyId) });
+      queryClient.invalidateQueries({ queryKey: ["tenant-properties"] });
+    },
+  });
+}
+
+export function useCreateTenantEnquiry() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createTenantEnquiry,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tenant-enquiries"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.tenantProfile });
+    },
   });
 }
 

@@ -27,7 +27,7 @@ export function AppButton({ title, variant = "primary", loading, icon, disabled,
           opacity: disabled ? 0.5 : pressed ? 0.86 : 1,
           transform: [{ scale: pressed ? 0.98 : 1 }],
         },
-        typeof style === "function" ? style({ pressed }) : style,
+        typeof style === "function" ? style({ pressed, hovered: false }) : style,
       ]}
       {...props}
     >

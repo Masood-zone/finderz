@@ -11,7 +11,7 @@ type RouteGuardProps = {
 
 function getRoleHome(role: AppRole) {
   if (role === "TENANT") {
-    return "/tenant/dashboard";
+    return "/tenant/index";
   }
 
   if (role === "LANDLORD") {

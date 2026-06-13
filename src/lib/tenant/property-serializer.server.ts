@@ -5,7 +5,9 @@ import type { TenantFilters, TenantProperty, TenantPropertySort } from "@/types/
 
 const DEFAULT_PAGE_SIZE = 12;
 
-type PropertyRow = Awaited<ReturnType<typeof db.query.properties.findMany>>[number];
+type PropertyRow = typeof properties.$inferSelect & {
+  images?: Array<typeof propertyImages.$inferSelect>;
+};
 
 function numberParam(value: string | null) {
   if (!value) {

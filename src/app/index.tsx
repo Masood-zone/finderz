@@ -32,5 +32,5 @@ export default function Index() {
     return <Redirect href="/super-admin/dashboard" />;
   }
 
-  return <Redirect href="/tenant/dashboard" />;
+  return <Redirect href="/tenant/index" />;
 }
