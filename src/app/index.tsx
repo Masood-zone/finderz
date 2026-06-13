@@ -1,17 +1,19 @@
 import { Redirect } from "expo-router";
 import { LoadingScreen } from "@/components/shared/loading-screen";
 import { useTypedSession } from "@/lib/auth-client";
+import { useOnboardingStore } from "@/store/onboarding-store";
 
 export default function Index() {
   const session = useTypedSession();
   const user = session.data?.user;
+  const hasSeenPublicOnboarding = useOnboardingStore((state) => state.hasSeenPublicOnboarding);
 
   if (session.isPending) {
     return <LoadingScreen />;
   }
 
   if (!user) {
-    return <Redirect href="/onboarding" />;
+    return <Redirect href={hasSeenPublicOnboarding ? "/sign-in" : "/splash"} />;
   }
 
   if (user.accountStatus === "SUSPENDED") {

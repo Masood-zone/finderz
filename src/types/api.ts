@@ -28,7 +28,6 @@ export type CurrentUserResponse = {
 };
 
 export type DashboardStats = {
-  userId: string;
-  role: string;
+  user: CurrentUserResponse["user"];
   stats: Record<string, number>;
 };

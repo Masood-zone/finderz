@@ -1,10 +1,25 @@
-import { Text, View } from "react-native";
+import { router } from "expo-router";
+import { ShieldAlert } from "lucide-react-native";
+import { StateView } from "@/components/general/state-view";
+import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
+import { colors } from "@/components/ui/design-system";
+import { signOut } from "@/lib/auth-client";
 
 export default function AccountStatusScreen() {
+  const leaveAccount = async () => {
+    await signOut();
+    router.replace("/sign-in");
+  };
+
   return (
-    <View className="flex-1 justify-center bg-background px-6">
-      <Text className="text-2xl font-bold text-error">Account unavailable</Text>
-      <Text className="mt-2 text-base text-text-secondary">This account cannot access FinderZ right now.</Text>
-    </View>
+    <SafeAreaScreen>
+      <StateView
+        icon={<ShieldAlert color={colors.error} size={54} />}
+        title="Account Under Review"
+        message="Your FinderZ account cannot access dashboards right now. Contact support if you believe this is a mistake."
+        primaryAction={{ title: "Back to Sign In", onPress: leaveAccount, variant: "danger" }}
+        secondaryAction={{ title: "Go Home", onPress: () => router.replace("/"), variant: "secondary" }}
+      />
+    </SafeAreaScreen>
   );
 }
