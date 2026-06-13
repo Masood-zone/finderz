@@ -5,18 +5,15 @@ import { FinderzLogo } from "@/components/ui/finderz-logo";
 import { AppText } from "@/components/ui/app-text";
 import { colors } from "@/components/ui/design-system";
 import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
-import { useOnboardingStore } from "@/store/onboarding-store";
 
 export default function SplashScreenRoute() {
-  const hasSeenPublicOnboarding = useOnboardingStore((state) => state.hasSeenPublicOnboarding);
-
   useEffect(() => {
     const timeout = setTimeout(() => {
-      router.replace(hasSeenPublicOnboarding ? "/sign-in" : "/onboarding/find-housing");
+      router.replace("/onboarding/find-housing");
     }, 1300);
 
     return () => clearTimeout(timeout);
-  }, [hasSeenPublicOnboarding]);
+  }, []);
 
   return (
     <SafeAreaScreen style={{ backgroundColor: colors.primary }}>

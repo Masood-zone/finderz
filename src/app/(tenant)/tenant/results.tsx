@@ -11,7 +11,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { useTenantProperties, useToggleTenantFavourite } from "@/services/queries/hooks";
 import type { TenantFilters, TenantPropertySort } from "@/types/tenant";
 
-const sortOptions: Array<{ label: string; value: TenantPropertySort }> = [
+const sortOptions: { label: string; value: TenantPropertySort }[] = [
   { label: "Relevance", value: "relevance" },
   { label: "Newest", value: "newest" },
   { label: "Lowest Price", value: "lowest-price" },

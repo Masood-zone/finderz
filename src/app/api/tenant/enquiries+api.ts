@@ -17,9 +17,9 @@ const createEnquirySchema = z.object({
 type EnquiryRow = typeof enquiries.$inferSelect & {
   landlord: typeof user.$inferSelect;
   property: typeof properties.$inferSelect & {
-    images?: Array<typeof propertyImages.$inferSelect>;
+    images?: (typeof propertyImages.$inferSelect)[];
   };
-  messages?: Array<typeof messages.$inferSelect>;
+  messages?: (typeof messages.$inferSelect)[];
 };
 
 function filterToStatuses(filter: string | null) {

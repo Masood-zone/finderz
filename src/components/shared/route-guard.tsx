@@ -1,4 +1,6 @@
-import { Redirect, Stack } from "expo-router";
+import { useEffect } from "react";
+import { router, Stack, usePathname } from "expo-router";
+import type { Href } from "expo-router";
 import { LoadingScreen } from "./loading-screen";
 import { useTypedSession } from "@/lib/auth-client";
 import type { AppRole, AuthSessionUser } from "@/types/auth";
@@ -11,7 +13,7 @@ type RouteGuardProps = {
 
 function getRoleHome(role: AppRole) {
   if (role === "TENANT") {
-    return "/tenant/index";
+    return "/tenant";
   }
 
   if (role === "LANDLORD") {
@@ -28,42 +30,38 @@ function getSessionUser(user: AuthSessionUser | undefined) {
 export function RouteGuard({ allowSignedOut = false, signedOutOnly = false, roles }: RouteGuardProps) {
   const session = useTypedSession();
   const user = getSessionUser(session.data?.user);
+  const pathname = usePathname();
   const isPending = Boolean(session.isPending);
-
-  if (isPending) {
-    return <LoadingScreen />;
-  }
+  let redirectHref: Href | null = null;
 
   if (signedOutOnly && user) {
     if (user.accountStatus === "SUSPENDED") {
-      return <Redirect href="/account-status" />;
+      redirectHref = "/account-status";
+    } else if (!user.onboardingCompleted) {
+      redirectHref = "/role-selection";
+    } else {
+      redirectHref = getRoleHome(user.role);
     }
+  } else if (!allowSignedOut && !user) {
+    redirectHref = "/sign-in";
+  } else if (user?.accountStatus === "SUSPENDED") {
+    redirectHref = "/account-status";
+  } else if (user && !user.onboardingCompleted && roles?.length) {
+    redirectHref = "/role-selection";
+  } else if (user && roles?.length && !roles.includes(user.role)) {
+    redirectHref = user.onboardingCompleted ? getRoleHome(user.role) : "/role-selection";
+  }
 
-    if (!user.onboardingCompleted) {
-      return <Redirect href="/role-selection" />;
+  const shouldRedirect = Boolean(redirectHref && pathname !== redirectHref);
+
+  useEffect(() => {
+    if (shouldRedirect && redirectHref) {
+      router.replace(redirectHref);
     }
+  }, [redirectHref, shouldRedirect]);
 
-    return <Redirect href={getRoleHome(user.role)} />;
-  }
-
-  if (!allowSignedOut && !user) {
-    return <Redirect href="/sign-in" />;
-  }
-
-  if (user?.accountStatus === "SUSPENDED") {
-    return <Redirect href="/account-status" />;
-  }
-
-  if (user && !user.onboardingCompleted && roles?.length) {
-    return <Redirect href="/role-selection" />;
-  }
-
-  if (user && roles?.length && !roles.includes(user.role)) {
-    if (!user.onboardingCompleted) {
-      return <Redirect href="/role-selection" />;
-    }
-
-    return <Redirect href={getRoleHome(user.role)} />;
+  if (isPending || shouldRedirect) {
+    return <LoadingScreen />;
   }
 
   return <Stack screenOptions={{ headerShown: false }} />;

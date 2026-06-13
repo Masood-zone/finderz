@@ -35,18 +35,18 @@ export type TenantProperty = {
   availableFrom: string | null;
   createdAt: string;
   coverImage: string | null;
-  images: Array<{
+  images: {
     id: string;
     url: string;
     isCover: boolean;
     position: number;
-  }>;
-  amenities: Array<{
+  }[];
+  amenities: {
     id: string;
     name: string;
     slug: string;
     icon: string | null;
-  }>;
+  }[];
   landlord: TenantLandlordSummary | null;
   isFavourite: boolean;
 };
@@ -58,11 +58,11 @@ export type TenantFeedResponse = {
   recommended: TenantProperty[];
   affordableNearby: TenantProperty[];
   recentlyAdded: TenantProperty[];
-  popularLocations: Array<{
+  popularLocations: {
     region: string;
     city: string;
     count: number;
-  }>;
+  }[];
 };
 
 export type TenantPropertySearchResponse = {
@@ -111,13 +111,13 @@ export type TenantEnquiryListResponse = {
 
 export type TenantEnquiryDetailResponse = {
   enquiry: TenantEnquiry;
-  messages: Array<{
+  messages: {
     id: string;
     senderId: string;
     content: string;
     isRead: boolean;
     createdAt: string;
-  }>;
+  }[];
 };
 
 export type TenantProfileResponse = {

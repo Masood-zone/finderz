@@ -9,7 +9,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { useTenantEnquiries } from "@/services/queries/hooks";
 import type { TenantEnquiryStatusFilter } from "@/types/tenant";
 
-const tabs: Array<{ label: string; value: TenantEnquiryStatusFilter }> = [
+const tabs: { label: string; value: TenantEnquiryStatusFilter }[] = [
   { label: "Active", value: "active" },
   { label: "Awaiting Reply", value: "awaiting-reply" },
   { label: "Closed", value: "closed" },

@@ -13,9 +13,9 @@ type RouteParams = {
 type EnquiryDetailRow = typeof enquiries.$inferSelect & {
   landlord: typeof user.$inferSelect;
   property: typeof properties.$inferSelect & {
-    images?: Array<typeof propertyImages.$inferSelect>;
+    images?: (typeof propertyImages.$inferSelect)[];
   };
-  messages?: Array<typeof messages.$inferSelect>;
+  messages?: (typeof messages.$inferSelect)[];
 };
 
 export async function GET(request: Request, { params }: { params: RouteParams }) {

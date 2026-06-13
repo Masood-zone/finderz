@@ -2,7 +2,7 @@ import { Alert, Pressable, ScrollView, View } from "react-native";
 import { router } from "expo-router";
 import { Bell, ChevronRight, FileText, Heart, HelpCircle, Lock, LogOut, MessageCircle, Shield, UserRound } from "lucide-react-native";
 import { AppText } from "@/components/ui/app-text";
-import { colors, radius } from "@/components/ui/design-system";
+import { colors } from "@/components/ui/design-system";
 import { TenantAvatar, TenantTopBar } from "@/components/tenant/tenant-shell";
 import { TenantErrorState, TenantSkeleton } from "@/components/tenant/tenant-state";
 import { getErrorMessage } from "@/lib/get-error-message";

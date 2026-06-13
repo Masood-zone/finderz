@@ -1,6 +1,6 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { ReactNode } from "react";
-import { ScrollView, type ViewProps } from "react-native";
+import { ScrollView, View, type ViewProps } from "react-native";
 import { colors } from "./design-system";
 
 type SafeAreaScreenProps = ViewProps & {
@@ -12,8 +12,15 @@ export function SafeAreaScreen({ scroll, children, className = "", style, ...pro
   if (scroll) {
     return (
       <SafeAreaView className={`flex-1 ${className}`} style={[{ backgroundColor: colors.background }, style]} {...props}>
-        <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-          {children}
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+          style={{ flex: 1 }}
+        >
+          <View className="flex-1" style={style}>
+            {children}
+          </View>
         </ScrollView>
       </SafeAreaView>
     );

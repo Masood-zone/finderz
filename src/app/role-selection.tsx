@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, View } from "react-native";
 import { Building2, Home } from "lucide-react-native";
 import { Link, router } from "expo-router";
@@ -25,7 +25,7 @@ function getRoleHome(role: string) {
     return "/super-admin/dashboard";
   }
 
-  return "/tenant/index";
+  return "/tenant";
 }
 
 export default function RoleSelectionScreen() {
@@ -38,17 +38,25 @@ export default function RoleSelectionScreen() {
   const [selected, setSelected] = useState<PublicOnboardingRole>(storedRole ?? "TENANT");
   const [error, setError] = useState<string | undefined>();
 
+  useEffect(() => {
+    if (session.isPending) return;
+
+    if (user?.accountStatus === "SUSPENDED") {
+      router.replace("/account-status");
+      return;
+    }
+
+    if (user?.onboardingCompleted) {
+      router.replace(getRoleHome(user.role));
+      return;
+    }
+  }, [session.isPending, user?.accountStatus, user?.onboardingCompleted, user?.role]);
+
   if (session.isPending) {
     return <LoadingScreen />;
   }
 
-  if (user?.accountStatus === "SUSPENDED") {
-    router.replace("/account-status");
-    return <LoadingScreen />;
-  }
-
-  if (user?.onboardingCompleted) {
-    router.replace(getRoleHome(user.role));
+  if (user?.accountStatus === "SUSPENDED" || user?.onboardingCompleted) {
     return <LoadingScreen />;
   }
 

@@ -6,7 +6,7 @@ import type { TenantFilters, TenantProperty, TenantPropertySort } from "@/types/
 const DEFAULT_PAGE_SIZE = 12;
 
 type PropertyRow = typeof properties.$inferSelect & {
-  images?: Array<typeof propertyImages.$inferSelect>;
+  images?: (typeof propertyImages.$inferSelect)[];
 };
 
 function numberParam(value: string | null) {

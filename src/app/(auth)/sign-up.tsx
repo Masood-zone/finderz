@@ -18,6 +18,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { signUpWithEmail } from "@/services/api/auth-flows";
 import { useAssignRole } from "@/services/queries/hooks";
 import { useOnboardingStore } from "@/store/onboarding-store";
+import { getSession } from "@/lib/auth-client";
 import type { PublicOnboardingRole } from "@/types/auth";
 
 const signUpSchema = z
@@ -76,6 +77,7 @@ export default function SignUpScreen() {
         phone: values.phone.trim(),
       });
       await assignRoleMutation.mutateAsync({ role });
+      await getSession();
       setHasSeenPublicOnboarding(true);
       setSelectedRole(null);
       router.replace("/");

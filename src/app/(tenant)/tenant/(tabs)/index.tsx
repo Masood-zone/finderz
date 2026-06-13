@@ -3,7 +3,7 @@ import { Link, router } from "expo-router";
 import { MapPin, Search, SlidersHorizontal } from "lucide-react-native";
 import { AppButton } from "@/components/ui/app-button";
 import { AppText } from "@/components/ui/app-text";
-import { colors, radius } from "@/components/ui/design-system";
+import { colors } from "@/components/ui/design-system";
 import { PropertyCard } from "@/components/tenant/property-card";
 import { TenantChip, TenantSectionHeader, TenantTopBar } from "@/components/tenant/tenant-shell";
 import { TenantEmptyState, TenantErrorState, TenantSkeleton } from "@/components/tenant/tenant-state";

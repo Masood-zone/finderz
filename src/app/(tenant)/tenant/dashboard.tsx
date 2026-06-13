@@ -1,5 +1,11 @@
-import { Redirect } from "expo-router";
+import { useEffect } from "react";
+import { router } from "expo-router";
+import { LoadingScreen } from "@/components/shared/loading-screen";
 
 export default function TenantDashboardRedirect() {
-  return <Redirect href="/tenant/index" />;
+  useEffect(() => {
+    router.replace("/tenant");
+  }, []);
+
+  return <LoadingScreen />;
 }
