@@ -1,5 +1,4 @@
-import "../../global.css";
-import { useEffect } from "react";
+import { AppProviders } from "@/providers/app-providers";
 import {
   Manrope_400Regular,
   Manrope_600SemiBold,
@@ -9,7 +8,8 @@ import {
 } from "@expo-google-fonts/manrope";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { AppProviders } from "@/providers/app-providers";
+import { useEffect } from "react";
+import "../../global.css";
 
 void SplashScreen.preventAutoHideAsync();
 

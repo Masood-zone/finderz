@@ -1,9 +1,9 @@
-import { useEffect } from "react";
-import { router, Stack, usePathname } from "expo-router";
-import type { Href } from "expo-router";
-import { LoadingScreen } from "./loading-screen";
 import { useTypedSession } from "@/lib/auth-client";
 import type { AppRole, AuthSessionUser } from "@/types/auth";
+import type { Href } from "expo-router";
+import { router, Stack, usePathname } from "expo-router";
+import { useEffect } from "react";
+import { LoadingScreen } from "./loading-screen";
 
 type RouteGuardProps = {
   allowSignedOut?: boolean;
@@ -27,7 +27,11 @@ function getSessionUser(user: AuthSessionUser | undefined) {
   return user;
 }
 
-export function RouteGuard({ allowSignedOut = false, signedOutOnly = false, roles }: RouteGuardProps) {
+export function RouteGuard({
+  allowSignedOut = false,
+  signedOutOnly = false,
+  roles,
+}: RouteGuardProps) {
   const session = useTypedSession();
   const user = getSessionUser(session.data?.user);
   const pathname = usePathname();
@@ -49,7 +53,9 @@ export function RouteGuard({ allowSignedOut = false, signedOutOnly = false, role
   } else if (user && !user.onboardingCompleted && roles?.length) {
     redirectHref = "/role-selection";
   } else if (user && roles?.length && !roles.includes(user.role)) {
-    redirectHref = user.onboardingCompleted ? getRoleHome(user.role) : "/role-selection";
+    redirectHref = user.onboardingCompleted
+      ? getRoleHome(user.role)
+      : "/role-selection";
   }
 
   const shouldRedirect = Boolean(redirectHref && pathname !== redirectHref);

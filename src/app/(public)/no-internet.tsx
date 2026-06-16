@@ -1,11 +1,10 @@
-import { useState } from "react";
-import { Linking, Platform } from "react-native";
+import { StateView } from "@/components/general/state-view";
+import { colors } from "@/components/ui/design-system";
 import * as Network from "expo-network";
 import { router } from "expo-router";
 import { CloudOff, WifiOff } from "lucide-react-native";
-import { StateView } from "@/components/general/state-view";
-import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
-import { colors } from "@/components/ui/design-system";
+import { useState } from "react";
+import { Linking, Platform } from "react-native";
 
 export default function NoInternetScreen() {
   const [isChecking, setIsChecking] = useState(false);
@@ -34,16 +33,23 @@ export default function NoInternetScreen() {
   };
 
   return (
-    <SafeAreaScreen>
-      <StateView
-        icon={<CloudOff color={colors.primary} size={52} />}
-        title="You’re Offline"
-        message="FinderZ needs an internet connection to refresh listings, messages, and saved homes."
-        primaryAction={{ title: isChecking ? "Checking..." : "Retry Connection", onPress: retry }}
-        secondaryAction={{ title: "Check Settings", onPress: openSettings, variant: "secondary" }}
-      >
-        <WifiOff color={colors.outline} size={26} />
-      </StateView>
-    </SafeAreaScreen>
+    // <SafeAreaScreen>
+    <StateView
+      icon={<CloudOff color={colors.primary} size={52} />}
+      title="You’re Offline"
+      message="FinderZ needs an internet connection to refresh listings, messages, and saved homes."
+      primaryAction={{
+        title: isChecking ? "Checking..." : "Retry Connection",
+        onPress: retry,
+      }}
+      secondaryAction={{
+        title: "Check Settings",
+        onPress: openSettings,
+        variant: "secondary",
+      }}
+    >
+      <WifiOff color={colors.outline} size={26} />
+    </StateView>
+    //<SafeAreaScreen>
   );
 }
