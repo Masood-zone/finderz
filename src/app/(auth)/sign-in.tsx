@@ -105,7 +105,11 @@ export default function SignInScreen() {
             </Link>
           </View>
 
-          <FormError message={error ?? googleMessage} />
+          <FormError
+            message={error ?? googleMessage}
+            title={error ? "Sign in failed" : "Google sign-in unavailable"}
+            tone={error ? "error" : "info"}
+          />
 
           <AppButton title="Sign In" loading={isSubmitting} onPress={onSubmit} />
           <AppButton title="Continue with Google" variant="secondary" onPress={() => setGoogleMessage("Google sign-in is not configured for this FinderZ environment yet.")} />
@@ -113,7 +117,7 @@ export default function SignInScreen() {
 
         <View className="mt-8 flex-row justify-center gap-1">
           <AppText muted>New to FinderZ?</AppText>
-          <Link href="/role-selection" asChild>
+          <Link href="/sign-up" asChild>
             <Pressable>
               <AppText style={{ color: colors.primary, fontFamily: "Manrope_700Bold" }}>Create account</AppText>
             </Pressable>

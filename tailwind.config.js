@@ -11,23 +11,23 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          dark: "#073B66",
-          DEFAULT: "#0B5E9A",
+          dark: "#07324F",
+          DEFAULT: "#075E8F",
         },
         accent: {
-          gold: "#E5A900",
-          light: "#F5C542",
+          gold: "#F4C542",
+          teal: "#0F766E",
         },
-        background: "#F7F9FC",
+        background: "#F6F8FB",
         surface: "#FFFFFF",
         text: {
-          primary: "#132238",
-          secondary: "#667085",
+          primary: "#111827",
+          secondary: "#5F6B7A",
         },
-        border: "#E4E7EC",
+        border: "#D8E0EA",
         success: "#159455",
-        warning: "#F79009",
-        error: "#D92D20",
+        warning: "#B7791F",
+        error: "#B42318",
       },
     },
   },

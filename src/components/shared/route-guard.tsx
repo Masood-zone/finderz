@@ -27,6 +27,10 @@ function getSessionUser(user: AuthSessionUser | undefined) {
   return user;
 }
 
+function hasRestrictedAccount(user: AuthSessionUser | undefined) {
+  return Boolean(user && user.accountStatus !== "ACTIVE");
+}
+
 export function RouteGuard({
   allowSignedOut = false,
   signedOutOnly = false,
@@ -39,7 +43,7 @@ export function RouteGuard({
   let redirectHref: Href | null = null;
 
   if (signedOutOnly && user) {
-    if (user.accountStatus === "SUSPENDED") {
+    if (hasRestrictedAccount(user)) {
       redirectHref = "/account-status";
     } else if (!user.onboardingCompleted) {
       redirectHref = "/role-selection";
@@ -48,7 +52,7 @@ export function RouteGuard({
     }
   } else if (!allowSignedOut && !user) {
     redirectHref = "/sign-in";
-  } else if (user?.accountStatus === "SUSPENDED") {
+  } else if (hasRestrictedAccount(user)) {
     redirectHref = "/account-status";
   } else if (user && !user.onboardingCompleted && roles?.length) {
     redirectHref = "/role-selection";
@@ -64,7 +68,7 @@ export function RouteGuard({
     if (shouldRedirect && redirectHref) {
       router.replace(redirectHref);
     }
-  }, [redirectHref, shouldRedirect]);
+  }, [redirectHref, shouldRedirect, pathname]);
 
   if (isPending || shouldRedirect) {
     return <LoadingScreen />;

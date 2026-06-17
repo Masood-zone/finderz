@@ -3,6 +3,7 @@ import { AppText } from "@/components/ui/app-text";
 import { colors, radius } from "@/components/ui/design-system";
 import { FinderzLogo } from "@/components/ui/finderz-logo";
 import { FormError } from "@/components/ui/form-error";
+import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { resendVerificationEmail } from "@/services/api/auth-flows";
 import { Link, useLocalSearchParams } from "expo-router";
@@ -50,8 +51,8 @@ export default function EmailVerificationScreen() {
   };
 
   return (
-    //<SafeAreaScreen scroll>
-    <View className="flex-1 px-6 py-8">
+    <SafeAreaScreen scroll>
+      <View className="flex-1 px-6 py-8">
       <View className="items-center">
         <FinderzLogo variant="text" size="md" />
       </View>
@@ -89,7 +90,7 @@ export default function EmailVerificationScreen() {
             {message}
           </AppText>
         ) : null}
-        <FormError message={error} />
+        <FormError message={error} title="Unable to resend" />
       </View>
 
       <View
@@ -114,7 +115,7 @@ export default function EmailVerificationScreen() {
           </Pressable>
         </Link>
       </View>
-    </View>
-    //<SafeAreaScreen scroll>
+      </View>
+    </SafeAreaScreen>
   );
 }

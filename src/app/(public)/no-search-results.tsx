@@ -1,6 +1,7 @@
 import { StateView } from "@/components/general/state-view";
 import { AppText } from "@/components/ui/app-text";
 import { colors, radius } from "@/components/ui/design-system";
+import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import { ScreenShell } from "@/components/ui/screen-shell";
 import { router } from "expo-router";
 import { SearchX, SlidersHorizontal, X } from "lucide-react-native";
@@ -10,11 +11,11 @@ const filters = ["Accra", "2 Bedrooms", "Under GHS 2,500"];
 
 export default function NoSearchResultsScreen() {
   return (
-    // <SafeAreaScreen>
-    <ScreenShell
-      title="Search"
-      right={<SlidersHorizontal color={colors.primary} size={22} />}
-    >
+    <SafeAreaScreen>
+      <ScreenShell
+        title="Search"
+        right={<SlidersHorizontal color={colors.primary} size={22} />}
+      >
       <StateView
         icon={<SearchX color={colors.primary} size={54} />}
         title="No matches found"
@@ -50,7 +51,7 @@ export default function NoSearchResultsScreen() {
           ))}
         </View>
       </StateView>
-    </ScreenShell>
-    //<SafeAreaScreen scroll>
+      </ScreenShell>
+    </SafeAreaScreen>
   );
 }

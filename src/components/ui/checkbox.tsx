@@ -13,15 +13,15 @@ export function Checkbox({ checked, onChange, label }: CheckboxProps) {
   return (
     <Pressable accessibilityRole="checkbox" accessibilityState={{ checked }} className="flex-row items-start gap-3" onPress={() => onChange(!checked)}>
       <View
-        className="h-5 w-5 items-center justify-center"
+        className="h-6 w-6 items-center justify-center"
         style={{
-          borderRadius: radius.sm,
+          borderRadius: radius.md,
           borderWidth: 1.5,
-          borderColor: checked ? colors.primary : colors.border,
+          borderColor: checked ? colors.primary : colors.borderStrong,
           backgroundColor: checked ? colors.primary : colors.surface,
         }}
       >
-        {checked ? <Check color="#fff" size={14} /> : null}
+        {checked ? <Check color="#fff" size={16} /> : null}
       </View>
       {label}
     </Pressable>

@@ -12,7 +12,7 @@ export default function Index() {
   if (!session.isPending) {
     if (!user) {
       redirectHref = "/splash";
-    } else if (user.accountStatus === "SUSPENDED") {
+    } else if (user.accountStatus !== "ACTIVE") {
       redirectHref = "/account-status";
     } else if (!user.onboardingCompleted) {
       redirectHref = "/role-selection";

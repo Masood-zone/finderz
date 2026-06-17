@@ -1,6 +1,7 @@
 import { StateView } from "@/components/general/state-view";
 import { AppText } from "@/components/ui/app-text";
 import { colors, radius } from "@/components/ui/design-system";
+import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import { ScreenShell } from "@/components/ui/screen-shell";
 import { router } from "expo-router";
 import { Home, HousePlus, MapPinOff, TrendingUp } from "lucide-react-native";
@@ -10,8 +11,8 @@ const suggestions = ["East Legon", "Kumasi", "Tema"];
 
 export default function PropertyUnavailableScreen() {
   return (
-    // <SafeAreaScreen>
-    <ScreenShell title="Listing">
+    <SafeAreaScreen>
+      <ScreenShell title="Listing">
       <StateView
         icon={<MapPinOff color={colors.primary} size={54} />}
         title="Listing No Longer Available"
@@ -86,7 +87,7 @@ export default function PropertyUnavailableScreen() {
           </View>
         </View>
       </StateView>
-    </ScreenShell>
-    //<SafeAreaScreen scroll>
+      </ScreenShell>
+    </SafeAreaScreen>
   );
 }

@@ -1,6 +1,7 @@
 import { AppText } from "@/components/ui/app-text";
 import { colors } from "@/components/ui/design-system";
 import { FinderzLogo } from "@/components/ui/finderz-logo";
+import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { View } from "react-native";
@@ -15,8 +16,8 @@ export default function SplashScreenRoute() {
   }, []);
 
   return (
-    // <SafeAreaScreen style={{ backgroundColor: colors.primary }}>
-    <View className="flex-1 items-center justify-center px-8">
+    <SafeAreaScreen style={{ backgroundColor: colors.primary }}>
+      <View className="flex-1 items-center justify-center px-8">
       <View className="absolute left-[-48px] top-[-32px] h-40 w-40 rounded-full bg-white/10" />
       <View className="absolute bottom-[-64px] right-[-40px] h-52 w-52 rounded-full bg-white/10" />
       <FinderzLogo variant="mark" size="lg" />
@@ -39,7 +40,7 @@ export default function SplashScreenRoute() {
           />
         ))}
       </View>
-    </View>
-    ////<SafeAreaScreen scroll>
+      </View>
+    </SafeAreaScreen>
   );
 }

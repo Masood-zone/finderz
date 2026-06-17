@@ -5,6 +5,7 @@ import { AppText } from "@/components/ui/app-text";
 import { colors } from "@/components/ui/design-system";
 import { FinderzLogo } from "@/components/ui/finderz-logo";
 import { FormError } from "@/components/ui/form-error";
+import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import { useTypedSession } from "@/lib/auth-client";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useAssignRole } from "@/services/queries/hooks";
@@ -30,6 +31,9 @@ function getRoleHome(role: string) {
 export default function RoleSelectionScreen() {
   const session = useTypedSession();
   const user = session.data?.user;
+  const accountStatus = user?.accountStatus;
+  const onboardingCompleted = user?.onboardingCompleted;
+  const role = user?.role;
   const storedRole = useOnboardingStore((state) => state.selectedRole);
   const setSelectedRole = useOnboardingStore((state) => state.setSelectedRole);
   const setHasSeenPublicOnboarding = useOnboardingStore(
@@ -44,27 +48,27 @@ export default function RoleSelectionScreen() {
   useEffect(() => {
     if (session.isPending) return;
 
-    if (user?.accountStatus === "SUSPENDED") {
+    if (accountStatus && accountStatus !== "ACTIVE") {
       router.replace("/account-status");
       return;
     }
 
-    if (user?.onboardingCompleted) {
-      router.replace(getRoleHome(user.role));
+    if (onboardingCompleted && role) {
+      router.replace(getRoleHome(role));
       return;
     }
   }, [
+    accountStatus,
+    onboardingCompleted,
+    role,
     session.isPending,
-    user?.accountStatus,
-    user?.onboardingCompleted,
-    user?.role,
   ]);
 
   if (session.isPending) {
     return <LoadingScreen />;
   }
 
-  if (user?.accountStatus === "SUSPENDED" || user?.onboardingCompleted) {
+  if ((accountStatus && accountStatus !== "ACTIVE") || onboardingCompleted) {
     return <LoadingScreen />;
   }
 
@@ -98,8 +102,8 @@ export default function RoleSelectionScreen() {
   };
 
   return (
-    //<SafeAreaScreen scroll>
-    <View className="flex-1 px-6 py-5">
+    <SafeAreaScreen scroll>
+      <View className="flex-1 px-6 py-5">
       <View className="flex-row items-center justify-between">
         <FinderzLogo variant="text" size="sm" />
         <Link href="/sign-in" asChild>
@@ -169,7 +173,7 @@ export default function RoleSelectionScreen() {
           </Link>
         </View>
       </View>
-    </View>
-    //<SafeAreaScreen scroll>
+      </View>
+    </SafeAreaScreen>
   );
 }

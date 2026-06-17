@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { ActivityIndicator, Pressable, type PressableProps, Text, View } from "react-native";
-import { colors, radius } from "./design-system";
+import { colors, radius, shadows } from "./design-system";
 
 type AppButtonProps = PressableProps & {
   title: string;
@@ -12,19 +12,33 @@ type AppButtonProps = PressableProps & {
 export function AppButton({ title, variant = "primary", loading, icon, disabled, style, ...props }: AppButtonProps) {
   const isPrimary = variant === "primary";
   const isDanger = variant === "danger";
+  const isSecondary = variant === "secondary";
+  const isGhost = variant === "ghost";
+  const foreground = isPrimary || isDanger ? colors.surface : colors.primary;
 
   return (
     <Pressable
       accessibilityRole="button"
       disabled={disabled || loading}
-      className="h-12 flex-row items-center justify-center gap-2"
+      className="h-12 flex-row items-center justify-center gap-2 px-5"
       style={({ pressed }) => [
         {
           borderRadius: radius.lg,
-          backgroundColor: isPrimary ? colors.gold : isDanger ? colors.errorSoft : variant === "secondary" ? colors.surface : "transparent",
-          borderWidth: variant === "secondary" ? 1.5 : 0,
-          borderColor: variant === "secondary" ? colors.primary : "transparent",
-          opacity: disabled ? 0.5 : pressed ? 0.86 : 1,
+          backgroundColor: isPrimary
+            ? pressed
+              ? colors.primaryPressed
+              : colors.primary
+            : isDanger
+              ? pressed
+                ? colors.errorPressed
+                : colors.error
+              : isSecondary
+                ? colors.surfaceBlue
+                : "transparent",
+          borderWidth: isGhost ? 0 : 1,
+          borderColor: isPrimary ? colors.primary : isDanger ? colors.error : colors.borderStrong,
+          ...(isPrimary || isDanger ? shadows.sm : {}),
+          opacity: disabled || loading ? 0.55 : pressed ? 0.9 : 1,
           transform: [{ scale: pressed ? 0.98 : 1 }],
         },
         typeof style === "function" ? style({ pressed, hovered: false }) : style,
@@ -32,14 +46,14 @@ export function AppButton({ title, variant = "primary", loading, icon, disabled,
       {...props}
     >
       {loading ? (
-        <ActivityIndicator color={isPrimary ? colors.goldDark : colors.primary} />
+        <ActivityIndicator color={foreground} />
       ) : (
         <View className="flex-row items-center justify-center gap-2">
           {icon}
           <Text
             className="font-bold"
             style={{
-              color: isPrimary ? colors.goldDark : isDanger ? colors.error : colors.primary,
+              color: foreground,
               fontFamily: "Manrope_700Bold",
             }}
           >

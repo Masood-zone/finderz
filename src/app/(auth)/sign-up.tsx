@@ -76,6 +76,7 @@ export default function SignUpScreen() {
         password: values.password,
         phone: values.phone.trim(),
       });
+      await getSession();
       await assignRoleMutation.mutateAsync({ role });
       await getSession();
       setHasSeenPublicOnboarding(true);
@@ -91,10 +92,17 @@ export default function SignUpScreen() {
       <View className="flex-1 px-6 py-8">
         <AuthHeader title="Create account" subtitle={`Set up your ${getRoleLabel(selectedRole).toLowerCase()} on FinderZ.`} />
 
-        <View className="mt-5 self-start rounded-full px-3 py-2" style={{ backgroundColor: colors.surfaceBlue }}>
+        <View className="mt-5 flex-row items-center gap-3 self-start rounded-full px-3 py-2" style={{ backgroundColor: colors.surfaceBlue }}>
           <AppText variant="caption" style={{ color: colors.primary, fontFamily: "Manrope_700Bold" }}>
             {getRoleLabel(selectedRole)}
           </AppText>
+          <Link href="/role-selection" asChild>
+            <Pressable>
+              <AppText variant="caption" style={{ color: colors.primary, fontFamily: "Manrope_700Bold" }}>
+                Change
+              </AppText>
+            </Pressable>
+          </Link>
         </View>
 
         <View className="mt-6 gap-4">
@@ -161,7 +169,11 @@ export default function SignUpScreen() {
               <Checkbox checked={value} onChange={onChange} label={<AppText muted>I agree to the FinderZ terms and privacy policy.</AppText>} />
             )}
           />
-          <FormError message={errors.terms?.message ?? error ?? googleMessage} />
+          <FormError
+            message={errors.terms?.message ?? error ?? googleMessage}
+            title={errors.terms?.message ? "Terms required" : error ? "Account creation failed" : "Google sign-up unavailable"}
+            tone={errors.terms?.message || error ? "error" : "info"}
+          />
           <AppButton title="Create Account" loading={isSubmitting || assignRoleMutation.isPending} onPress={onSubmit} />
           <AppButton title="Continue with Google" variant="secondary" onPress={() => setGoogleMessage("Google sign-up is not configured for this FinderZ environment yet.")} />
         </View>

@@ -3,6 +3,7 @@ import { AppText } from "@/components/ui/app-text";
 import { colors, radius } from "@/components/ui/design-system";
 import { FinderzLogo } from "@/components/ui/finderz-logo";
 import { ProgressDots } from "@/components/ui/progress-dots";
+import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import type { ReactNode } from "react";
 import { Pressable, View } from "react-native";
 
@@ -26,8 +27,8 @@ export function OnboardingSlide({
   onSkip,
 }: OnboardingSlideProps) {
   return (
-    // //<SafeAreaScreen scroll>
-    <View className="flex-1 px-6 pt-4 pb-6">
+    <SafeAreaScreen scroll>
+      <View className="flex-1 px-6 pt-4 pb-6">
       <View className="flex-row items-center justify-between">
         <FinderzLogo variant="text" size="sm" />
         <Pressable
@@ -83,7 +84,7 @@ export function OnboardingSlide({
         <ProgressDots total={3} index={index} />
         <AppButton title={buttonTitle} onPress={onNext} variant="primary" />
       </View>
-    </View>
-    ////<SafeAreaScreen scroll>
+      </View>
+    </SafeAreaScreen>
   );
 }
