@@ -1,24 +1,51 @@
 import type { ReactNode } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  View,
+  type ScrollViewProps,
+} from "react-native";
 import { SafeAreaScreen } from "./safe-area-screen";
 
-export function KeyboardAwareScreen({ children }: { children: ReactNode }) {
+type KeyboardAwareScreenProps = {
+  children: ReactNode;
+  contentContainerStyle?: ScrollViewProps["contentContainerStyle"];
+};
+
+export function KeyboardAwareScreen({
+  children,
+  contentContainerStyle,
+}: KeyboardAwareScreenProps) {
+  const content = (
+    <ScrollView
+      style={{ flex: 1 }}
+      contentContainerStyle={[
+        {
+          flexGrow: 1,
+          paddingBottom: 24,
+        },
+        contentContainerStyle,
+      ]}
+      keyboardShouldPersistTaps="always"
+      keyboardDismissMode="none"
+      nestedScrollEnabled
+      overScrollMode="never"
+      showsVerticalScrollIndicator={false}
+    >
+      {children}
+    </ScrollView>
+  );
+
   return (
-    <SafeAreaScreen>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        className="flex-1"
-        style={{ flex: 1 }}
-      >
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ flexGrow: 1 }}
-          showsVerticalScrollIndicator={false}
-          style={{ flex: 1 }}
-        >
-          {children}
-        </ScrollView>
-      </KeyboardAvoidingView>
+    <SafeAreaScreen edges={["top", "left", "right"]}>
+      {Platform.OS === "ios" ? (
+        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+          {content}
+        </KeyboardAvoidingView>
+      ) : (
+        <View style={{ flex: 1 }}>{content}</View>
+      )}
     </SafeAreaScreen>
   );
 }

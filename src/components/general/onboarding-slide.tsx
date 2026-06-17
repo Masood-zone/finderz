@@ -82,7 +82,7 @@ export function OnboardingSlide({
 
       <View className="gap-5 pt-4">
         <ProgressDots total={3} index={index} />
-        <AppButton title={buttonTitle} onPress={onNext} variant="primary" />
+        <AppButton title={buttonTitle} onPress={onNext} variant="primary" style={{ marginHorizontal: 4 }} />
       </View>
       </View>
     </SafeAreaScreen>

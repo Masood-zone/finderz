@@ -84,7 +84,7 @@ export default function RoleSelectionScreen() {
     setError(undefined);
 
     if (!user) {
-      router.push("/sign-up");
+      router.push("/(auth)/sign-up");
       return;
     }
 

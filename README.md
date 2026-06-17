@@ -1,59 +1,38 @@
-# FinderZ Mobile
+# FinderZ Android keyboard stability fix
 
-FinderZ is an Expo SDK 55 housing-search app for tenants, landlords, and Super Administrators in Ghana.
+Replace the following project files with the versions in this package:
 
-## Phase 1 Setup
+- `src/components/ui/keyboard-aware-screen.tsx`
+- `src/components/ui/app-input.tsx`
+- `src/components/ui/password-input.tsx`
 
-Install dependencies with pnpm:
-
-```bash
-pnpm install
-```
-
-Start the app:
+Then clear Metro's cache:
 
 ```bash
-pnpm start
+pnpm start --clear
 ```
 
-Useful scripts:
+## What the patch changes
 
-```bash
-pnpm typecheck
-pnpm lint
-pnpm db:auth-generate
-pnpm db:generate
-pnpm db:migrate
-pnpm db:seed
-pnpm db:check
+1. Android no longer uses `KeyboardAvoidingView`; Android's native window resizing handles the keyboard.
+2. The keyboard screen excludes the bottom safe-area inset while the keyboard is active.
+3. The ScrollView keeps the keyboard open when child controls are tapped.
+4. Focus no longer adds a dynamic shadow/elevation to the input.
+5. Android TextInput padding and vertical alignment are fixed.
+6. Tapping the password visibility icon restores focus to the password field.
+
+## Optional app.json setting for a development/production build
+
+Expo defaults Android to `resize`. You can make it explicit:
+
+```json
+{
+  "expo": {
+    "android": {
+      "softwareKeyboardLayoutMode": "resize"
+    }
+  }
+}
 ```
 
-## Environment
-
-Copy `.env.example` to `.env` and fill in real values locally:
-
-```bash
-DATABASE_URL=
-BETTER_AUTH_SECRET=
-BETTER_AUTH_URL=
-EXPO_PUBLIC_API_URL=
-SUPER_ADMIN_NAME=
-SUPER_ADMIN_EMAIL=
-SUPER_ADMIN_PASSWORD=
-```
-
-Only `EXPO_PUBLIC_API_URL` is safe for mobile client code. `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and Super Administrator credentials are server-only and must stay out of Expo public variables.
-
-When running Expo Go on a physical phone, the phone cannot reach your computer through `localhost`. Use a reachable LAN address such as `http://192.168.x.x:8081` or a deployed API URL for `EXPO_PUBLIC_API_URL` and `BETTER_AUTH_URL`.
-
-## NativeWind
-
-This project uses NativeWind v5 preview. The v5 package requires Tailwind CSS greater than `4.1.11`, so Tailwind `4.3.1` is installed even though the initial Phase 1 brief mentioned Tailwind 3. NativeWind v4 is the compatible line for Tailwind 3.
-
-FinderZ design tokens are mapped in `tailwind.config.js`, and `src/components/ui/nativewind-smoke-test.tsx` confirms className styling without replacing completed UI.
-
-## Database
-
-Drizzle schema lives under `src/db/schema`, with relations in `src/db/relations.ts`.
-
-The seed script is idempotent. It inserts standard amenities and creates the Super Administrator through Better Auth before assigning the `SUPER_ADMIN` role on the server.
+This is a native configuration. Test its final behavior in a development build, preview build, or production build rather than relying only on Expo Go.
