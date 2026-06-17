@@ -1,38 +1,37 @@
-# FinderZ Android keyboard stability fix
+# FinderZ automatic keyboard scrolling
 
-Replace the following project files with the versions in this package:
+This patch makes long forms automatically scroll the focused input above the
+Android or iOS keyboard.
 
+## 1. Install the Expo-compatible package
+
+```bash
+pnpm exec expo install react-native-keyboard-controller
+```
+
+## 2. Replace these files
+
+- `src/providers/app-providers.tsx`
 - `src/components/ui/keyboard-aware-screen.tsx`
-- `src/components/ui/app-input.tsx`
-- `src/components/ui/password-input.tsx`
 
-Then clear Metro's cache:
+## 3. Clear Metro
 
 ```bash
 pnpm start --clear
 ```
 
-## What the patch changes
+Completely close and reopen Expo Go before testing.
 
-1. Android no longer uses `KeyboardAvoidingView`; Android's native window resizing handles the keyboard.
-2. The keyboard screen excludes the bottom safe-area inset while the keyboard is active.
-3. The ScrollView keeps the keyboard open when child controls are tapped.
-4. Focus no longer adds a dynamic shadow/elevation to the input.
-5. Android TextInput padding and vertical alignment are fixed.
-6. Tapping the password visibility icon restores focus to the password field.
+## Behaviour
 
-## Optional app.json setting for a development/production build
+- Tapping Password scrolls Password above the keyboard.
+- Tapping Confirm Password scrolls Confirm Password above the keyboard.
+- `bottomOffset={32}` keeps 32 pixels of space between the focused input and
+  the keyboard.
+- Change the offset per screen when needed:
 
-Expo defaults Android to `resize`. You can make it explicit:
-
-```json
-{
-  "expo": {
-    "android": {
-      "softwareKeyboardLayoutMode": "resize"
-    }
-  }
-}
+```tsx
+<KeyboardAwareScreen bottomOffset={48}>
+  ...
+</KeyboardAwareScreen>
 ```
-
-This is a native configuration. Test its final behavior in a development build, preview build, or production build rather than relying only on Expo Go.
