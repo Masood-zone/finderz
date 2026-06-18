@@ -2,8 +2,12 @@ import "dotenv/config";
 import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from ".";
-import { amenities, user } from "./schema";
-import { ghanaSampleLocations, propertyTypes, standardAmenities } from "./seed-data";
+import { amenities, ghanaCities, ghanaRegions, user } from "./schema";
+import { ghanaRegionsWithCities, ghanaSampleLocations, propertyTypes, standardAmenities } from "./seed-data";
+
+function slugify(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
 
 async function seedAmenities() {
   for (const amenity of standardAmenities) {
@@ -17,6 +21,43 @@ async function seedAmenities() {
           icon: amenity.icon,
         },
       });
+  }
+}
+
+async function seedGhanaLocations() {
+  for (const region of ghanaRegionsWithCities) {
+    await db
+      .insert(ghanaRegions)
+      .values({
+        id: region.id,
+        name: region.name,
+        slug: region.slug,
+        capital: region.capital,
+      })
+      .onConflictDoUpdate({
+        target: ghanaRegions.slug,
+        set: {
+          name: region.name,
+          capital: region.capital,
+        },
+      });
+
+    for (const city of region.cities) {
+      await db
+        .insert(ghanaCities)
+        .values({
+          id: `city-${region.slug}-${slugify(city)}`,
+          regionId: region.id,
+          name: city,
+          slug: slugify(city),
+        })
+        .onConflictDoUpdate({
+          target: [ghanaCities.regionId, ghanaCities.slug],
+          set: {
+            name: city,
+          },
+        });
+    }
   }
 }
 
@@ -57,6 +98,7 @@ async function seedSuperAdministrator() {
 
 async function main() {
   await seedAmenities();
+  await seedGhanaLocations();
   await seedSuperAdministrator();
 
   console.log(
@@ -66,6 +108,8 @@ async function main() {
         seeded: {
           propertyTypes: propertyTypes.length,
           sampleLocationRegions: ghanaSampleLocations.length,
+          ghanaRegions: ghanaRegionsWithCities.length,
+          ghanaCities: ghanaRegionsWithCities.reduce((count, region) => count + region.cities.length, 0),
           amenities: standardAmenities.length,
           superAdministrator: process.env.SUPER_ADMIN_EMAIL,
         },

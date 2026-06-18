@@ -8,3 +8,4 @@ export * from "./messages";
 export * from "./property-reports";
 export * from "./notifications";
 export * from "./admin-audit-logs";
+export * from "./locations";

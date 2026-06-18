@@ -14,5 +14,6 @@ export const queryKeys = {
   landlordProperties: (status: string) => ["landlord-properties", status] as const,
   landlordProperty: (propertyId: string) => ["landlord-property", propertyId] as const,
   landlordEnquiries: ["landlord-enquiries"] as const,
+  ghanaLocations: ["ghana-locations"] as const,
   superAdminDashboard: ["super-admin-dashboard"] as const,
 };

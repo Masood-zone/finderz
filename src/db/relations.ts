@@ -5,6 +5,8 @@ import {
   amenities,
   enquiries,
   favourites,
+  ghanaCities,
+  ghanaRegions,
   landlordProfiles,
   messages,
   notifications,
@@ -97,4 +99,12 @@ export const notificationRelations = relations(notifications, ({ one }) => ({
 
 export const adminAuditLogRelations = relations(adminAuditLogs, ({ one }) => ({
   administrator: one(user, { fields: [adminAuditLogs.administratorId], references: [user.id] }),
+}));
+
+export const ghanaRegionRelations = relations(ghanaRegions, ({ many }) => ({
+  cities: many(ghanaCities),
+}));
+
+export const ghanaCityRelations = relations(ghanaCities, ({ one }) => ({
+  region: one(ghanaRegions, { fields: [ghanaCities.regionId], references: [ghanaRegions.id] }),
 }));

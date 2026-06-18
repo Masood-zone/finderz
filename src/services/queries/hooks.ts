@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { assignRole } from "@/services/api/onboarding";
+import { getGhanaLocations } from "@/services/api/locations";
 import {
   deleteLandlordProperty,
   duplicateLandlordProperty,
@@ -229,6 +230,14 @@ export function useLandlordEnquiries() {
   return useQuery({
     queryKey: queryKeys.landlordEnquiries,
     queryFn: getLandlordEnquiries,
+  });
+}
+
+export function useGhanaLocations() {
+  return useQuery({
+    queryKey: queryKeys.ghanaLocations,
+    queryFn: getGhanaLocations,
+    staleTime: 1000 * 60 * 60,
   });
 }
 
