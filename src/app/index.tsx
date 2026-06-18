@@ -22,7 +22,7 @@ export default function Index() {
     } else if (user.role === "LANDLORD") {
       redirectHref = "/landlord" as Href;
     } else if (user.role === "SUPER_ADMIN") {
-      redirectHref = "/super-admin/dashboard";
+      redirectHref = "/super-admin" as Href;
     } else {
       redirectHref = "/tenant";
     }

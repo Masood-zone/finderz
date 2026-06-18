@@ -20,7 +20,7 @@ function getRoleHome(role: AppRole) {
     return "/landlord" as Href;
   }
 
-  return "/super-admin/dashboard" as Href;
+  return "/super-admin" as Href;
 }
 
 function getSessionUser(user: AuthSessionUser | undefined) {

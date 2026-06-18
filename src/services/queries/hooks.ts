@@ -14,7 +14,18 @@ import {
   saveLandlordProperty,
   submitLandlordOnboarding,
 } from "@/services/api/landlord";
-import { getSuperAdminDashboard } from "@/services/api/super-admin";
+import {
+  getSuperAdminApprovals,
+  getSuperAdminDashboard,
+  getSuperAdminNotifications,
+  getSuperAdminProperty,
+  getSuperAdminReports,
+  getSuperAdminUsers,
+  moderateSuperAdminProperty,
+  moderateSuperAdminReport,
+  moderateSuperAdminUser,
+  updateSuperAdminNotifications,
+} from "@/services/api/super-admin";
 import { getTenantDashboard } from "@/services/api/tenant";
 import {
   addTenantFavourite,
@@ -32,6 +43,7 @@ import { getCurrentUser, updateProfile } from "@/services/api/users";
 import { queryKeys } from "./keys";
 import type { TenantEnquiryStatusFilter, TenantFilters } from "@/types/tenant";
 import type { LandlordPropertyStatus, SaveLandlordPropertyInput } from "@/types/landlord";
+import type { PropertyModerationAction, ReportModerationAction, UserModerationAction } from "@/types/super-admin";
 
 export function useCurrentUser() {
   return useQuery({
@@ -245,5 +257,92 @@ export function useSuperAdminDashboard() {
   return useQuery({
     queryKey: queryKeys.superAdminDashboard,
     queryFn: getSuperAdminDashboard,
+  });
+}
+
+export function useSuperAdminApprovals(filters: { page?: number; pageSize?: number; q?: string; location?: string } = {}) {
+  return useQuery({
+    queryKey: queryKeys.superAdminApprovals(filters),
+    queryFn: () => getSuperAdminApprovals(filters),
+  });
+}
+
+export function useSuperAdminProperty(propertyId: string) {
+  return useQuery({
+    queryKey: queryKeys.superAdminProperty(propertyId),
+    queryFn: () => getSuperAdminProperty(propertyId),
+    enabled: Boolean(propertyId),
+  });
+}
+
+export function useSuperAdminPropertyAction() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: { propertyId: string; action: PropertyModerationAction; reason?: string }) => moderateSuperAdminProperty(input),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.superAdminDashboard });
+      queryClient.invalidateQueries({ queryKey: ["super-admin-approvals"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.superAdminProperty(variables.propertyId) });
+      queryClient.invalidateQueries({ queryKey: ["super-admin-reports"] });
+    },
+  });
+}
+
+export function useSuperAdminReports(filters: { page?: number; pageSize?: number; status?: string } = {}) {
+  return useQuery({
+    queryKey: queryKeys.superAdminReports(filters),
+    queryFn: () => getSuperAdminReports(filters),
+  });
+}
+
+export function useSuperAdminReportAction() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: { reportId: string; action: ReportModerationAction; reason?: string }) => moderateSuperAdminReport(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.superAdminDashboard });
+      queryClient.invalidateQueries({ queryKey: ["super-admin-reports"] });
+      queryClient.invalidateQueries({ queryKey: ["super-admin-approvals"] });
+    },
+  });
+}
+
+export function useSuperAdminUsers(filters: { page?: number; pageSize?: number; filter?: string; q?: string } = {}) {
+  return useQuery({
+    queryKey: queryKeys.superAdminUsers(filters),
+    queryFn: () => getSuperAdminUsers(filters),
+  });
+}
+
+export function useSuperAdminUserAction() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: { userId: string; action: UserModerationAction; reason?: string }) => moderateSuperAdminUser(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.superAdminDashboard });
+      queryClient.invalidateQueries({ queryKey: ["super-admin-users"] });
+    },
+  });
+}
+
+export function useSuperAdminNotifications(filters: { page?: number; pageSize?: number } = {}) {
+  return useQuery({
+    queryKey: queryKeys.superAdminNotifications(filters),
+    queryFn: () => getSuperAdminNotifications(filters),
+  });
+}
+
+export function useSuperAdminNotificationAction() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: { action: "mark_read" | "mark_all_read"; notificationId?: string }) => updateSuperAdminNotifications(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["super-admin-notifications"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.superAdminDashboard });
+    },
   });
 }
