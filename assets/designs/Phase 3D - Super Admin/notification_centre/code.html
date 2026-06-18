@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FinderZ Admin - Alerts</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary": "#ffffff",
+                      "tertiary": "#272b2d",
+                      "surface-container": "#e5eeff",
+                      "outline-variant": "#c5c5d3",
+                      "on-error-container": "#93000a",
+                      "error": "#ba1a1a",
+                      "secondary-fixed-dim": "#e9c349",
+                      "surface-container-high": "#dce9ff",
+                      "on-tertiary-fixed": "#191c1e",
+                      "tertiary-container": "#3d4143",
+                      "on-error": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "background": "#f8f9ff",
+                      "surface-variant": "#d3e4fe",
+                      "secondary": "#735c00",
+                      "inverse-on-surface": "#eaf1ff",
+                      "inverse-primary": "#b6c4ff",
+                      "error-container": "#ffdad6",
+                      "surface-bright": "#f8f9ff",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-container": "#aaadaf",
+                      "on-primary-fixed-variant": "#264191",
+                      "on-primary-container": "#90a8ff",
+                      "secondary-container": "#fed65b",
+                      "on-surface": "#0b1c30",
+                      "on-secondary-fixed": "#241a00",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-highest": "#d3e4fe",
+                      "primary-fixed": "#dce1ff",
+                      "surface-dim": "#cbdbf5",
+                      "primary-container": "#1e3a8a",
+                      "secondary-fixed": "#ffe088",
+                      "on-secondary-container": "#745c00",
+                      "tertiary-fixed": "#e0e3e5",
+                      "primary": "#00236f",
+                      "outline": "#757682",
+                      "on-tertiary-fixed-variant": "#444749",
+                      "on-surface-variant": "#444651",
+                      "on-primary-fixed": "#00164e",
+                      "on-secondary-fixed-variant": "#574500",
+                      "on-background": "#0b1c30",
+                      "surface-tint": "#4059aa",
+                      "surface": "#f8f9ff",
+                      "inverse-surface": "#213145",
+                      "surface-container-low": "#eff4ff",
+                      "primary-fixed-dim": "#b6c4ff",
+                      "tertiary-fixed-dim": "#c4c7c9"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "md": "16px",
+                      "xs": "4px",
+                      "lg": "24px",
+                      "container-margin": "16px",
+                      "gutter": "16px",
+                      "base": "8px",
+                      "xl": "32px",
+                      "sm": "12px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Manrope"],
+                      "headline-lg": ["Manrope"],
+                      "label-md": ["Manrope"],
+                      "display-lg": ["Manrope"],
+                      "body-md": ["Manrope"],
+                      "headline-lg-mobile": ["Manrope"],
+                      "body-lg": ["Manrope"]
+              },
+              "fontSize": {
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["22px", {"lineHeight": "28px", "fontWeight": "700"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .unread-glow {
+            box-shadow: inset 4px 0 0 0 #00236f;
+        }
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #f8f9ff;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- Top AppBar -->
+<header class="bg-surface dark:bg-inverse-surface docked full-width top-0 z-50 bg-surface-bright dark:bg-surface-dim shadow-[0px_4px_12px_rgba(30,58,138,0.08)] sticky">
+<div class="flex justify-between items-center px-container-margin py-base w-full">
+<div class="flex items-center gap-sm">
+<img alt="Administrator profile picture" class="w-10 h-10 rounded-full object-cover border-2 border-primary-container" data-alt="A professional headshot of a confident tech administrator in a modern office setting. The lighting is bright and clean, reflecting a corporate yet approachable atmosphere with soft blue and white background tones that match a premium real estate platform aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2pz8KPolYJwkv5mF07rdkjt-2Mk6xsyTx5qapfcOu5ebrcW8LagiN6F1BN4IhtZFALd0IqGa_Koc0Ce5nDkQF8COSAQnFzfMoI_uX5BmhSBAv7OYRGdbrDqU4aqx63BBmpPdfwhbwDmjjB7iZFtbG0cjCoolt0N85m8-N5pbOsD1hj9LwtOiWKkRO64YYMFKWKya57kxAkKW7Lt2eKCqVAh6ahkVfCyAxJUowZq6k_5L7Rw_BKtr10UIJzFgj0xlXJmrfRKXmG-8"/>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary dark:text-primary-fixed-dim tracking-tight">FinderZ Admin</h1>
+</div>
+<button class="material-symbols-outlined text-primary p-2 hover:bg-surface-container-low transition-colors rounded-full active:opacity-80">
+                settings
+            </button>
+</div>
+</header>
+<main class="max-w-4xl mx-auto px-container-margin mt-lg">
+<!-- Title & Action Bar -->
+<div class="flex justify-between items-end mb-lg">
+<div>
+<p class="text-primary font-label-md text-label-md uppercase tracking-widest mb-1">System Monitoring</p>
+<h2 class="font-display-lg text-display-lg text-on-surface">Administrative Alerts</h2>
+</div>
+<button class="flex items-center gap-xs text-primary font-label-md text-label-md hover:underline active:scale-95 transition-all" id="markRead">
+<span class="material-symbols-outlined text-[18px]">done_all</span>
+                Mark all as read
+            </button>
+</div>
+<!-- Notification List -->
+<div class="space-y-md">
+<!-- New Property Submission (Unread) -->
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)] unread-glow flex gap-md items-start border-l-0 transition-all hover:translate-x-1 cursor-pointer">
+<div class="bg-primary-container text-on-primary-container p-sm rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined">add_business</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-headline-md text-headline-md text-on-surface">New property submission</h3>
+<span class="text-outline font-label-md text-label-md">10m ago</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">A luxury 4-bedroom villa in East Legon, Accra has been submitted for review. Review technical specs and documentation.</p>
+<div class="mt-md flex gap-sm">
+<button class="bg-secondary-container text-on-secondary-container px-lg py-2 rounded-lg font-label-md text-label-md font-bold active:scale-95 transition-transform">Review Now</button>
+</div>
+</div>
+</div>
+<!-- New Report Filed (Unread) -->
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)] unread-glow flex gap-md items-start transition-all hover:translate-x-1 cursor-pointer">
+<div class="bg-error-container text-on-error-container p-sm rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined">report</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-headline-md text-headline-md text-on-surface">New report filed</h3>
+<span class="text-outline font-label-md text-label-md">45m ago</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Listing #8821 reported for inaccurate pricing information. User: 'kwame_tech99' reported this 12 minutes ago.</p>
+</div>
+</div>
+<!-- Landlord Verification -->
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)] flex gap-md items-start transition-all hover:bg-surface-container-low cursor-pointer opacity-90">
+<div class="bg-surface-container-high text-primary p-sm rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined">verified_user</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-headline-md text-headline-md text-on-surface">Landlord verification request</h3>
+<span class="text-outline font-label-md text-label-md">2h ago</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Kofi Adu has uploaded Ghana Card for identity verification. Status: Pending automatic scan results.</p>
+</div>
+</div>
+<!-- System Update -->
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)] flex gap-md items-start transition-all hover:bg-surface-container-low cursor-pointer opacity-90">
+<div class="bg-tertiary-fixed text-on-tertiary-fixed-variant p-sm rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined">system_update_alt</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-headline-md text-headline-md text-on-surface">System update</h3>
+<span class="text-outline font-label-md text-label-md">5h ago</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Database maintenance successfully completed for regional server cluster 'West-1'. Performance index: 99.8%.</p>
+</div>
+</div>
+<!-- Another Submission (Read) -->
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)] flex gap-md items-start transition-all hover:bg-surface-container-low cursor-pointer opacity-90">
+<div class="bg-primary-container text-on-primary-container p-sm rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined">add_business</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-headline-md text-headline-md text-on-surface">New property submission</h3>
+<span class="text-outline font-label-md text-label-md">Yesterday</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Commercial space in Kumasi Business District submitted by 'Metro Rentals'.</p>
+</div>
+</div>
+</div>
+<!-- Summary Widget -->
+<div class="mt-xl grid grid-cols-1 md:grid-cols-3 gap-md pb-lg">
+<div class="bg-surface-bright p-lg rounded-xl border border-surface-container-high flex flex-col items-center text-center">
+<span class="text-primary font-display-lg text-display-lg">12</span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-tighter">Pending Approvals</span>
+</div>
+<div class="bg-surface-bright p-lg rounded-xl border border-surface-container-high flex flex-col items-center text-center">
+<span class="text-error font-display-lg text-display-lg">3</span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-tighter">Critical Reports</span>
+</div>
+<div class="bg-surface-bright p-lg rounded-xl border border-surface-container-high flex flex-col items-center text-center">
+<span class="text-secondary font-display-lg text-display-lg">94%</span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-tighter">System Health</span>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-container-lowest dark:bg-surface-container shadow-[0px_-4px_12px_rgba(30,58,138,0.08)] flex justify-around items-center px-xs pb-safe pt-base h-20">
+<!-- Dashboard -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-all active:scale-95 duration-100 px-4 py-1" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<!-- Approvals -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-all active:scale-95 duration-100 px-4 py-1" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="font-label-md text-label-md">Approvals</span>
+</a>
+<!-- Users -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-all active:scale-95 duration-100 px-4 py-1" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Users</span>
+</a>
+<!-- Moderation -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-all active:scale-95 duration-100 px-4 py-1" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-label-md text-label-md">Moderation</span>
+</a>
+<!-- Alerts (Active) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">notifications</span>
+<span class="font-label-md text-label-md">Alerts</span>
+</a>
+</nav>
+<script>
+        // Micro-interactions
+        document.getElementById('markRead').addEventListener('click', function() {
+            const unreads = document.querySelectorAll('.unread-glow');
+            unreads.forEach(el => {
+                el.classList.remove('unread-glow');
+                el.style.opacity = '0.9';
+            });
+            this.innerHTML = '<span class="material-symbols-outlined text-[18px]">done_all</span> All read';
+            this.classList.add('text-outline');
+            this.disabled = true;
+        });
+
+        // Add subtle animation to new alerts
+        const notificationCards = document.querySelectorAll('.unread-glow');
+        notificationCards.forEach((card, index) => {
+            card.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s forwards`;
+            card.style.opacity = '0';
+        });
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body></html>

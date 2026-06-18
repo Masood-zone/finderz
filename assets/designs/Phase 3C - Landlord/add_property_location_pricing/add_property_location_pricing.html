@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FinderZ - Add Property: Location &amp; Pricing</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#d3e4fe",
+                    "on-surface": "#0b1c30",
+                    "inverse-surface": "#213145",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#4059aa",
+                    "on-primary-container": "#90a8ff",
+                    "background": "#f8f9ff",
+                    "secondary-fixed-dim": "#e9c349",
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed": "#e0e3e5",
+                    "on-background": "#0b1c30",
+                    "surface-dim": "#cbdbf5",
+                    "surface-container-low": "#eff4ff",
+                    "on-secondary-fixed": "#241a00",
+                    "on-tertiary-container": "#aaadaf",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed-variant": "#444749",
+                    "inverse-primary": "#b6c4ff",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "outline-variant": "#c5c5d3",
+                    "on-tertiary-fixed": "#191c1e",
+                    "tertiary-fixed-dim": "#c4c7c9",
+                    "primary": "#00236f",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#dce9ff",
+                    "on-primary-fixed": "#00164e",
+                    "on-secondary-fixed-variant": "#574500",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#f8f9ff",
+                    "secondary-container": "#fed65b",
+                    "primary-fixed": "#dce1ff",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#3d4143",
+                    "secondary": "#735c00",
+                    "primary-container": "#1e3a8a",
+                    "error": "#ba1a1a",
+                    "on-secondary-container": "#745c00",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-primary-fixed-variant": "#264191",
+                    "surface": "#f8f9ff",
+                    "on-surface-variant": "#444651",
+                    "tertiary": "#272b2d",
+                    "surface-container": "#e5eeff",
+                    "secondary-fixed": "#ffe088",
+                    "surface-container-highest": "#d3e4fe",
+                    "outline": "#757682",
+                    "surface-container-lowest": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "gutter": "16px",
+                    "md": "16px",
+                    "xl": "32px",
+                    "base": "8px",
+                    "container-margin": "16px",
+                    "sm": "12px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "label-md": ["Manrope"],
+                    "headline-md": ["Manrope"],
+                    "headline-lg": ["Manrope"],
+                    "body-lg": ["Manrope"],
+                    "headline-lg-mobile": ["Manrope"],
+                    "display-lg": ["Manrope"],
+                    "body-md": ["Manrope"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["22px", {"lineHeight": "28px", "fontWeight": "700"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        display: inline-block;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+      }
+      body {
+        font-family: 'Manrope', sans-serif;
+        background-color: #f8f9ff;
+      }
+      .custom-shadow {
+        box-shadow: 0px 4px 12px rgba(30, 58, 138, 0.08);
+      }
+      /* Hide navigation shell per instruction for transactional flow */
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col">
+<!-- Top App Bar (Task Focused - No Nav Cluster) -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-gutter h-14 bg-surface dark:bg-surface-dim shadow-sm">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary" onclick="window.history.back()">arrow_back</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary font-bold">FinderZ</h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-md text-label-md text-on-surface-variant">Step 2 of 3</span>
+</div>
+</header>
+<main class="pt-20 pb-24 px-gutter flex-1 w-full max-w-[1200px] mx-auto">
+<!-- Progress Bar Section -->
+<div class="w-full mb-lg">
+<div class="flex justify-between mb-2">
+<span class="font-label-md text-label-md text-primary font-bold uppercase">Location &amp; Pricing</span>
+<span class="font-label-md text-label-md text-outline">66% Complete</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[66.6%] transition-all duration-500 ease-out"></div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg items-start">
+<!-- Left Column: Form -->
+<div class="lg:col-span-7 space-y-xl">
+<!-- Location Section -->
+<section class="space-y-md">
+<div class="flex items-center gap-2 mb-sm">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">location_on</span>
+<h2 class="font-headline-md text-headline-md">Property Location</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant px-1" for="region">Region</label>
+<div class="relative">
+<select class="w-full h-12 px-4 rounded-lg border-[1.5px] border-outline-variant focus:border-primary focus:ring-0 appearance-none bg-surface-container-lowest font-body-md text-body-md" id="region">
+<option value="greater_accra">Greater Accra</option>
+<option value="ashanti">Ashanti</option>
+<option value="central">Central</option>
+<option value="western">Western</option>
+<option value="eastern">Eastern</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
+</div>
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant px-1" for="city">City</label>
+<div class="relative">
+<input class="w-full h-12 px-4 rounded-lg border-[1.5px] border-outline-variant focus:border-primary focus:ring-0 bg-surface-container-lowest font-body-md text-body-md" id="city" placeholder="e.g., Tema" type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline">location_city</span>
+</div>
+</div>
+<div class="md:col-span-2 space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant px-1" for="neighborhood">Area / Neighborhood</label>
+<input class="w-full h-12 px-4 rounded-lg border-[1.5px] border-outline-variant focus:border-primary focus:ring-0 bg-surface-container-lowest font-body-md text-body-md" id="neighborhood" placeholder="e.g., Community 25 or East Legon" type="text"/>
+</div>
+</div>
+</section>
+<hr class="border-surface-container-high"/>
+<!-- Pricing Section -->
+<section class="space-y-md">
+<div class="flex items-center gap-2 mb-sm">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">payments</span>
+<h2 class="font-headline-md text-headline-md">Pricing Details</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant px-1" for="price">Price (GH₵)</label>
+<div class="relative">
+<input class="w-full h-12 pl-12 pr-4 rounded-lg border-[1.5px] border-outline-variant focus:border-primary focus:ring-0 bg-surface-container-lowest font-body-md text-body-md" id="price" placeholder="0.00" type="number"/>
+<span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-primary">GH₵</span>
+</div>
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface-variant px-1" for="billing">Billing Cycle</label>
+<div class="flex bg-surface-container h-12 p-1 rounded-lg">
+<button class="flex-1 rounded-md font-label-md text-label-md bg-white shadow-sm text-primary transition-all" type="button">Monthly</button>
+<button class="flex-1 rounded-md font-label-md text-label-md text-on-surface-variant hover:bg-surface-variant transition-all" type="button">Yearly</button>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">handshake</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-bold">Price is Negotiable</p>
+<p class="text-[11px] text-on-surface-variant">Allow potential clients to make offers</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</section>
+</div>
+<!-- Right Column: Visual Guide/Preview -->
+<div class="lg:col-span-5 sticky top-24 hidden lg:block">
+<div class="bg-white rounded-xl custom-shadow overflow-hidden p-0 border border-surface-container">
+<div class="relative h-48 bg-surface-dim">
+<img class="w-full h-full object-cover" data-alt="A bird's eye view of a modern urban neighborhood in Accra, Ghana, showing clean paved streets and well-structured contemporary houses under a clear blue sky. The scene is bathed in golden hour sunlight, highlighting the warm tones of the architecture and the vibrant greenery. This visual represents a premium, secure real estate market with a professional and trustworthy aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZViybSIgQKhdKoi8i8p_ZaY7GGNCR6fck3WjuCB-3rqrDdWKnG_MExrtGTfwE-khgCm1AA2FnTX6lr421RmbUodofZiL4C8xVzHSnJjWpzlIoR7K1gVuG2PfluWUMwyrLJ2BAoZKAbePgIG0eLqIZ_1Z6ptN4oN4eCD8lnchNethR_f8HisbZd-QuzDOcruXec_E1JmDLjm4AquWRlax8YCycLpYkhLVj5Z0UNU9ZtQ2TP8BORUQ1_6Bo4qEXkyFkZKaTxNSru8k"/>
+<div class="absolute bottom-4 left-4 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-md text-label-md">
+                            Draft Preview
+                        </div>
+</div>
+<div class="p-lg space-y-md">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-md text-headline-md text-primary">GH₵ 4,500 <span class="font-body-md text-body-md text-on-surface-variant font-normal">/ month</span></h3>
+<div class="flex items-center gap-1 text-on-surface-variant mt-1">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="font-body-md text-body-md">East Legon, Accra</span>
+</div>
+</div>
+<div class="bg-surface-variant text-on-primary-fixed-variant px-2 py-1 rounded text-[10px] font-bold uppercase">Negotiable</div>
+</div>
+<div class="bg-surface-container-low p-3 rounded-lg border border-dashed border-outline-variant">
+<p class="font-body-md text-body-md text-on-surface-variant italic">"Listing your property in the right area helps us find you the most relevant tenants in Ghana."</p>
+</div>
+</div>
+</div>
+<div class="mt-lg p-md bg-secondary-fixed text-on-secondary-fixed rounded-xl flex gap-3 items-start">
+<span class="material-symbols-outlined mt-1">info</span>
+<div>
+<p class="font-label-md text-label-md font-bold">Local Market Tip</p>
+<p class="text-[13px]">In Tema and Accra, yearly rentals are common, but monthly options often attract a wider range of young professionals.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Action Shell) -->
+<footer class="fixed bottom-0 left-0 w-full z-50 bg-surface-container-lowest border-t border-surface-container shadow-lg px-gutter py-4 flex items-center justify-between">
+<button class="flex items-center gap-2 h-12 px-6 rounded-lg font-bold text-primary hover:bg-surface-container-high transition-colors" onclick="window.history.back()">
+<span class="material-symbols-outlined">arrow_back</span>
+            Back
+        </button>
+<button class="flex items-center gap-2 h-12 px-8 rounded-lg font-bold bg-secondary-container text-primary shadow-sm active:scale-95 transition-transform">
+            Continue
+            <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</footer>
+<script>
+        // Micro-interactions for form states
+        document.querySelectorAll('input, select').forEach(element => {
+            element.addEventListener('focus', () => {
+                element.parentElement.classList.add('scale-[1.01]');
+            });
+            element.addEventListener('blur', () => {
+                element.parentElement.classList.remove('scale-[1.01]');
+            });
+        });
+
+        // Billing Cycle Toggle Logic
+        const billingBtns = document.querySelectorAll('[type="button"]');
+        billingBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (this.innerText === 'Monthly' || this.innerText === 'Yearly') {
+                    billingBtns.forEach(b => {
+                        b.classList.remove('bg-white', 'shadow-sm', 'text-primary');
+                        b.classList.add('text-on-surface-variant', 'hover:bg-surface-variant');
+                    });
+                    this.classList.add('bg-white', 'shadow-sm', 'text-primary');
+                    this.classList.remove('text-on-surface-variant', 'hover:bg-surface-variant');
+                }
+            });
+        });
+    </script>
+</body></html>

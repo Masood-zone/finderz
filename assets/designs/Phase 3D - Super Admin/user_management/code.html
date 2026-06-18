@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FinderZ Admin | User Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary": "#ffffff",
+                    "tertiary": "#272b2d",
+                    "surface-container": "#e5eeff",
+                    "outline-variant": "#c5c5d3",
+                    "on-error-container": "#93000a",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#e9c349",
+                    "surface-container-high": "#dce9ff",
+                    "on-tertiary-fixed": "#191c1e",
+                    "tertiary-container": "#3d4143",
+                    "on-error": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "background": "#f8f9ff",
+                    "surface-variant": "#d3e4fe",
+                    "secondary": "#735c00",
+                    "inverse-on-surface": "#eaf1ff",
+                    "inverse-primary": "#b6c4ff",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f8f9ff",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-container": "#aaadaf",
+                    "on-primary-fixed-variant": "#264191",
+                    "on-primary-container": "#90a8ff",
+                    "secondary-container": "#fed65b",
+                    "on-surface": "#0b1c30",
+                    "on-secondary-fixed": "#241a00",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#d3e4fe",
+                    "primary-fixed": "#dce1ff",
+                    "surface-dim": "#cbdbf5",
+                    "primary-container": "#1e3a8a",
+                    "secondary-fixed": "#ffe088",
+                    "on-secondary-container": "#745c00",
+                    "tertiary-fixed": "#e0e3e5",
+                    "primary": "#00236f",
+                    "outline": "#757682",
+                    "on-tertiary-fixed-variant": "#444749",
+                    "on-surface-variant": "#444651",
+                    "on-primary-fixed": "#00164e",
+                    "on-secondary-fixed-variant": "#574500",
+                    "on-background": "#0b1c30",
+                    "surface-tint": "#4059aa",
+                    "surface": "#f8f9ff",
+                    "inverse-surface": "#213145",
+                    "surface-container-low": "#eff4ff",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "tertiary-fixed-dim": "#c4c7c9"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "xs": "4px",
+                    "lg": "24px",
+                    "container-margin": "16px",
+                    "gutter": "16px",
+                    "base": "8px",
+                    "xl": "32px",
+                    "sm": "12px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Manrope"],
+                    "headline-lg": ["Manrope"],
+                    "label-md": ["Manrope"],
+                    "display-lg": ["Manrope"],
+                    "body-md": ["Manrope"],
+                    "headline-lg-mobile": ["Manrope"],
+                    "body-lg": ["Manrope"]
+            },
+            "fontSize": {
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["22px", {"lineHeight": "28px", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .user-row:active { background-color: #eff4ff; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopAppBar Shell -->
+<header class="bg-surface-bright shadow-[0px_4px_12px_rgba(30,58,138,0.08)] docked full-width top-0 z-50 flex justify-between items-center px-container-margin py-base w-full sticky">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img alt="Administrator profile picture" class="w-full h-full object-cover" data-alt="A professional headshot of a confident Ghanaian woman in corporate attire, smiling warmly. The setting is a bright, modern office with soft natural light and blurred architectural details in the background. The aesthetic is clean and professional, using a bright, high-key palette with subtle warm skin tones and crisp details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBdcKfB053g00-dBnQbyf5U2YXqmp9E5eBEAH4pBBaBF7mSVHddt9gqfSIgsDZOS-aO2KeE9ofeFIfHqsMN__mbW5dXWxs96V-HrgVjwDjhupD1bbmUI8aV_Uvx4l2OhoKRWg3Np4RXOyFPFD7WMw6sLR40ON0D8xi-kTjHmul9knejyc3ZbBB-EFHL94n1hGewMbZakPZdKDj-yz02-AjnOFd8HG22kVQf9wFPAKCt06hhVV-zjIPxG2fiwGe8uqgY3K-_VaEkfs"/>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">FinderZ Admin</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors active:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-primary">settings</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow px-container-margin pb-32 pt-lg">
+<!-- Search and Filter Section -->
+<section class="flex flex-col gap-md mb-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full h-12 pl-12 pr-4 bg-surface-container-lowest border-[1.5px] border-outline-variant rounded-xl text-body-md focus:border-primary focus:ring-0 transition-all outline-none" placeholder="Search users by name or email..." type="text"/>
+</div>
+<!-- Filter Chips -->
+<div class="flex gap-base overflow-x-auto no-scrollbar pb-xs">
+<button class="px-md py-2 bg-primary text-on-primary rounded-full font-label-md text-label-md whitespace-nowrap shadow-sm">All</button>
+<button class="px-md py-2 bg-surface-container text-on-surface-variant border border-outline-variant rounded-full font-label-md text-label-md whitespace-nowrap hover:bg-surface-container-high transition-all">Tenants</button>
+<button class="px-md py-2 bg-surface-container text-on-surface-variant border border-outline-variant rounded-full font-label-md text-label-md whitespace-nowrap hover:bg-surface-container-high transition-all">Landlords</button>
+<button class="px-md py-2 bg-surface-container text-on-surface-variant border border-outline-variant rounded-full font-label-md text-label-md whitespace-nowrap hover:bg-surface-container-high transition-all">Suspended</button>
+<button class="px-md py-2 bg-surface-container text-on-surface-variant border border-outline-variant rounded-full font-label-md text-label-md whitespace-nowrap hover:bg-surface-container-high transition-all">Verified</button>
+</div>
+</section>
+<!-- User List Section -->
+<section class="flex flex-col gap-sm">
+<div class="flex justify-between items-center mb-base px-xs">
+<h2 class="font-headline-md text-headline-md text-on-surface">Registered Users</h2>
+<span class="text-on-surface-variant font-label-md text-label-md">1,248 total</span>
+</div>
+<div class="space-y-sm">
+<!-- User Card 1 -->
+<div class="user-row flex items-center justify-between p-md bg-surface-container-lowest rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)] transition-all">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-dim">
+<img alt="Kojo Mensah" class="w-full h-full object-cover" data-alt="A portrait of a young Ghanaian man in a casual white t-shirt, standing outdoors in front of a modern Accra apartment building. The lighting is golden hour, creating a warm and approachable feel. The image is sharp and high-contrast, fitting the professional FinderZ real estate platform aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuAeCqe_zcVM_60RtcA_eXol20YZjcC1ti0AS2MD9DWkqF-7KwXL6X8IuQToZ_fC5SbVp2az7Kd7jc3fHm1LmGo5VNjJB9fetHYTyZwOMcd4ZiWRb4GxexmEtPpGHMHAFdg7ODg1tzn_r_biSm2h_ufqz3hacfMqzfSUlXRhcsdcA2xjArrU6thlcy0ak5OpeE0XJOx_3-vInC6egtAC3WkxZLXKowKfZqecnZNb4BwAKfdAK-rPBYieEZcLOQHqTRjFDNKm852Qo"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">Kojo Mensah</h3>
+<p class="text-body-md text-on-surface-variant">kojo.mensah@email.com</p>
+<div class="flex gap-xs mt-1">
+<span class="bg-secondary-container/20 text-secondary px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Tenant</span>
+<span class="flex items-center gap-0.5 text-primary text-[10px] font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">verified</span> Verified
+                                </span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+<!-- User Card 2 -->
+<div class="user-row flex items-center justify-between p-md bg-surface-container-lowest rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)] transition-all border-l-4 border-secondary">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-dim">
+<img alt="Abena Osei" class="w-full h-full object-cover" data-alt="A portrait of a professional Ghanaian woman in a stylish corporate blazer, set against a blurred city backdrop in Ghana. Her expression is confident and trustworthy. The image features a bright, clean lighting scheme consistent with a premium corporate UI, using a palette of soft blues and natural skin tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5EvIXm7jsxXMLVKREKI7mTXmiOwrl3q9zCMP4O5UnxjHitRlFlz4tAYVNAzeaszgUQZrModO9O5zxi64X9uWI_Lh38aWxC88UolXSrZh2EEnX0hP94_w9utUf3YWqrdeQTYTFXWd5ZqOnIbJmzQSQL6m74tp6V0sHvgx7L9VSedobyH_CiBaqonAWKZJCpTNs0uo3e_ZvqN8k4h1jjCMnfuYkqSXb2wheBJ8M8hIm4OZA4xl3B-yss7GyBm3maV2_Hf1uEODMuEA"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">Abena Osei</h3>
+<p class="text-body-md text-on-surface-variant">abena.properties@gh.com</p>
+<div class="flex gap-xs mt-1">
+<span class="bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Landlord</span>
+<span class="flex items-center gap-0.5 text-primary text-[10px] font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">verified</span> Verified
+                                </span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+<!-- User Card 3 -->
+<div class="user-row flex items-center justify-between p-md bg-surface-container-lowest rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)] transition-all">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-dim">
+<img alt="Kwame Boateng" class="w-full h-full object-cover" data-alt="A portrait of a young Ghanaian man wearing glasses and a focused expression, photographed in a bright indoor studio with a clean white background. He is wearing a professional polo shirt. The lighting is even and soft, emphasizing clarity and trust for a data-focused administrator dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBcRVsBDJLnAAdJCWCnW6xLb5UqKKnDFZhqtswGol7kHNXT104lIvfFpsSmdOUUVVumW6IJbLmFDGq7NJFmokOgzHY9UMS6FE5OYFAah6N7HZyjdlgjea9oGimYzh06xGMJA3FNyA1HNfAnX2nvJ2eGD7ycWitNSppxtV7d0-5Weo-w8kdY-cBk34T8cyccTC9nZsQML_cLOi19_RMBjCny3gvCwKFs8TyEaddpU2AzPVmlZnuCAsJsrXWxniWQLMmxcxNLBy4Ono"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">Kwame Boateng</h3>
+<p class="text-body-md text-on-surface-variant">kwame.b@gmail.com</p>
+<div class="flex gap-xs mt-1">
+<span class="bg-secondary-container/20 text-secondary px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Tenant</span>
+<span class="flex items-center gap-0.5 text-outline text-[10px] font-bold uppercase tracking-wider">
+                                    Pending Verification
+                                </span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+<!-- User Card 4 (Suspended) -->
+<div class="user-row flex items-center justify-between p-md bg-surface-container-lowest rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)] transition-all opacity-80">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-dim grayscale">
+<img alt="Akua Asare" class="w-full h-full object-cover" data-alt="A portrait of a woman in Ghana, shown with a neutral expression in a grayscale filter. The background is a simple, non-distracting architectural wall. The image is designed to represent a suspended account, maintaining the professional quality while indicating a inactive status through tonal shifts." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqZRX3kBhn9T-mGM8F0Hp9_paygCh72E84jTNpu4O3tFbNZU-XiyFDqM_oRskhGsHZcGD9JMw1BINM4kn9DS6WEkDOu3MdzGRtZa-SRO7nuwtPkAGtYTnX6BAJur813cqyVReHTOC8sdySLwgZ0Rx7RqcX6AKKG3Bhxy0L1VEo5ht1KMX97BqYXdujTn6cU-mu-qliPT-H4gkiFrW0dCMXhsbN5W1duBc_Nd9fszMSD6sIui5EV0igE78ZRpg-J3Ngmy53u1TpL4A"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">Akua Asare</h3>
+<p class="text-body-md text-on-surface-variant">akua.a@yahoo.com</p>
+<div class="flex gap-xs mt-1">
+<span class="bg-error-container text-on-error-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Suspended</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+<!-- User Card 5 -->
+<div class="user-row flex items-center justify-between p-md bg-surface-container-lowest rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)] transition-all">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-dim">
+<img alt="Yaw Donkor" class="w-full h-full object-cover" data-alt="A headshot of an older Ghanaian man with a dignified and professional presence, wearing traditional but formal attire. The lighting is soft and flattering, taken in a bright, modern interior setting. The aesthetic is focused on reliability and experience, fitting for a landlord profile on a high-end property platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8jj8HrBCiQq_0DU32viG5SMkmChoIIXSahN81p3ltWSMvRyFkjiLzmZtCjhgTS-f2_wAyGrCCb08xfrOZRA1BZgB0q06bR4o8-rCckpam-alfzt2yBM3dVAUimVRLbbM5suDzr7SfPIbqbqAhhTnC5Fjsvztl5CuO6XXuBwqVUPIJeylis3UM5Xm4b1PBTULOiwyvmZN9_huV8LVhahJ-OXyA7oV5-QnZOmXmwpJ32-wdfIlvTlVTabPV_VBTYtw_alaIH1PKUlg"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">Yaw Donkor</h3>
+<p class="text-body-md text-on-surface-variant">yaw.donkor@realestate.com.gh</p>
+<div class="flex gap-xs mt-1">
+<span class="bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Landlord</span>
+<span class="flex items-center gap-0.5 text-primary text-[10px] font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">verified</span> Verified
+                                </span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+<!-- Load More -->
+<button class="w-full py-md mt-md text-primary font-bold text-body-lg border-2 border-primary-container rounded-xl hover:bg-surface-container-low transition-colors">
+                Load more users
+            </button>
+</section>
+</main>
+<!-- BottomNavBar Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-xs pb-6 pt-base bg-surface-container-lowest shadow-[0px_-4px_12px_rgba(30,58,138,0.08)] rounded-t-xl">
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-all active:scale-95 duration-100 p-2 rounded-xl">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-all active:scale-95 duration-100 p-2 rounded-xl">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="font-label-md text-label-md">Approvals</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 active:scale-95 duration-100">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-label-md text-label-md">Users</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-all active:scale-95 duration-100 p-2 rounded-xl">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-label-md text-label-md">Moderation</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-all active:scale-95 duration-100 p-2 rounded-xl">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-md text-label-md">Alerts</span>
+</div>
+</nav>
+<script>
+        // Simple micro-interactions
+        document.querySelectorAll('.user-row').forEach(row => {
+            row.addEventListener('click', () => {
+                row.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    row.style.transform = 'scale(1)';
+                }, 100);
+            });
+        });
+
+        // Filter chip selection logic
+        const chips = document.querySelectorAll('button[class*="rounded-full"]');
+        chips.forEach(chip => {
+            if (chip.textContent === "Dashboard" || chip.textContent === "Approvals") return; // Skip nav
+            chip.addEventListener('click', () => {
+                chips.forEach(c => {
+                    if (c.textContent === "Dashboard" || c.textContent === "Approvals" || c.textContent === "Users" || c.textContent === "Moderation" || c.textContent === "Alerts") return;
+                    c.classList.remove('bg-primary', 'text-on-primary');
+                    c.classList.add('bg-surface-container', 'text-on-surface-variant', 'border', 'border-outline-variant');
+                });
+                chip.classList.add('bg-primary', 'text-on-primary');
+                chip.classList.remove('bg-surface-container', 'text-on-surface-variant', 'border', 'border-outline-variant');
+            });
+        });
+    </script>
+</body></html>

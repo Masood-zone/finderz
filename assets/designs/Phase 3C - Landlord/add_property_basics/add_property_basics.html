@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FinderZ - Add Property</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#d3e4fe",
+                    "on-surface": "#0b1c30",
+                    "inverse-surface": "#213145",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#4059aa",
+                    "on-primary-container": "#90a8ff",
+                    "background": "#f8f9ff",
+                    "secondary-fixed-dim": "#e9c349",
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed": "#e0e3e5",
+                    "on-background": "#0b1c30",
+                    "surface-dim": "#cbdbf5",
+                    "surface-container-low": "#eff4ff",
+                    "on-secondary-fixed": "#241a00",
+                    "on-tertiary-container": "#aaadaf",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed-variant": "#444749",
+                    "inverse-primary": "#b6c4ff",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "outline-variant": "#c5c5d3",
+                    "on-tertiary-fixed": "#191c1e",
+                    "tertiary-fixed-dim": "#c4c7c9",
+                    "primary": "#00236f",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#dce9ff",
+                    "on-primary-fixed": "#00164e",
+                    "on-secondary-fixed-variant": "#574500",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#f8f9ff",
+                    "secondary-container": "#fed65b",
+                    "primary-fixed": "#dce1ff",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#3d4143",
+                    "secondary": "#735c00",
+                    "primary-container": "#1e3a8a",
+                    "error": "#ba1a1a",
+                    "on-secondary-container": "#745c00",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-primary-fixed-variant": "#264191",
+                    "surface": "#f8f9ff",
+                    "on-surface-variant": "#444651",
+                    "tertiary": "#272b2d",
+                    "surface-container": "#e5eeff",
+                    "secondary-fixed": "#ffe088",
+                    "surface-container-highest": "#d3e4fe",
+                    "outline": "#757682",
+                    "surface-container-lowest": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "gutter": "16px",
+                    "md": "16px",
+                    "xl": "32px",
+                    "base": "8px",
+                    "container-margin": "16px",
+                    "sm": "12px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "label-md": ["Manrope"],
+                    "headline-md": ["Manrope"],
+                    "headline-lg": ["Manrope"],
+                    "body-lg": ["Manrope"],
+                    "headline-lg-mobile": ["Manrope"],
+                    "display-lg": ["Manrope"],
+                    "body-md": ["Manrope"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["22px", {"lineHeight": "28px", "fontWeight": "700"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; -webkit-font-smoothing: antialiased; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .step-active { width: 33.33%; transition: width 0.5s ease-in-out; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-20 md:pb-0">
+<!-- Top Navigation Header -->
+<header class="fixed top-0 w-full bg-surface dark:bg-surface-dim shadow-sm flex justify-between items-center px-gutter h-14 z-50">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container-high transition-colors duration-200 rounded-full">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary dark:text-primary-fixed-dim font-bold">Add Property</h1>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full overflow-hidden border-2 border-primary">
+<img alt="Landlord Profile Photo" class="w-full h-full object-cover" data-alt="A professional headshot of a smiling Ghanaian landlord in a modern corporate setting. He is wearing a crisp white shirt with a subtle kente-patterned tie. The background is a soft-focus office with warm wooden accents and natural lighting, conveying trust, reliability, and professional excellence in the real estate market." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfYCAEqWJU_p_sLRwdg0VP1Ykc849nrwaiR9WG-Uyc2Q67C7ZY1UjhpiO2OPrJbUGZJrGEkWYvGkSRbVJ_FtufYCrHTuUegWDbkxaGm1H5rdD4dqMgS4tLLPMKbbSX4ZsnfGGZGQjxrOecACXUZ4CgIR2GwqBStRv7pCOOQAIOoA4KvmniPKAVL7prvFUEj7VK9v0X16EaNjygix7MDqGEg_rKBpCjuec1TvwL50JU81uQMeEKBzIToVnUW49nG5mGnab5tKNeZvg"/>
+</div>
+</div>
+</header>
+<main class="mt-14 max-w-2xl mx-auto px-gutter py-lg">
+<!-- Progress Indicator Section -->
+<div class="mb-xl">
+<div class="flex justify-between items-end mb-2">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-primary uppercase tracking-wider">Step 1 of 3</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">Basic Information</h2>
+</div>
+<span class="font-label-md text-label-md text-outline">33% Complete</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container step-active"></div>
+</div>
+</div>
+<!-- Form Content -->
+<div class="bg-surface-container-lowest rounded-xl p-lg shadow-[0px_4px_12px_rgba(30,58,138,0.08)]">
+<form class="space-y-lg" id="property-form">
+<!-- Property Title -->
+<div class="space-y-xs">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1">Property Title</label>
+<input class="w-full h-12 px-4 rounded-lg border-[1.5px] border-[#CBD5E1] focus:border-primary focus:ring-0 text-body-lg font-body-lg bg-surface transition-all outline-none" placeholder="e.g., Modern 2-Bedroom at East Legon" required="" type="text"/>
+<p class="text-[11px] text-outline mt-1 px-1">Use a title that highlights unique features and the neighborhood.</p>
+</div>
+<!-- Property Type Chips Selection -->
+<div class="space-y-xs">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-2">Property Type</label>
+<div class="flex flex-wrap gap-2">
+<label class="relative cursor-pointer group">
+<input checked="" class="peer sr-only" name="property_type" type="radio" value="apartment"/>
+<div class="px-4 py-2 rounded-full border-[1.5px] border-[#CBD5E1] peer-checked:border-primary peer-checked:bg-primary-fixed peer-checked:text-primary transition-all flex items-center gap-2 group-hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[20px]">apartment</span>
+<span class="font-label-md text-label-md">Apartment</span>
+</div>
+</label>
+<label class="relative cursor-pointer group">
+<input class="peer sr-only" name="property_type" type="radio" value="house"/>
+<div class="px-4 py-2 rounded-full border-[1.5px] border-[#CBD5E1] peer-checked:border-primary peer-checked:bg-primary-fixed peer-checked:text-primary transition-all flex items-center gap-2 group-hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[20px]">house</span>
+<span class="font-label-md text-label-md">House</span>
+</div>
+</label>
+<label class="relative cursor-pointer group">
+<input class="peer sr-only" name="property_type" type="radio" value="townhouse"/>
+<div class="px-4 py-2 rounded-full border-[1.5px] border-[#CBD5E1] peer-checked:border-primary peer-checked:bg-primary-fixed peer-checked:text-primary transition-all flex items-center gap-2 group-hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[20px]">cottage</span>
+<span class="font-label-md text-label-md">Townhouse</span>
+</div>
+</label>
+<label class="relative cursor-pointer group">
+<input class="peer sr-only" name="property_type" type="radio" value="studio"/>
+<div class="px-4 py-2 rounded-full border-[1.5px] border-[#CBD5E1] peer-checked:border-primary peer-checked:bg-primary-fixed peer-checked:text-primary transition-all flex items-center gap-2 group-hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[20px]">grid_view</span>
+<span class="font-label-md text-label-md">Studio</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Description -->
+<div class="space-y-xs">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1">Detailed Description</label>
+<textarea class="w-full p-4 rounded-lg border-[1.5px] border-[#CBD5E1] focus:border-primary focus:ring-0 text-body-md font-body-md bg-surface transition-all outline-none resize-none custom-scrollbar" placeholder="Describe the property's amenities, nearby landmarks, and specific advantages..." required="" rows="4"></textarea>
+</div>
+<!-- Bedrooms & Bathrooms Row -->
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-xs">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1">Bedrooms</label>
+<div class="flex items-center border-[1.5px] border-[#CBD5E1] rounded-lg bg-surface h-12">
+<button class="w-12 h-full flex items-center justify-center text-primary active:scale-95 transition-transform" onclick="decrement('bedrooms')" type="button">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<input class="w-full text-center bg-transparent border-none focus:ring-0 font-headline-md text-headline-md text-primary" id="bedrooms" readonly="" type="number" value="1"/>
+<button class="w-12 h-full flex items-center justify-center text-primary active:scale-95 transition-transform" onclick="increment('bedrooms')" type="button">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<div class="space-y-xs">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1">Bathrooms</label>
+<div class="flex items-center border-[1.5px] border-[#CBD5E1] rounded-lg bg-surface h-12">
+<button class="w-12 h-full flex items-center justify-center text-primary active:scale-95 transition-transform" onclick="decrement('bathrooms')" type="button">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<input class="w-full text-center bg-transparent border-none focus:ring-0 font-headline-md text-headline-md text-primary" id="bathrooms" readonly="" type="number" value="1"/>
+<button class="w-12 h-full flex items-center justify-center text-primary active:scale-95 transition-transform" onclick="increment('bathrooms')" type="button">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Guidance Note -->
+<div class="p-md bg-surface-container-high rounded-lg flex gap-3 items-start">
+<span class="material-symbols-outlined text-primary-container">info</span>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                        Providing accurate details increases the trust factor for property seekers. Listings with clear descriptions get up to <span class="font-bold text-primary">40% more enquiries</span> in Accra.
+                    </p>
+</div>
+<!-- Actions -->
+<div class="pt-lg flex flex-col gap-3">
+<button class="w-full h-12 bg-secondary-container text-on-secondary-container font-bold rounded-lg shadow-sm active:scale-[0.98] transition-transform flex items-center justify-center gap-2 hover:bg-opacity-90" type="submit">
+                        Continue to Step 2
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<button class="w-full h-12 bg-transparent text-primary font-bold rounded-lg border-[1.5px] border-primary hover:bg-primary-fixed transition-colors" type="button">
+                        Save as Draft
+                    </button>
+</div>
+</form>
+</div>
+</main>
+<!-- Bottom Navigation (Hides on Add Property Flow to maintain Focus) -->
+<!-- Determined suppression based on "Task-Focused" rule -->
+<script>
+        function increment(id) {
+            const el = document.getElementById(id);
+            el.value = parseInt(el.value) + 1;
+        }
+
+        function decrement(id) {
+            const el = document.getElementById(id);
+            if (parseInt(el.value) > 0) {
+                el.value = parseInt(el.value) - 1;
+            }
+        }
+
+        document.getElementById('property-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // In a real app, this would navigate to the next step
+            console.log('Moving to Step 2...');
+        });
+    </script>
+</body></html>

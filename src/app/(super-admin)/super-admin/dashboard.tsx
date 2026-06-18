@@ -1,8 +1,11 @@
 import { AppButton } from "@/components/ui/app-button";
+import { AppText } from "@/components/ui/app-text";
+import { colors } from "@/components/ui/design-system";
+import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import { signOut } from "@/lib/auth-client";
 import { useSuperAdminDashboard } from "@/services/queries/hooks";
 import { router } from "expo-router";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 export default function SuperAdminDashboardScreen() {
   const dashboard = useSuperAdminDashboard();
@@ -11,25 +14,25 @@ export default function SuperAdminDashboardScreen() {
     router.replace("/sign-in");
   };
   return (
-    <View className="flex-1 justify-center bg-background px-6">
-      <Text className="text-2xl font-bold text-text-primary">
+    <SafeAreaScreen scroll contentContainerStyle={{ padding: 24, justifyContent: "center" }}>
+      <AppText variant="headline">
         Super Administrator dashboard
-      </Text>
-      <Text className="mt-2 text-base text-text-secondary">
+      </AppText>
+      <AppText className="mt-2" muted>
         Status: {dashboard.status}
-      </Text>
+      </AppText>
 
       {/* Profile data */}
-      <View className="mt-4">
-        <Text className="text-lg font-semibold text-text-primary">
+      <View className="mt-4 rounded-2xl border p-4" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
+        <AppText variant="title">
           Profile Information
-        </Text>
-        <Text className="mt-2 text-base text-text-secondary">
+        </AppText>
+        <AppText className="mt-2" muted>
           Name: {dashboard?.data?.user?.name}
-        </Text>
-        <Text className="text-base text-text-secondary">
+        </AppText>
+        <AppText muted>
           Email: {dashboard?.data?.user?.email}
-        </Text>
+        </AppText>
 
         <AppButton
           title="Log out"
@@ -37,9 +40,9 @@ export default function SuperAdminDashboardScreen() {
           onPress={() => {
             logOut();
           }}
-          className="mt-4"
+          style={{ marginTop: 16 }}
         />
       </View>
-    </View>
+    </SafeAreaScreen>
   );
 }

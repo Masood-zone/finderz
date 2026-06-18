@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Listing Submitted Successfully - FinderZ</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#e9c349",
+                        "on-secondary-container": "#745c00",
+                        "on-tertiary-fixed-variant": "#444749",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#cbdbf5",
+                        "primary": "#00236f",
+                        "surface-variant": "#d3e4fe",
+                        "secondary": "#735c00",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "error-container": "#ffdad6",
+                        "background": "#f8f9ff",
+                        "tertiary": "#272b2d",
+                        "on-secondary-fixed": "#241a00",
+                        "surface-container-low": "#eff4ff",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-error": "#ffffff",
+                        "on-tertiary-container": "#aaadaf",
+                        "on-background": "#0b1c30",
+                        "inverse-surface": "#213145",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "tertiary-fixed-dim": "#c4c7c9",
+                        "on-secondary-fixed-variant": "#574500",
+                        "surface-container": "#e5eeff",
+                        "secondary-container": "#fed65b",
+                        "inverse-primary": "#b6c4ff",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#1e3a8a",
+                        "outline": "#757682",
+                        "on-primary-fixed-variant": "#264191",
+                        "surface-tint": "#4059aa",
+                        "tertiary-fixed": "#e0e3e5",
+                        "surface": "#f8f9ff",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f8f9ff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#191c1e",
+                        "on-primary-container": "#90a8ff",
+                        "secondary-fixed": "#ffe088",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#c5c5d3",
+                        "surface-container-high": "#dce9ff",
+                        "tertiary-container": "#3d4143",
+                        "on-surface-variant": "#444651",
+                        "on-surface": "#0b1c30",
+                        "on-primary-fixed": "#00164e",
+                        "primary-fixed": "#dce1ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "gutter": "16px",
+                        "xs": "4px",
+                        "base": "8px",
+                        "md": "16px",
+                        "container-margin": "16px",
+                        "sm": "12px",
+                        "xl": "32px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Manrope"],
+                        "label-md": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "display-lg": ["Manrope"],
+                        "headline-lg": ["Manrope"],
+                        "body-md": ["Manrope"],
+                        "body-lg": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["22px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .check-glow {
+            box-shadow: 0 0 40px rgba(115, 92, 0, 0.2);
+        }
+        @keyframes scaleIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-success {
+            animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- Top Navigation Bar (Suppressed on splash but maintaining hierarchy) -->
+<header class="fixed top-0 w-full z-50 bg-surface flex justify-between items-center px-container-margin h-12 shadow-[0px_4px_12px_rgba(30,58,138,0.08)]">
+<div class="flex items-center gap-2">
+<span class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">FinderZ</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqOTxYtOItwGrgQQVtfcdXNQOwXtZo4GRzGY8qRQ7WGQ_q5hsB9d7l-9R5s4Fq_y4kt04yofd4kjJnq-aAXh8ZIPFMKvuusJmdXVNug-z3Py254LEkMsemj5g3CIs_-clyHvqx7pTu4lj-GqnfePI7Y7w2TFQ5Xdd788iH4-VNt3ZeKW2uM1l0ECYLEkWkepOgli2wIEMvi0O7wIcdE_TqTtO8o1J_ceJufgWXUQayV4atkKKzFrD6INkGvufB3U4UazB18m-nlC4"/>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-container-margin py-xl mt-12 mb-16">
+<!-- Success Card Container -->
+<div class="max-w-md w-full text-center space-y-lg animate-success">
+<!-- Celebratory Gold Checkmark -->
+<div class="relative inline-flex items-center justify-center">
+<div class="absolute inset-0 bg-secondary-container opacity-20 rounded-full scale-150 blur-2xl"></div>
+<div class="w-24 h-24 rounded-full bg-secondary-container flex items-center justify-center check-glow border-4 border-white">
+<span class="material-symbols-outlined text-secondary text-[48px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<!-- Content Group -->
+<div class="space-y-md">
+<h1 class="font-display-lg text-display-lg text-primary">Listing Submitted!</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xs mx-auto">
+                    Your property has been successfully sent for review. Our team will verify the details within 24 hours. You can track its status in your dashboard.
+                </p>
+</div>
+<!-- Image Teaser (Property Context) -->
+<div class="w-full h-48 rounded-xl overflow-hidden shadow-sm border border-outline-variant/30">
+<img class="w-full h-full object-cover" data-alt="A luxurious modern residential home in an upscale Accra neighborhood featuring clean architectural lines, large glass windows, and a manicured tropical garden. The lighting is warm golden hour sunlight, emphasizing the premium and trustworthy feel of the FinderZ brand. The overall aesthetic is professional, high-end, and perfectly aligned with the Ghanaian real estate market's pursuit of quality and security." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFPa6eZEjnTDJKTHtHedjAZX-YGKjiDBQd6v5zQgzUjcZySHh-6f7VT4KydJYfC3s0C5eM_uPvCR2bMLeYI4f4BUeIG9k9amyfPmnmoqrCDGqWz9OoSdtfWCOzJ27si4yO2ac5TAoY7kMkJHYXTU62ksvs9QXi0l3VUARC_BDbFEvx_zFOmjnCd0TiOBENjYJ2acJ7mvlsqe-yP_9-KKZih32bKSdZDjCUI1E6eOxQMXvZFDBd8TxwbhWcnCe8YRwsaPwcloSog7s"/>
+</div>
+<!-- Action Cluster -->
+<div class="flex flex-col gap-md pt-base">
+<button class="h-12 w-full bg-secondary-container hover:bg-secondary-fixed-dim text-on-secondary-container font-headline-md rounded-lg active:scale-95 transition-all shadow-sm">
+                    Go to Dashboard
+                </button>
+<button class="h-12 w-full border-2 border-primary text-primary font-headline-md rounded-lg hover:bg-surface-container-low active:scale-95 transition-all">
+                    Add Another Property
+                </button>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Hidden on focus/transaction success states but shown for consistency with prompt context of being a 'destination' after task) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-2 pb-safe bg-surface shadow-[0px_-4px_12px_rgba(30,58,138,0.05)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-label-md text-label-md">Search</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="add_circle" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+<span class="font-label-md text-label-md">Add</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="font-label-md text-label-md">Alerts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+</nav>
+<!-- Confetti Interaction -->
+<canvas class="fixed inset-0 pointer-events-none z-[100]" id="confetti"></canvas>
+<script>
+        // Micro-interaction for celebration
+        const canvas = document.getElementById('confetti');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const pieces = [];
+        const colors = ['#ffe088', '#fed65b', '#00236f', '#e9c349'];
+
+        function createPiece() {
+            return {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height - canvas.height,
+                size: Math.random() * 8 + 4,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                speed: Math.random() * 3 + 2,
+                angle: Math.random() * 360
+            };
+        }
+
+        for (let i = 0; i < 50; i++) {
+            pieces.push(createPiece());
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            pieces.forEach((p, i) => {
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.angle * Math.PI / 180);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                ctx.restore();
+
+                p.y += p.speed;
+                p.angle += 2;
+
+                if (p.y > canvas.height) {
+                    pieces[i] = createPiece();
+                }
+            });
+            requestAnimationFrame(draw);
+        }
+
+        // Run for a short duration
+        setTimeout(() => {
+            draw();
+            setTimeout(() => {
+                // Fade out after 3 seconds
+                canvas.style.transition = 'opacity 1s ease';
+                canvas.style.opacity = '0';
+            }, 3000);
+        }, 100);
+    </script>
+</body></html>

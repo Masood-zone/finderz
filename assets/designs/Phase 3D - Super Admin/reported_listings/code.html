@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Moderation Center | FinderZ Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary": "#ffffff",
+                    "tertiary": "#272b2d",
+                    "surface-container": "#e5eeff",
+                    "outline-variant": "#c5c5d3",
+                    "on-error-container": "#93000a",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#e9c349",
+                    "surface-container-high": "#dce9ff",
+                    "on-tertiary-fixed": "#191c1e",
+                    "tertiary-container": "#3d4143",
+                    "on-error": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "background": "#f8f9ff",
+                    "surface-variant": "#d3e4fe",
+                    "secondary": "#735c00",
+                    "inverse-on-surface": "#eaf1ff",
+                    "inverse-primary": "#b6c4ff",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f8f9ff",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-container": "#aaadaf",
+                    "on-primary-fixed-variant": "#264191",
+                    "on-primary-container": "#90a8ff",
+                    "secondary-container": "#fed65b",
+                    "on-surface": "#0b1c30",
+                    "on-secondary-fixed": "#241a00",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#d3e4fe",
+                    "primary-fixed": "#dce1ff",
+                    "surface-dim": "#cbdbf5",
+                    "primary-container": "#1e3a8a",
+                    "secondary-fixed": "#ffe088",
+                    "on-secondary-container": "#745c00",
+                    "tertiary-fixed": "#e0e3e5",
+                    "primary": "#00236f",
+                    "outline": "#757682",
+                    "on-tertiary-fixed-variant": "#444749",
+                    "on-surface-variant": "#444651",
+                    "on-primary-fixed": "#00164e",
+                    "on-secondary-fixed-variant": "#574500",
+                    "on-background": "#0b1c30",
+                    "surface-tint": "#4059aa",
+                    "surface": "#f8f9ff",
+                    "inverse-surface": "#213145",
+                    "surface-container-low": "#eff4ff",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "tertiary-fixed-dim": "#c4c7c9"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "xs": "4px",
+                    "lg": "24px",
+                    "container-margin": "16px",
+                    "gutter": "16px",
+                    "base": "8px",
+                    "xl": "32px",
+                    "sm": "12px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Manrope"],
+                    "headline-lg": ["Manrope"],
+                    "label-md": ["Manrope"],
+                    "display-lg": ["Manrope"],
+                    "body-md": ["Manrope"],
+                    "headline-lg-mobile": ["Manrope"],
+                    "body-lg": ["Manrope"]
+            },
+            "fontSize": {
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["22px", {"lineHeight": "28px", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-filter {
+            background-color: #00236f;
+            color: #ffffff;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="bg-surface-bright dark:bg-surface-dim shadow-[0px_4px_12px_rgba(30,58,138,0.08)] sticky docked full-width top-0 z-50 flex justify-between items-center px-container-margin py-base w-full">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary">
+<img alt="Administrator profile picture" class="w-full h-full object-cover" data-alt="A professional headshot of a corporate administrator, wearing a sharp navy blue suit and a friendly expression. The lighting is bright and clean, typical of a high-end office environment. The style is modern, professional, and trustworthy, reflecting the FinderZ brand identity with high-quality digital photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBt5jqdVFhHUS397Nv6zKMDQ6xNEbdUzeUlM8fdtE37-VmpCQxC8e0wVRoMthzFMUTJFv-nEcKEkWGCaEhprawUbecBPaFfXNpXulpQVjBjVhgJ06JHanuhGRQQHr_Ys1-igQTSELbZjLgn8KnqCF8K0DihbU_GpvNCr3IK8z_WGBV-cs4efGIwd54n8NFZph6-v3Qdk0zDmD92ocevFMFckaogHE2ZkWoFBr4BCYpcEMBLRkfXybRwt8GpsbFkJHPwY9kgohWrc2Q"/>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary dark:text-primary-fixed-dim tracking-tight">FinderZ Admin</h1>
+</div>
+<button class="hover:bg-surface-container-low transition-colors p-2 rounded-full active:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed-dim">settings</span>
+</button>
+</header>
+<main class="px-container-margin py-lg max-w-5xl mx-auto">
+<!-- Page Title & Selection Action -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-md mb-xl">
+<div>
+<h2 class="font-display-lg text-display-lg text-on-surface">Moderation Queue</h2>
+<p class="font-body-md text-on-surface-variant">Review and resolve reported property listings across Ghana.</p>
+</div>
+<div class="hidden" id="selection-action">
+<button class="bg-error text-on-error px-lg py-md rounded-lg font-bold flex items-center gap-xs shadow-lg hover:brightness-110 transition-all">
+<span class="material-symbols-outlined">block</span>
+                    Suspend Listing
+                </button>
+</div>
+</div>
+<!-- Filter Tabs -->
+<div class="flex bg-surface-container-low p-1 rounded-xl mb-lg overflow-x-auto whitespace-nowrap scrollbar-hide">
+<button class="active-filter flex-1 px-lg py-md rounded-lg font-headline-md text-headline-md transition-all duration-200" onclick="switchTab(this)">Unresolved</button>
+<button class="flex-1 px-lg py-md rounded-lg font-headline-md text-headline-md text-on-surface-variant hover:bg-surface-container transition-all duration-200" onclick="switchTab(this)">In Review</button>
+<button class="flex-1 px-lg py-md rounded-lg font-headline-md text-headline-md text-on-surface-variant hover:bg-surface-container transition-all duration-200" onclick="switchTab(this)">Resolved</button>
+</div>
+<!-- Reported Items List -->
+<div class="space-y-md">
+<!-- Item 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_12px_rgba(30,58,138,0.08)] border border-transparent hover:border-primary-container transition-all group relative cursor-pointer" onclick="toggleSelection(this)">
+<div class="flex flex-col md:flex-row md:items-center gap-lg">
+<div class="w-full md:w-32 h-24 rounded-lg overflow-hidden shrink-0">
+<img alt="Luxury Villa in East Legon" class="w-full h-full object-cover" data-alt="A luxurious modern villa in the East Legon neighborhood of Accra, Ghana. The architecture features clean lines, expansive glass windows, and a pristine white exterior under a clear blue tropical sky. The property is surrounded by manicured green lawns and palm trees, reflecting a premium real estate market aesthetic with high-quality corporate photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAt5S8qdZsOIlXpYGct9St0gdZoyhmU6fovDMEmHysDxJOHH8YBRmCDWtsKnDA63UlRYaapvHcXkKmaUmbsvepGECxgZxTRrIW0hVIqOTGx65JTs0O1_zz7GrNL7KNXFXCkldRt-JjdHAwK5Sp1z2kf4nOQVJ0vcNjqi8GJAbsl1-cyv0STwJ5efS1UPZ2rKpP89VOwAqvHvy36qb9lrGPxA-8Iep9Acel6VexTNOyH5c9q4ecBYDdycmOtxiVschZaiC4SnFN39Zw"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between mb-xs">
+<h3 class="font-headline-md text-headline-md text-primary">Luxury Villa in East Legon</h3>
+<span class="bg-error-container text-on-error-container px-sm py-1 rounded-full font-label-md text-label-md">High Priority</span>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-md mt-sm">
+<div>
+<p class="font-label-md text-on-surface-variant uppercase tracking-wider">Reason</p>
+<p class="font-body-md text-on-surface font-bold">Inaccurate Price</p>
+</div>
+<div>
+<p class="font-label-md text-on-surface-variant uppercase tracking-wider">Reporter</p>
+<p class="font-body-md text-on-surface">Kwame Mensah</p>
+</div>
+<div>
+<p class="font-label-md text-on-surface-variant uppercase tracking-wider">Date</p>
+<p class="font-body-md text-on-surface">Oct 24, 2023</p>
+</div>
+<div class="flex items-center justify-end">
+<button class="bg-secondary-container text-on-secondary-container px-lg py-2 rounded-lg font-bold hover:brightness-95 transition-all">Review Report</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Selection Overlay (Mobile Hidden by default) -->
+<div class="absolute top-2 right-2 hidden group-hover:block selection-indicator">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_12px_rgba(30,58,138,0.08)] border border-transparent hover:border-primary-container transition-all group relative cursor-pointer" onclick="toggleSelection(this)">
+<div class="flex flex-col md:flex-row md:items-center gap-lg">
+<div class="w-full md:w-32 h-24 rounded-lg overflow-hidden shrink-0">
+<img alt="Modern Apartment Cantonments" class="w-full h-full object-cover" data-alt="A sleek, contemporary apartment building in the Cantonments area of Accra, Ghana. The design emphasizes urban luxury with balcony glass railings and structured geometric facades. The image is captured during the golden hour, casting a warm, professional glow over the architecture, suggesting a high-value real estate listing." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCV5ZnmQ0Rr2VO3fwIEMeZ0Qa68nLye-IFK8B2gs-oqYeEloxM088xHNKBpQI2nl5uJtH4wdmC9aEWDvNZcbC8GwDoF6kPRW5PaVHN3gLf1bxU6K_2kXAyFB5ftKh3mPQ0Dr657ZWR57xwppP4K1OlbWplbCvxce1hGFePvWDzmV3LUGLGxJDWTmIK1cbiwLsBvAFPEe0C3XWlE5zFsZjDwDg83PhNqkCYBpsQ2fxu70JbM_OU42CICpxhxC3QsFM1Z68v4Z-pOzU"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between mb-xs">
+<h3 class="font-headline-md text-headline-md text-primary">Modern 3BR Apartment</h3>
+<span class="bg-surface-container text-on-surface-variant px-sm py-1 rounded-full font-label-md text-label-md">Duplicate Listing</span>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-md mt-sm">
+<div>
+<p class="font-label-md text-on-surface-variant uppercase tracking-wider">Reason</p>
+<p class="font-body-md text-on-surface font-bold">Misleading Photos</p>
+</div>
+<div>
+<p class="font-label-md text-on-surface-variant uppercase tracking-wider">Reporter</p>
+<p class="font-body-md text-on-surface">Akua Addo</p>
+</div>
+<div>
+<p class="font-label-md text-on-surface-variant uppercase tracking-wider">Date</p>
+<p class="font-body-md text-on-surface">Oct 23, 2023</p>
+</div>
+<div class="flex items-center justify-end">
+<button class="bg-secondary-container text-on-secondary-container px-lg py-2 rounded-lg font-bold hover:brightness-95 transition-all">Review Report</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0px_4px_12px_rgba(30,58,138,0.08)] border border-transparent hover:border-primary-container transition-all group relative cursor-pointer" onclick="toggleSelection(this)">
+<div class="flex flex-col md:flex-row md:items-center gap-lg">
+<div class="w-full md:w-32 h-24 rounded-lg overflow-hidden shrink-0">
+<img alt="Gated Community House" class="w-full h-full object-cover" data-alt="A beautiful single-family home located within a secure gated community in Spintex, Accra. The house features traditional roofing with modern finishes, surrounded by a paved driveway and small garden patches. The setting is peaceful and bright, conveying security and domestic stability in a corporate real estate style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEcyv3kBP0Y1VPy90Rl1jTl-gwmGltKdnqWOu0HprJZfSvq2uoW1YG1G20i41Mo8_XP5Z5GEkS5PFieqM85zX6kXWYUZb2qNOIyM5FHLzbmSE4AWMOWt_mNA8JWnBp44eJAn2b6O3wvrUptWMXyENHTIwcXY6GoGSjuH_4lsinJxAC-nIrEKDPbX6xZC3dEy9KaQqYAZP2aN1uEfI-tHtuhuMNb9FaqeWn9T_6b2yGOTJOFvHSyrPaQsfSTmY2tAmo8n2nmaII9co"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center justify-between mb-xs">
+<h3 class="font-headline-md text-headline-md text-primary">Executive Spintex Residence</h3>
+<span class="bg-surface-container text-on-surface-variant px-sm py-1 rounded-full font-label-md text-label-md">Low Priority</span>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-md mt-sm">
+<div>
+<p class="font-label-md text-on-surface-variant uppercase tracking-wider">Reason</p>
+<p class="font-body-md text-on-surface font-bold">Inaccurate Location</p>
+</div>
+<div>
+<p class="font-label-md text-on-surface-variant uppercase tracking-wider">Reporter</p>
+<p class="font-body-md text-on-surface">Kofi Asante</p>
+</div>
+<div>
+<p class="font-label-md text-on-surface-variant uppercase tracking-wider">Date</p>
+<p class="font-body-md text-on-surface">Oct 22, 2023</p>
+</div>
+<div class="flex items-center justify-end">
+<button class="bg-secondary-container text-on-secondary-container px-lg py-2 rounded-lg font-bold hover:brightness-95 transition-all">Review Report</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-xs pb-6 pt-base bg-surface-container-lowest dark:bg-surface-container shadow-[0px_-4px_12px_rgba(30,58,138,0.08)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-all active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-all active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="font-label-md text-label-md">Approvals</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-all active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Users</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">gavel</span>
+<span class="font-label-md text-label-md">Moderation</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-all active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-md text-label-md">Alerts</span>
+</a>
+</nav>
+<script>
+        function switchTab(button) {
+            const tabs = button.parentElement.querySelectorAll('button');
+            tabs.forEach(tab => {
+                tab.classList.remove('active-filter');
+                tab.classList.add('text-on-surface-variant');
+            });
+            button.classList.add('active-filter');
+            button.classList.remove('text-on-surface-variant');
+        }
+
+        let selectedCount = 0;
+        function toggleSelection(card) {
+            const isSelected = card.getAttribute('data-selected') === 'true';
+            const actionContainer = document.getElementById('selection-action');
+            
+            if (!isSelected) {
+                card.setAttribute('data-selected', 'true');
+                card.classList.add('ring-2', 'ring-primary', 'bg-surface-container-low');
+                selectedCount++;
+            } else {
+                card.setAttribute('data-selected', 'false');
+                card.classList.remove('ring-2', 'ring-primary', 'bg-surface-container-low');
+                selectedCount--;
+            }
+
+            if (selectedCount > 0) {
+                actionContainer.classList.remove('hidden');
+                actionContainer.classList.add('flex');
+            } else {
+                actionContainer.classList.add('hidden');
+                actionContainer.classList.remove('flex');
+            }
+        }
+    </script>
+</body></html>

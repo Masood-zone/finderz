@@ -1,6 +1,7 @@
 import { Bell } from "lucide-react-native";
 import { Image, Pressable, View } from "react-native";
 import type { ReactNode } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppText } from "@/components/ui/app-text";
 import { colors, radius } from "@/components/ui/design-system";
 import { FinderzLogo } from "@/components/ui/finderz-logo";
@@ -28,8 +29,10 @@ export function TenantAvatar({ name, image, size = 40 }: { name?: string; image?
 }
 
 export function TenantTopBar({ title, subtitle, userName, right }: { title?: string; subtitle?: string; userName?: string; right?: ReactNode }) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <View className="flex-row items-center justify-between px-4 py-3" style={{ backgroundColor: colors.background }}>
+    <View className="flex-row items-center justify-between px-4 pb-3" style={{ backgroundColor: colors.background, paddingTop: Math.max(insets.top, 12) }}>
       <View className="min-w-0 flex-1 flex-row items-center gap-3">
         {title ? <TenantAvatar name={userName} size={40} /> : <FinderzLogo variant="mark" size="sm" />}
         <View className="min-w-0 flex-1">

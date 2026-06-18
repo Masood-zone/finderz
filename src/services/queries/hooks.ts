@@ -1,6 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { assignRole } from "@/services/api/onboarding";
-import { getLandlordDashboard } from "@/services/api/landlord";
+import {
+  deleteLandlordProperty,
+  duplicateLandlordProperty,
+  getLandlordDashboard,
+  getLandlordEnquiries,
+  getLandlordProfile,
+  getLandlordProperties,
+  getLandlordProperty,
+  getLandlordVerificationStatus,
+  markLandlordPropertyAsRented,
+  saveLandlordProperty,
+  submitLandlordOnboarding,
+} from "@/services/api/landlord";
 import { getSuperAdminDashboard } from "@/services/api/super-admin";
 import { getTenantDashboard } from "@/services/api/tenant";
 import {
@@ -18,6 +30,7 @@ import {
 import { getCurrentUser, updateProfile } from "@/services/api/users";
 import { queryKeys } from "./keys";
 import type { TenantEnquiryStatusFilter, TenantFilters } from "@/types/tenant";
+import type { LandlordPropertyStatus, SaveLandlordPropertyInput } from "@/types/landlord";
 
 export function useCurrentUser() {
   return useQuery({
@@ -137,6 +150,85 @@ export function useLandlordDashboard() {
   return useQuery({
     queryKey: queryKeys.landlordDashboard,
     queryFn: getLandlordDashboard,
+  });
+}
+
+export function useLandlordProfile() {
+  return useQuery({
+    queryKey: queryKeys.landlordProfile,
+    queryFn: getLandlordProfile,
+  });
+}
+
+export function useSubmitLandlordOnboarding() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: submitLandlordOnboarding,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.landlordProfile });
+      queryClient.invalidateQueries({ queryKey: queryKeys.landlordVerification });
+      queryClient.invalidateQueries({ queryKey: queryKeys.currentUser });
+    },
+  });
+}
+
+export function useLandlordVerificationStatus() {
+  return useQuery({
+    queryKey: queryKeys.landlordVerification,
+    queryFn: getLandlordVerificationStatus,
+  });
+}
+
+export function useLandlordProperties(status: LandlordPropertyStatus = "all") {
+  return useQuery({
+    queryKey: queryKeys.landlordProperties(status),
+    queryFn: () => getLandlordProperties(status),
+  });
+}
+
+export function useLandlordProperty(propertyId: string) {
+  return useQuery({
+    queryKey: queryKeys.landlordProperty(propertyId),
+    queryFn: () => getLandlordProperty(propertyId),
+    enabled: Boolean(propertyId),
+  });
+}
+
+export function useSaveLandlordProperty() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: SaveLandlordPropertyInput) => saveLandlordProperty(input),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["landlord-properties"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.landlordDashboard });
+      queryClient.invalidateQueries({ queryKey: queryKeys.landlordProperty(data.property.id) });
+    },
+  });
+}
+
+export function useLandlordPropertyAction() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ propertyId, action }: { propertyId: string; action: "mark-rented" | "duplicate" | "delete" }) => {
+      if (action === "mark-rented") return markLandlordPropertyAsRented(propertyId);
+      if (action === "duplicate") return duplicateLandlordProperty(propertyId);
+      await deleteLandlordProperty(propertyId);
+      return { property: null };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["landlord-properties"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.landlordDashboard });
+    },
+  });
+}
+
+export function useLandlordEnquiries() {
+  return useQuery({
+    queryKey: queryKeys.landlordEnquiries,
+    queryFn: getLandlordEnquiries,
   });
 }
 

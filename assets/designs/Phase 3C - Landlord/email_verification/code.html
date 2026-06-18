@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Verify Your Email | FinderZ</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#e9c349",
+                    "on-secondary-container": "#745c00",
+                    "on-tertiary-fixed-variant": "#444749",
+                    "on-primary": "#ffffff",
+                    "surface-dim": "#cbdbf5",
+                    "primary": "#00236f",
+                    "surface-variant": "#d3e4fe",
+                    "secondary": "#735c00",
+                    "on-tertiary": "#ffffff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "error-container": "#ffdad6",
+                    "background": "#f8f9ff",
+                    "tertiary": "#272b2d",
+                    "on-secondary-fixed": "#241a00",
+                    "surface-container-low": "#eff4ff",
+                    "surface-container-highest": "#d3e4fe",
+                    "on-error": "#ffffff",
+                    "on-tertiary-container": "#aaadaf",
+                    "on-background": "#0b1c30",
+                    "inverse-surface": "#213145",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "tertiary-fixed-dim": "#c4c7c9",
+                    "on-secondary-fixed-variant": "#574500",
+                    "surface-container": "#e5eeff",
+                    "secondary-container": "#fed65b",
+                    "inverse-primary": "#b6c4ff",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-container": "#1e3a8a",
+                    "outline": "#757682",
+                    "on-primary-fixed-variant": "#264191",
+                    "surface-tint": "#4059aa",
+                    "tertiary-fixed": "#e0e3e5",
+                    "surface": "#f8f9ff",
+                    "error": "#ba1a1a",
+                    "surface-bright": "#f8f9ff",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed": "#191c1e",
+                    "on-primary-container": "#90a8ff",
+                    "secondary-fixed": "#ffe088",
+                    "on-secondary": "#ffffff",
+                    "outline-variant": "#c5c5d3",
+                    "surface-container-high": "#dce9ff",
+                    "tertiary-container": "#3d4143",
+                    "on-surface-variant": "#444651",
+                    "on-surface": "#0b1c30",
+                    "on-primary-fixed": "#00164e",
+                    "primary-fixed": "#dce1ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "24px",
+                    "gutter": "16px",
+                    "xs": "4px",
+                    "base": "8px",
+                    "md": "16px",
+                    "container-margin": "16px",
+                    "sm": "12px",
+                    "xl": "32px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Manrope"],
+                    "label-md": ["Manrope"],
+                    "headline-md": ["Manrope"],
+                    "display-lg": ["Manrope"],
+                    "headline-lg": ["Manrope"],
+                    "body-md": ["Manrope"],
+                    "body-lg": ["Manrope"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["22px", {"lineHeight": "28px", "fontWeight": "700"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .floating-animation {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        .success-checkmark {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: dash 1.5s ease-in-out forwards;
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: 0; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+<!-- Top Navigation Placeholder (Hidden for Transactional Screen as per Shell Visibility Rules) -->
+<header class="fixed top-0 w-full bg-surface/80 backdrop-blur-md z-50 flex items-center justify-between px-container-margin h-16">
+<div class="font-headline-lg-mobile text-headline-lg-mobile font-extrabold text-primary">
+            FinderZ
+        </div>
+</header>
+<main class="flex-grow flex flex-col items-center justify-center px-container-margin pt-24 pb-12">
+<div class="max-w-md w-full text-center space-y-8">
+<!-- Hero Illustration -->
+<div class="relative flex justify-center items-center mb-10">
+<div class="absolute w-48 h-48 bg-secondary-container/20 rounded-full blur-3xl"></div>
+<div class="relative z-10 floating-animation">
+<!-- Premium Gold Envelope Icon with Deep Blue accents -->
+<div class="w-32 h-32 bg-secondary-container rounded-2xl flex items-center justify-center shadow-[0px_8px_24px_rgba(115,92,0,0.15)] transform -rotate-3 border-2 border-secondary-fixed-dim">
+<span class="material-symbols-outlined text-on-secondary-container !text-6xl" style="font-variation-settings: 'FILL' 1;">
+                            mark_email_unread
+                        </span>
+</div>
+<!-- Small decorative element -->
+<div class="absolute -top-4 -right-4 w-12 h-12 bg-primary rounded-full flex items-center justify-center border-4 border-surface shadow-lg">
+<span class="material-symbols-outlined text-white !text-xl">priority_high</span>
+</div>
+</div>
+</div>
+<!-- Content -->
+<div class="space-y-4">
+<h1 class="font-display-lg text-display-lg text-primary">
+                    Check your email
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-sm mx-auto leading-relaxed">
+                    We've sent a verification link to your email address. Please click the link to activate your account.
+                </p>
+</div>
+<!-- Actions -->
+<div class="pt-6 space-y-4">
+<!-- Primary Action (Sign In) -->
+<button class="w-full h-12 bg-secondary-container text-on-secondary-fixed font-headline-md text-headline-md rounded-xl hover:shadow-[0px_4px_12px_rgba(115,92,0,0.2)] active:scale-95 transition-all duration-150 flex items-center justify-center gap-2">
+                    Sign In
+                    <span class="material-symbols-outlined !text-xl">arrow_forward</span>
+</button>
+<!-- Secondary Action (Resend) -->
+<div class="flex flex-col items-center gap-2">
+<p class="font-body-md text-body-md text-on-surface-variant">Didn't receive an email?</p>
+<button class="text-primary font-label-md text-label-md hover:underline active:opacity-70 transition-opacity" id="resendBtn">
+                        Resend Email
+                    </button>
+</div>
+</div>
+<!-- Decorative Card with Ghanaian Context (Subtle Map/Architecture reference) -->
+<div class="mt-12 p-lg bg-surface-container-low rounded-2xl border border-outline-variant/30 flex items-start gap-md text-left">
+<div class="bg-primary-container p-2 rounded-lg">
+<span class="material-symbols-outlined text-on-primary-container !text-xl">shield</span>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-primary mb-1">Secure Ghanaian Real Estate</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Verification ensures we maintain a trusted community for property seekers across Accra and Kumasi.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Visual Polish: Atmospheric Background Image -->
+<div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none opacity-40">
+<img class="w-full h-full object-cover" data-alt="A sophisticated wide-angle shot of high-end modern Ghanaian architecture in East Legon, Accra. The image features clean lines, white stone facades, and warm wooden accents under a bright, clear tropical sky. The atmosphere is professional, reliable, and represents the premium standard of properties available on the FinderZ platform, with a high-key lighting style that matches the UI design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlOJxvnmOATDgyPla-Z9zfww4Dpbe-7tmp-nQ0YdzMvDFcEseYYe_9haY3EojGw9-hkO77W3oPCwdUh49HYWEz8XQb8BGMa85RHCnRMd4WdF7RrOglB5aB-O9OgZ7lCSb9DzYQUTRaSaN6kTUSiPVKezjagwkNKpeTnbq7_1ix4-1u5DrXUtEgtRsB8XI7AyV0JWAQx4zJYrHrNBqXrgBtA81Z8TEdEUvIlAyfZC3qXZwGYBG6tqi0F0d64N28Q5OGm6gFN-fpW70"/>
+</div>
+<!-- Micro-interaction for Feedback -->
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-lg py-sm rounded-full font-label-md text-label-md shadow-2xl translate-y-32 transition-transform duration-500 flex items-center gap-2 z-[60]" id="toast">
+<span class="material-symbols-outlined text-secondary-fixed-dim">check_circle</span>
+        Verification email resent successfully
+    </div>
+<script>
+        // Simple Interaction logic
+        const resendBtn = document.getElementById('resendBtn');
+        const toast = document.getElementById('toast');
+
+        resendBtn.addEventListener('click', () => {
+            // Visual feedback for resend
+            resendBtn.innerHTML = '<span class="flex items-center gap-2">Sending...</span>';
+            resendBtn.style.opacity = '0.5';
+            resendBtn.style.pointerEvents = 'none';
+
+            setTimeout(() => {
+                // Show toast
+                toast.classList.remove('translate-y-32');
+                
+                // Reset button
+                resendBtn.innerHTML = 'Resend Email';
+                resendBtn.style.opacity = '1';
+                resendBtn.style.pointerEvents = 'auto';
+
+                // Hide toast after 3s
+                setTimeout(() => {
+                    toast.classList.add('translate-y-32');
+                }, 3000);
+            }, 1200);
+        });
+
+        // Toggle Dark Mode support (if system preference changes)
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            // Optional: document.documentElement.classList.add('dark');
+        }
+    </script>
+</body></html>

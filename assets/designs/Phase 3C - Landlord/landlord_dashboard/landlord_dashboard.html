@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FinderZ Landlord Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-variant": "#d3e4fe",
+                      "on-surface": "#0b1c30",
+                      "inverse-surface": "#213145",
+                      "error-container": "#ffdad6",
+                      "surface-tint": "#4059aa",
+                      "on-primary-container": "#90a8ff",
+                      "background": "#f8f9ff",
+                      "secondary-fixed-dim": "#e9c349",
+                      "on-secondary": "#ffffff",
+                      "tertiary-fixed": "#e0e3e5",
+                      "on-background": "#0b1c30",
+                      "surface-dim": "#cbdbf5",
+                      "surface-container-low": "#eff4ff",
+                      "on-secondary-fixed": "#241a00",
+                      "on-tertiary-container": "#aaadaf",
+                      "on-error-container": "#93000a",
+                      "on-tertiary-fixed-variant": "#444749",
+                      "inverse-primary": "#b6c4ff",
+                      "primary-fixed-dim": "#b6c4ff",
+                      "outline-variant": "#c5c5d3",
+                      "on-tertiary-fixed": "#191c1e",
+                      "tertiary-fixed-dim": "#c4c7c9",
+                      "primary": "#00236f",
+                      "on-error": "#ffffff",
+                      "surface-container-high": "#dce9ff",
+                      "on-primary-fixed": "#00164e",
+                      "on-secondary-fixed-variant": "#574500",
+                      "on-tertiary": "#ffffff",
+                      "surface-bright": "#f8f9ff",
+                      "secondary-container": "#fed65b",
+                      "primary-fixed": "#dce1ff",
+                      "on-primary": "#ffffff",
+                      "tertiary-container": "#3d4143",
+                      "secondary": "#735c00",
+                      "primary-container": "#1e3a8a",
+                      "error": "#ba1a1a",
+                      "on-secondary-container": "#745c00",
+                      "inverse-on-surface": "#eaf1ff",
+                      "on-primary-fixed-variant": "#264191",
+                      "surface": "#f8f9ff",
+                      "on-surface-variant": "#444651",
+                      "tertiary": "#272b2d",
+                      "surface-container": "#e5eeff",
+                      "secondary-fixed": "#ffe088",
+                      "surface-container-highest": "#d3e4fe",
+                      "outline": "#757682",
+                      "surface-container-lowest": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "gutter": "16px",
+                      "md": "16px",
+                      "xl": "32px",
+                      "base": "8px",
+                      "container-margin": "16px",
+                      "sm": "12px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "label-md": ["Manrope"],
+                      "headline-md": ["Manrope"],
+                      "headline-lg": ["Manrope"],
+                      "body-lg": ["Manrope"],
+                      "headline-lg-mobile": ["Manrope"],
+                      "display-lg": ["Manrope"],
+                      "body-md": ["Manrope"]
+              },
+              "fontSize": {
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["22px", {"lineHeight": "28px", "fontWeight": "700"}],
+                      "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full bg-surface dark:bg-surface-dim shadow-sm flex justify-between items-center px-gutter h-14 z-50">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="menu">menu</span>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary dark:text-primary-fixed-dim font-bold">FinderZ</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer" data-icon="notifications">notifications</span>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high border border-outline-variant">
+<img alt="Landlord Profile Photo" data-alt="A professional headshot of a middle-aged Ghanaian businessman with a warm smile, wearing a modern tailored suit. The lighting is soft and natural, suggesting a high-end corporate office environment. The image uses a clean, bright aesthetic consistent with professional real estate services in Accra." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgR1hhhM1chDI3AUsWplNqxtiJ0R685dNvzy7luBhKZE-WpbJeReuGDEcR-Klc5FIlpaFfC8pYPgh6DAu7obUvuG0oDL02aSFKgSPM4JgYHw9MhDLcQJ6_KkbsMtQ26PF_zptTzNOkHZHsoNHmtRP5X19RnGIfdpG59zcjOJT_i4VwC7QzjD-kn6YebjJgjO7twROJOMtnUnJ0C8Ydq-TZF8eBtEQdsRq7QhSRFKWPeQkAGWQaxuA0RFfMjZ_gu3zpfbw_DX7Gupg"/>
+</div>
+</div>
+</header>
+<main class="pt-20 px-gutter max-w-7xl mx-auto">
+<!-- Dashboard Header -->
+<div class="mb-lg">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-xs">Dashboard Overview</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Welcome back, Kwesi. Here's what's happening with your properties.</p>
+</div>
+<!-- Summary Bento Grid -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-lg">
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)] flex flex-col justify-between hover:translate-y-[-2px] transition-transform duration-200">
+<span class="font-label-md text-label-md text-on-surface-variant">Total Listings</span>
+<div class="flex items-end justify-between mt-sm">
+<span class="font-display-lg text-display-lg text-primary">12</span>
+<span class="material-symbols-outlined text-primary-container" data-icon="list_alt">list_alt</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)] flex flex-col justify-between hover:translate-y-[-2px] transition-transform duration-200 border-l-4 border-secondary">
+<span class="font-label-md text-label-md text-on-surface-variant">Active Listings</span>
+<div class="flex items-end justify-between mt-sm">
+<span class="font-display-lg text-display-lg text-primary">8</span>
+<span class="material-symbols-outlined text-secondary" data-icon="check_circle">check_circle</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)] flex flex-col justify-between hover:translate-y-[-2px] transition-transform duration-200">
+<span class="font-label-md text-label-md text-on-surface-variant">Pending</span>
+<div class="flex items-end justify-between mt-sm">
+<span class="font-display-lg text-display-lg text-primary">2</span>
+<span class="material-symbols-outlined text-outline" data-icon="pending">pending</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)] flex flex-col justify-between hover:translate-y-[-2px] transition-transform duration-200">
+<span class="font-label-md text-label-md text-on-surface-variant">Enquiries</span>
+<div class="flex items-end justify-between mt-sm">
+<span class="font-display-lg text-display-lg text-primary">45</span>
+<span class="material-symbols-outlined text-primary-container" data-icon="forum">forum</span>
+</div>
+</div>
+</div>
+<!-- Main Content Area (Chart + Recent) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-lg mb-lg">
+<!-- Chart Section -->
+<div class="lg:col-span-2 bg-surface-container-lowest p-lg rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)]">
+<div class="flex justify-between items-center mb-lg">
+<h3 class="font-headline-md text-headline-md text-primary">Listing Views</h3>
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-1 rounded-full">
+<span class="font-label-md text-label-md text-on-surface-variant">Last 7 Days</span>
+<span class="material-symbols-outlined text-sm" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<!-- Simple SVG Line Chart Performance -->
+<div class="h-64 w-full relative">
+<svg class="w-full h-full" viewbox="0 0 800 200">
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#00236f" stop-opacity="0.1"></stop>
+<stop offset="100%" stop-color="#00236f" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,150 L100,140 L200,160 L300,100 L400,120 L500,60 L600,80 L700,40 L800,50" fill="none" stroke="#00236f" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+<path d="M0,150 L100,140 L200,160 L300,100 L400,120 L500,60 L600,80 L700,40 L800,50 V200 H0 Z" fill="url(#chartGradient)"></path>
+<!-- Circles on Points -->
+<circle cx="100" cy="140" fill="#fed65b" r="4"></circle>
+<circle cx="300" cy="100" fill="#fed65b" r="4"></circle>
+<circle cx="500" cy="60" fill="#fed65b" r="4"></circle>
+<circle cx="700" cy="40" fill="#fed65b" r="4"></circle>
+</svg>
+<div class="flex justify-between mt-4 font-label-md text-label-md text-outline">
+<span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+</div>
+</div>
+</div>
+<!-- Recent Enquiries -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)]">
+<div class="flex justify-between items-center mb-lg">
+<h3 class="font-headline-md text-headline-md text-primary">Recent Enquiries</h3>
+<button class="text-primary font-label-md text-label-md">View All</button>
+</div>
+<div class="space-y-4">
+<!-- Enquiry Item 1 -->
+<div class="flex items-center gap-4 p-sm rounded-lg hover:bg-surface-container transition-colors border border-transparent hover:border-outline-variant">
+<div class="w-12 h-12 rounded-full overflow-hidden shrink-0">
+<img alt="Lead Avatar" data-alt="A candid, warm-toned portrait of a young Ghanaian woman with braided hair, smiling brightly. She is captured in a natural outdoor setting with lush green foliage blurred in the background, conveying a friendly and professional character suited for a high-quality property portal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKcbhx0cmwp6VpTaza0VNgFdve2a_1RLfANYIbXN_kh7DB7CUToRbA0j04QJyCWa8M7DxSiZnAJZfYSJgcMbAtlVQSVPQvDyWcKJGPqJcYHjSbsHPtA3oU-IE9uFee66Pw6CMt32NG15Tq5hHMRsOhCLX2istWiz9LFONfsOnDm4v7xVfag93aPiVA_QBVadb09gLFRsqenWzhyo44Yc1eSLY1TXTawMm5oza9Dv1ypDyt3XKzlIGXtJbY23tbuPB7Yl3Br_dri6Q"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-body-md text-body-md text-on-surface font-bold truncate">Ama Serwaa</p>
+<p class="font-label-md text-label-md text-on-surface-variant truncate">Executive Studio, East Legon</p>
+</div>
+<span class="font-label-md text-label-md text-outline whitespace-nowrap">2m ago</span>
+</div>
+<!-- Enquiry Item 2 -->
+<div class="flex items-center gap-4 p-sm rounded-lg hover:bg-surface-container transition-colors border border-transparent hover:border-outline-variant">
+<div class="w-12 h-12 rounded-full overflow-hidden shrink-0">
+<img alt="Lead Avatar" data-alt="A professional and approachable portrait of a man in his late 20s, wearing casual professional attire. The background features a clean, modern minimalist office space with soft lighting. The visual style is crisp and corporate, fitting the premium aesthetic of a real estate dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUx7iXg1Xup7PI1Em_Kk9HBNcioW4ZR5m6ZShnnlwM8WacrPjF9Ux46XPE1eCAZcIYykt11zUcibuabO52ErhpmFBDbA55fmnLuHHm2327-iEzg0S8lAMg1vz6k-auqrstGTMlOER7REcbO5UFIfwpD8gX4gZLGBZAWuXF52T7g8S189cx1Yk8YRWLV5PlcMplTs_GUzT1w5zhS0YGtEbT4wu18iSpo4QasTm-BMaW_Fkly5xggRwCNC4kTvh5DvT-Eu4bwntp4-U"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-body-md text-body-md text-on-surface font-bold truncate">Kofi Mensah</p>
+<p class="font-label-md text-label-md text-on-surface-variant truncate">3-Bedroom Villa, Cantonments</p>
+</div>
+<span class="font-label-md text-label-md text-outline whitespace-nowrap">45m ago</span>
+</div>
+<!-- Enquiry Item 3 -->
+<div class="flex items-center gap-4 p-sm rounded-lg hover:bg-surface-container transition-colors border border-transparent hover:border-outline-variant">
+<div class="w-12 h-12 rounded-full overflow-hidden shrink-0">
+<img alt="Lead Avatar" data-alt="Close up portrait of a young woman with a friendly expression. She is in a brightly lit environment with neutral background colors. The photograph has a high-end, clean feel with realistic textures and soft lighting, representing a prospective property seeker in a modern digital environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrYM_gkFK9eR5RCU285zh3msath8NAWRrNcZAVdIq-4wnJXlGLbsnXJYKnNQnxog7G1NT0tWKB3qqUhu8dHwMswy-Op4a5_yWMwGk6wJGOaI-9SSgwdnLDdjH2dz-LR9aKjdmVL6_5LE2duM28SjdHAXDj8MfaZPjOmDo-PDQ6-K2EpbVYTbmvCQ1zgLiDk5ytwCYlFgCsEt1670YVz2eOCVoOmu0BwBDMSUk-bZ52TSz-zmwA4swxMKIyi5AI5Kmt4g3_2AT_yyQ"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-body-md text-body-md text-on-surface font-bold truncate">Esi Gyamfi</p>
+<p class="font-label-md text-label-md text-on-surface-variant truncate">Penthouse Suite, Airport Residential</p>
+</div>
+<span class="font-label-md text-label-md text-outline whitespace-nowrap">2h ago</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Actions / Portfolio Sneak Peek -->
+<div class="mb-lg">
+<h3 class="font-headline-md text-headline-md text-primary mb-md">Active Portfolio Highlights</h3>
+<div class="flex gap-md overflow-x-auto hide-scrollbar pb-4">
+<!-- Property Card 1 -->
+<div class="min-w-[280px] bg-surface-container-lowest rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)] overflow-hidden">
+<div class="h-40 relative">
+<img class="w-full h-full object-cover" data-alt="A luxury modern house in Accra, Ghana, featuring clean lines, large glass windows, and a pristine white exterior. The property is surrounded by manicured tropical gardens under a clear blue sky. The sunlight is bright and warm, creating a high-end real estate presentation feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDV4blwh9igGUt8x7cohj1OquS2xJdQRgmSOD9k5ITCuf2ceRzm4uacFRSkYs4tXWeh2MqlaK-Dqt6_VdupGq_tWFfHFFGyOx9lifKQCXtBV9gDuu4Z-nQcyWJrCdvENOv__QScwnNZhNwa5rLtnwXVZOcZOWFDKjvt_xFGX2XmqwEXlua_HRsXCuEbGdSDQ51B0ZpZrIwHZ_AJEyYIpm25ljqQhSElLlyhe9RnViDyt0G51bEyFa5fADyNg_CJx-PStpNUR9Y6GkA"/>
+<span class="absolute top-2 right-2 bg-secondary text-on-secondary font-label-md text-label-md px-2 py-1 rounded-full">Active</span>
+</div>
+<div class="p-md">
+<p class="font-headline-md text-headline-md text-primary">$2,500/mo</p>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="location_on">location_on</span> East Legon
+                        </p>
+</div>
+</div>
+<!-- Property Card 2 -->
+<div class="min-w-[280px] bg-surface-container-lowest rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)] overflow-hidden">
+<div class="h-40 relative">
+<img class="w-full h-full object-cover" data-alt="A stunning contemporary villa design with a sleek architectural profile, featuring wood and stone accents. The scene is set at dusk with warm interior lights glowing through expansive windows. The landscaping is lush and precisely maintained, offering a sense of exclusivity and secure luxury." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXkeB4dEovgG0dFX4IgJp9jefh-nSwVW5zzPbtH0zU5GpaHPdwv1R-LL2fM-z8GSe_57cJtxm3ZieFmaSQpAViK7cYXeXMosbelmu1sVMlsnrK2ETrZ9XL4oPgpr8Py9RfUyYDDsmINXUMFBG9BqKKzC1aXvAWjPznAmfzaPPPhWMiLa5_ul13V5vnoHnX99nYbJ0UFac96WbfG8TAaIbpLDknanTcJ-JGtRuMSOZb7vSqsSCaKqfbFJj1pOfUKW1rv5JmV3bSLew"/>
+<span class="absolute top-2 right-2 bg-secondary text-on-secondary font-label-md text-label-md px-2 py-1 rounded-full">Active</span>
+</div>
+<div class="p-md">
+<p class="font-headline-md text-headline-md text-primary">$4,800/mo</p>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="location_on">location_on</span> Cantonments
+                        </p>
+</div>
+</div>
+<!-- Property Card 3 -->
+<div class="min-w-[280px] bg-surface-container-lowest rounded-xl shadow-[0px_4px_12px_rgba(30,58,138,0.08)] overflow-hidden">
+<div class="h-40 relative">
+<img class="w-full h-full object-cover" data-alt="High-end apartment complex in Airport Residential Area, Accra. The image highlights a modern balcony overlooking a sparkling infinity pool. The overall mood is serene and luxurious, using a palette of whites, blues, and warm woods in a professional photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuABjFyPKt0rSNidtcbBp56CngBpjGBP6CWXt77vTC4LMUY_gYD-Lwx5J2bkv3kCzztiHtuUIsEesVNEhPt6oKTM6G_U01R692acY8R7d1woSUeyQzXUEFy5TKwFwnX7DvhcAOynjFOTNQi-rkodEjWzXb1qK2CSSjwbmwfphppGJFZuJBA4LphdPPzOg4Zmk1HPckKv55lZjqx7x_KTrkPnNHmahofVQNd1xEWJ9WW47S_3PMyWD8eM9NYF09e4fXWZchN6X_2VDmo"/>
+<span class="absolute top-2 right-2 bg-secondary text-on-secondary font-label-md text-label-md px-2 py-1 rounded-full">Active</span>
+</div>
+<div class="p-md">
+<p class="font-headline-md text-headline-md text-primary">$3,200/mo</p>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="location_on">location_on</span> Airport Residential
+                        </p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-20 right-6 w-14 h-14 bg-secondary-container text-on-secondary-container rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform z-40 md:bottom-10 md:right-10">
+<span class="material-symbols-outlined text-2xl" data-icon="add">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-2 pb-safe bg-surface-container-lowest dark:bg-inverse-surface shadow-[0px_-4px_12px_rgba(30,58,138,0.08)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="home_work">home_work</span>
+<span class="font-label-md text-label-md">Properties</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span class="font-label-md text-label-md">Add</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-label-md text-label-md">Enquiries</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+</nav>
+<!-- Navigation Drawer (Desktop Version - Placeholder) -->
+<aside class="hidden md:flex fixed left-0 top-0 h-full w-20 lg:w-64 flex-col bg-surface-container-lowest border-r border-outline-variant z-50">
+<div class="h-16 flex items-center px-6">
+<h1 class="font-headline-md text-headline-md text-primary font-bold hidden lg:block">FinderZ</h1>
+<span class="material-symbols-outlined text-primary lg:hidden" data-icon="home">home</span>
+</div>
+<div class="flex-1 py-4 space-y-2 px-2">
+<a class="flex items-center gap-4 p-3 bg-primary-container text-on-primary-container font-bold rounded-lg transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-body-md text-body-md hidden lg:block">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 p-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="home_work">home_work</span>
+<span class="font-body-md text-body-md hidden lg:block">Properties</span>
+</a>
+<a class="flex items-center gap-4 p-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md hidden lg:block">Portfolio Analytics</span>
+</a>
+<a class="flex items-center gap-4 p-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-body-md text-body-md hidden lg:block">Enquiries</span>
+</a>
+<div class="pt-4 mt-4 border-t border-outline-variant">
+<a class="flex items-center gap-4 p-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md hidden lg:block">Settings</span>
+</a>
+<a class="flex items-center gap-4 p-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-all duration-300 text-error" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-md text-body-md hidden lg:block">Logout</span>
+</a>
+</div>
+</div>
+</aside>
+<script>
+        // Micro-interaction: Update active state animation on hover
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                if(!el.classList.contains('active')) {
+                    el.style.transform = 'translateY(-1px)';
+                }
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'translateY(0px)';
+            });
+        });
+    </script>
+</body></html>

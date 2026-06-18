@@ -3,27 +3,63 @@ import { AppText } from "@/components/ui/app-text";
 import { colors, radius } from "@/components/ui/design-system";
 import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import { ScreenShell } from "@/components/ui/screen-shell";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Home, HousePlus, MapPinOff, TrendingUp } from "lucide-react-native";
 import { View } from "react-native";
 
 const suggestions = ["East Legon", "Kumasi", "Tema"];
 
+const reasonMessages: Record<string, { title: string; message: string; badge: string }> = {
+  rented: {
+    title: "This property has been rented",
+    message: "The listing is no longer accepting enquiries, but FinderZ can help you find similar available homes.",
+    badge: "RENTED",
+  },
+  removed: {
+    title: "Listing removed",
+    message: "The landlord has removed this listing. Browse similar verified properties instead.",
+    badge: "REMOVED",
+  },
+  rejected: {
+    title: "Listing unavailable",
+    message: "This listing is not currently approved for tenant viewing.",
+    badge: "UNAVAILABLE",
+  },
+  suspended: {
+    title: "Listing unavailable",
+    message: "This listing is temporarily inaccessible. You can continue browsing other verified properties.",
+    badge: "PAUSED",
+  },
+  deleted: {
+    title: "Listing deleted",
+    message: "This listing no longer exists on FinderZ.",
+    badge: "DELETED",
+  },
+};
+
 export default function PropertyUnavailableScreen() {
+  const params = useLocalSearchParams<{ reason?: string }>();
+  const reason = Array.isArray(params.reason) ? params.reason[0] : params.reason;
+  const copy = reasonMessages[reason ?? ""] ?? {
+    title: "Listing no longer available",
+    message: "This home may have been rented, removed, or made unavailable by the landlord. FinderZ can still help you find similar properties.",
+    badge: "UNAVAILABLE",
+  };
+
   return (
     <SafeAreaScreen>
       <ScreenShell title="Listing">
       <StateView
         icon={<MapPinOff color={colors.primary} size={54} />}
-        title="Listing No Longer Available"
-        message="This home may have been rented, sold, or removed by the landlord. FinderZ can still help you find similar properties."
+        title={copy.title}
+        message={copy.message}
         primaryAction={{
           title: "Explore Similar Properties",
-          onPress: () => router.replace("/tenant/dashboard"),
+          onPress: () => router.replace("/tenant/search"),
         }}
         secondaryAction={{
           title: "Back to Home Feed",
-          onPress: () => router.replace("/"),
+          onPress: () => router.replace("/tenant"),
           variant: "secondary",
         }}
       >
@@ -50,7 +86,7 @@ export default function PropertyUnavailableScreen() {
                 variant="caption"
                 style={{ color: colors.error, fontFamily: "Manrope_700Bold" }}
               >
-                SOLD
+                {copy.badge}
               </AppText>
             </View>
           </View>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Verification Status | FinderZ</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#d3e4fe",
+                    "on-surface": "#0b1c30",
+                    "inverse-surface": "#213145",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#4059aa",
+                    "on-primary-container": "#90a8ff",
+                    "background": "#f8f9ff",
+                    "secondary-fixed-dim": "#e9c349",
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed": "#e0e3e5",
+                    "on-background": "#0b1c30",
+                    "surface-dim": "#cbdbf5",
+                    "surface-container-low": "#eff4ff",
+                    "on-secondary-fixed": "#241a00",
+                    "on-tertiary-container": "#aaadaf",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed-variant": "#444749",
+                    "inverse-primary": "#b6c4ff",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "outline-variant": "#c5c5d3",
+                    "on-tertiary-fixed": "#191c1e",
+                    "tertiary-fixed-dim": "#c4c7c9",
+                    "primary": "#00236f",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#dce9ff",
+                    "on-primary-fixed": "#00164e",
+                    "on-secondary-fixed-variant": "#574500",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#f8f9ff",
+                    "secondary-container": "#fed65b",
+                    "primary-fixed": "#dce1ff",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#3d4143",
+                    "secondary": "#735c00",
+                    "primary-container": "#1e3a8a",
+                    "error": "#ba1a1a",
+                    "on-secondary-container": "#745c00",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-primary-fixed-variant": "#264191",
+                    "surface": "#f8f9ff",
+                    "on-surface-variant": "#444651",
+                    "tertiary": "#272b2d",
+                    "surface-container": "#e5eeff",
+                    "secondary-fixed": "#ffe088",
+                    "surface-container-highest": "#d3e4fe",
+                    "outline": "#757682",
+                    "surface-container-lowest": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "gutter": "16px",
+                    "md": "16px",
+                    "xl": "32px",
+                    "base": "8px",
+                    "container-margin": "16px",
+                    "sm": "12px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "label-md": ["Manrope"],
+                    "headline-md": ["Manrope"],
+                    "headline-lg": ["Manrope"],
+                    "body-lg": ["Manrope"],
+                    "headline-lg-mobile": ["Manrope"],
+                    "display-lg": ["Manrope"],
+                    "body-md": ["Manrope"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["22px", {"lineHeight": "28px", "fontWeight": "700"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .7; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full bg-surface dark:bg-surface-dim shadow-sm flex justify-between items-center px-gutter h-14 w-full z-50">
+<div class="flex items-center gap-4">
+<button class="p-2 transition-colors duration-200 hover:bg-surface-container-high rounded-full">
+<span class="material-symbols-outlined text-primary">menu</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary dark:text-primary-fixed-dim font-bold">FinderZ</h1>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full overflow-hidden border-2 border-surface-container-high shadow-sm">
+<img alt="Landlord Profile Photo" class="w-full h-full object-cover" data-alt="A professional portrait of a Ghanaian man in his late 40s, wearing a clean-cut business casual shirt. He is smiling warmly against a blurred office backdrop with natural light. The photograph is high-quality, high-resolution, and perfectly fits the professional real estate brand identity with warm, natural tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKOGM9jHG6V5qq4EJ1tHslMCDIQC1PvQqRDCTliKkL2lplRHuqAgf5dIqLJNDQNokTBlMYWw1HFbnV7sNq_aXB0XoDZE1jI1iLfl3GuZgJSRdRUeNaWzbanOXdYYlaWqbLiMcaOzQd1SUuyVTmE_t_xkxqBR3Sk3y6Lk8D7aQv8eBgIaTptZoFivdp56xylZSa6JtxO6ZK3Af2DePInoeZncL41fjZW6ikev5VCGS1_RvyZsilb8O8HsqPdlOMi3TnXMMMB9LVgIc"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-20 pb-24 px-gutter container mx-auto max-w-lg">
+<!-- Status Card -->
+<section class="bg-surface-container-lowest rounded-xl p-lg shadow-[0px_4px_12px_rgba(30,58,138,0.08)] flex flex-col items-center text-center space-y-lg relative overflow-hidden">
+<!-- Subtle Background Pattern -->
+<div class="absolute inset-0 opacity-5 pointer-events-none" style="background-image: radial-gradient(#00236f 0.5px, transparent 0.5px); background-size: 16px 16px;"></div>
+<!-- Verification Icon Cluster -->
+<div class="relative mt-4">
+<div class="w-24 h-24 rounded-full bg-surface-container-high flex items-center justify-center animate-pulse-slow">
+<span class="material-symbols-outlined text-primary text-6xl" style="font-variation-settings: 'wght' 300;">verified_user</span>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full flex items-center gap-1 shadow-sm border-2 border-surface-container-lowest">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-label-md text-label-md">Pending</span>
+</div>
+</div>
+<!-- Headline Section -->
+<div class="space-y-sm">
+<h2 class="font-headline-lg text-headline-lg text-primary">Under Review</h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                    Our compliance team is currently verifying your submitted documents. This process helps us build a secure and trusted community for both landlords and tenants in Ghana.
+                </p>
+</div>
+<!-- Time Estimate Box -->
+<div class="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl p-md flex items-center gap-4">
+<div class="w-12 h-12 flex-shrink-0 bg-primary/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">schedule</span>
+</div>
+<div class="text-left">
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Estimated Wait Time</p>
+<p class="font-headline-md text-headline-md text-primary">24 - 48 Hours</p>
+</div>
+</div>
+<!-- Trust Indicators (Bento Style Lite) -->
+<div class="grid grid-cols-2 gap-md w-full">
+<div class="bg-surface-container rounded-lg p-md text-left flex flex-col gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">shield_with_heart</span>
+<h3 class="font-label-md text-label-md text-primary">Reliable Status</h3>
+<p class="text-[11px] leading-tight text-on-surface-variant">Verified accounts receive 3x more inquiries.</p>
+</div>
+<div class="bg-surface-container rounded-lg p-md text-left flex flex-col gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">verified</span>
+<h3 class="font-label-md text-label-md text-primary">Trusted Badge</h3>
+<p class="text-[11px] leading-tight text-on-surface-variant">Unlock the "Verified Partner" badge upon approval.</p>
+</div>
+</div>
+<!-- Action Area -->
+<div class="w-full pt-4 flex flex-col gap-3">
+<button class="w-full h-12 bg-secondary-container hover:bg-[#ffcf33] active:scale-[0.98] transition-all text-on-secondary-container font-bold rounded-lg flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">help</span>
+                    Help &amp; Support
+                </button>
+<p class="font-label-md text-label-md text-outline">Reference ID: #VR-77420-ACC</p>
+</div>
+</section>
+<!-- Progress Timeline (Visual Flourish) -->
+<section class="mt-lg">
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-md px-2 uppercase">Verification Steps</h3>
+<div class="space-y-0">
+<div class="flex items-start gap-4 px-2">
+<div class="flex flex-col items-center">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-sm">check</span>
+</div>
+<div class="w-0.5 h-10 bg-primary"></div>
+</div>
+<div>
+<p class="font-body-md text-body-md font-bold text-on-surface">Document Submission</p>
+<p class="text-[12px] text-on-surface-variant">Completed on Oct 24, 10:15 AM</p>
+</div>
+</div>
+<div class="flex items-start gap-4 px-2">
+<div class="flex flex-col items-center">
+<div class="w-6 h-6 rounded-full border-2 border-primary bg-primary-fixed flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+</div>
+<div class="w-0.5 h-10 bg-outline-variant"></div>
+</div>
+<div>
+<p class="font-body-md text-body-md font-bold text-on-surface">Compliance Review</p>
+<p class="text-[12px] text-primary">In Progress</p>
+</div>
+</div>
+<div class="flex items-start gap-4 px-2">
+<div class="flex flex-col items-center">
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant bg-surface"></div>
+</div>
+<div>
+<p class="font-body-md text-body-md font-bold text-outline">Final Approval</p>
+<p class="text-[12px] text-outline">Pending review</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-surface-container-lowest dark:bg-inverse-surface flex justify-around items-center h-16 px-2 pb-safe shadow-[0px_-4px_12px_rgba(30,58,138,0.08)] rounded-t-xl">
+<button class="flex flex-col items-center justify-center text-on-surface-variant transition-transform active:scale-95">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant transition-transform active:scale-95">
+<span class="material-symbols-outlined">home_work</span>
+<span class="font-label-md text-label-md">Properties</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant transition-transform active:scale-95">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-label-md text-label-md">Add</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant transition-transform active:scale-95">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-label-md text-label-md">Enquiries</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 transition-transform active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</button>
+</nav>
+<script>
+        // Simple Micro-interaction for the Help Button
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const icon = btn.querySelector('.material-symbols-outlined');
+                if (icon) {
+                    icon.style.transform = 'scale(1.2)';
+                    setTimeout(() => icon.style.transform = 'scale(1)', 200);
+                }
+            });
+        });
+    </script>
+</body></html>

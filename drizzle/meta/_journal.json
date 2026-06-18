@@ -8,6 +8,13 @@
       "when": 1781307667701,
       "tag": "0000_wide_shiver_man",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1781777681851,
+      "tag": "0001_purple_lionheart",
+      "breakpoints": true
     }
   ]
 }

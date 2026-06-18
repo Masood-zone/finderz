@@ -9,5 +9,10 @@ export const queryKeys = {
   tenantEnquiry: (enquiryId: string) => ["tenant-enquiry", enquiryId] as const,
   tenantProfile: ["tenant-profile"] as const,
   landlordDashboard: ["landlord-dashboard"] as const,
+  landlordProfile: ["landlord-profile"] as const,
+  landlordVerification: ["landlord-verification"] as const,
+  landlordProperties: (status: string) => ["landlord-properties", status] as const,
+  landlordProperty: (propertyId: string) => ["landlord-property", propertyId] as const,
+  landlordEnquiries: ["landlord-enquiries"] as const,
   superAdminDashboard: ["super-admin-dashboard"] as const,
 };

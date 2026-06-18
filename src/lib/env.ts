@@ -3,12 +3,14 @@ import { z } from "zod";
 
 const publicEnvSchema = z.object({
   EXPO_PUBLIC_API_URL: z.preprocess((value) => (value === "" ? undefined : value), z.string().url().optional()),
+  EXPO_PUBLIC_APP_ENV: z.enum(["development", "preview", "production", "test"]).optional(),
 });
 
 export type PublicEnv = z.infer<typeof publicEnvSchema>;
 
 const parsedPublicEnv = publicEnvSchema.safeParse({
   EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL,
+  EXPO_PUBLIC_APP_ENV: process.env.EXPO_PUBLIC_APP_ENV,
 });
 
 export const publicEnv = parsedPublicEnv.success ? parsedPublicEnv.data : {};

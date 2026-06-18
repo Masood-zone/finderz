@@ -13,14 +13,14 @@ type RouteGuardProps = {
 
 function getRoleHome(role: AppRole) {
   if (role === "TENANT") {
-    return "/tenant";
+    return "/tenant" as Href;
   }
 
   if (role === "LANDLORD") {
-    return "/landlord/dashboard";
+    return "/landlord" as Href;
   }
 
-  return "/super-admin/dashboard";
+  return "/super-admin/dashboard" as Href;
 }
 
 function getSessionUser(user: AuthSessionUser | undefined) {
