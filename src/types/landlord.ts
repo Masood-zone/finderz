@@ -160,8 +160,6 @@ export type LandlordPropertyDraft = {
   area: string;
   landmark?: string | null;
   address: string;
-  latitude?: string | null;
-  longitude?: string | null;
   rentAmountCedis: number;
   paymentPeriod: string;
   advancePeriodMonths: number;

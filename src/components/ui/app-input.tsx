@@ -24,6 +24,7 @@ export const AppInput = forwardRef<TextInput, AppInputProps>(
       error,
       left,
       right,
+      multiline,
       style,
       onBlur,
       onFocus,
@@ -50,6 +51,9 @@ export const AppInput = forwardRef<TextInput, AppInputProps>(
             {
               borderColor,
               backgroundColor: colors.surface,
+              height: multiline ? undefined : 48,
+              minHeight: multiline ? 120 : 48,
+              alignItems: multiline ? "flex-start" : "center",
             },
           ]}
         >
@@ -61,6 +65,7 @@ export const AppInput = forwardRef<TextInput, AppInputProps>(
 
           <TextInput
             {...props}
+            multiline={multiline}
             ref={ref}
             placeholderTextColor="#98a2b3"
             selectionColor={colors.primary}
@@ -71,6 +76,8 @@ export const AppInput = forwardRef<TextInput, AppInputProps>(
               {
                 color: colors.text,
                 fontFamily: "Manrope_400Regular",
+                height: multiline ? undefined : "100%",
+                minHeight: multiline ? 96 : undefined,
               },
               style,
             ]}
@@ -97,7 +104,6 @@ AppInput.displayName = "AppInput";
 
 const styles = StyleSheet.create({
   container: {
-    height: 48,
     flexDirection: "row",
     alignItems: "center",
     borderRadius: radius.lg,
