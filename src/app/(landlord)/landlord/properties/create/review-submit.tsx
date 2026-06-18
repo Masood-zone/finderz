@@ -1,25 +1,34 @@
 import { router, type Href } from "expo-router";
-import { CheckCircle2 } from "lucide-react-native";
+import { ArrowLeft, Check, CheckCircle2, CloudUpload, ImagePlus, ShieldCheck, X } from "lucide-react-native";
 import { useState } from "react";
-import { Alert, Pressable, ScrollView, View } from "react-native";
+import { Alert, Image, Pressable, View } from "react-native";
 import FileUpload, { type UploadedFileResult } from "@/components/general/file-upload";
+import { AddPropertyPanel, AddPropertyShell } from "@/components/landlord/add-property-shell";
 import { AppButton } from "@/components/ui/app-button";
 import { AppInput } from "@/components/ui/app-input";
 import { AppText } from "@/components/ui/app-text";
+import { Checkbox } from "@/components/ui/checkbox";
 import { colors } from "@/components/ui/design-system";
-import { ScreenShell } from "@/components/ui/screen-shell";
-import { LandlordCard } from "@/components/landlord/landlord-shell";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { useLandlordPropertyDraftStore } from "@/store/landlord-property-draft-store";
 import { useSaveLandlordProperty } from "@/services/queries/hooks";
+import { useLandlordPropertyDraftStore } from "@/store/landlord-property-draft-store";
 
-const amenityOptions = ["Air conditioning", "Reliable water supply", "Parking", "Security", "Wi-Fi", "Backup generator", "Kitchen", "Balcony"];
+const amenityOptions = [
+  "Air Conditioning",
+  "High-speed WiFi",
+  "Water Reservoir (Polytank)",
+  "24/7 Security",
+  "Secured Parking",
+  "Backup Generator",
+];
 
-function Chip({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
+function AmenityRow({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
   return (
-    <Pressable className="flex-row items-center gap-2 rounded-full px-4 py-3" style={{ backgroundColor: active ? colors.primary : colors.surfaceBlue }} onPress={onPress}>
-      {active ? <CheckCircle2 color="#fff" size={14} /> : null}
-      <AppText variant="caption" style={{ color: active ? "#fff" : colors.primary, fontFamily: "Manrope_700Bold" }}>
+    <Pressable className="flex-row items-center gap-3 rounded-2xl p-4" style={{ backgroundColor: active ? "#dce9ff" : colors.surfaceBlue }} onPress={onPress}>
+      <View className="h-6 w-6 items-center justify-center rounded-md border" style={{ backgroundColor: active ? colors.primary : colors.surface, borderColor: active ? colors.primary : colors.borderStrong }}>
+        {active ? <Check color="#fff" size={15} /> : null}
+      </View>
+      <AppText className="min-w-0 flex-1" style={{ fontFamily: "Manrope_700Bold" }}>
         {label}
       </AppText>
     </Pressable>
@@ -46,9 +55,18 @@ export default function ReviewSubmitScreen() {
   const [contactPreferences, setContactPreferences] = useState(draft.contactPreferences ?? "PHONE");
   const [inspectionAvailability, setInspectionAvailability] = useState(draft.inspectionAvailability ?? "");
   const [houseRules, setHouseRules] = useState(draft.houseRules ?? "");
+  const [confirmed, setConfirmed] = useState(false);
 
   const toggleAmenity = (amenity: string) => {
     setAmenities((current) => (current.includes(amenity) ? current.filter((item) => item !== amenity) : [...current, amenity]));
+  };
+
+  const removeImage = (uri: string) => {
+    const next = images.filter((image) => image.uri !== uri);
+    setImages(next);
+    if (coverUri === uri) {
+      setCoverUri(next[0]?.uri ?? "");
+    }
   };
 
   const currentDraft = () => ({
@@ -72,85 +90,134 @@ export default function ReviewSubmitScreen() {
     mergeDraft(payload);
 
     if (submitForApproval && payload.images.length === 0) {
-      Alert.alert("Property images required", "Upload at least one property image before submitting for approval.");
+      Alert.alert("Property photos required", "Upload at least one property photo before submitting for approval.");
+      return;
+    }
+
+    if (submitForApproval && !confirmed) {
+      Alert.alert("Confirmation required", "Confirm that the listing information is accurate before submitting.");
       return;
     }
 
     try {
       await save.mutateAsync({ ...payload, submitForApproval });
       resetDraft();
-      if (submitForApproval) {
-        router.replace("/landlord/property-submitted" as Href);
-      } else {
-        router.replace("/landlord/properties" as Href);
-      }
+      router.replace(submitForApproval ? ("/landlord/property-submitted" as Href) : ("/landlord/properties" as Href));
     } catch (error) {
       Alert.alert("Unable to save property", getErrorMessage(error, "Please check the property details and try again."));
     }
   };
 
-  const missingBasics = !draft.title || !draft.region || !draft.rentAmountCedis;
-
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
-      <ScreenShell title="Add Property" subtitle="Final Step" showBack>
-        <ScrollView contentContainerStyle={{ paddingTop: 20, paddingBottom: 90, gap: 18 }} showsVerticalScrollIndicator={false}>
-          <View>
-            <AppText variant="label" muted className="mb-2 ml-1">
-              Amenities
-            </AppText>
-            <View className="flex-row flex-wrap gap-2">
-              {amenityOptions.map((amenity) => (
-                <Chip key={amenity} label={amenity} active={amenities.includes(amenity)} onPress={() => toggleAmenity(amenity)} />
-              ))}
+    <AddPropertyShell
+      currentStep={3}
+      footer={
+        <View className="flex-row gap-3">
+          <AppButton title="Back" variant="secondary" icon={<ArrowLeft color={colors.primary} size={18} />} style={{ flex: 1 }} onPress={() => router.back()} />
+          <AppButton title="Submit for Approval" loading={save.isPending} icon={<ShieldCheck color={colors.goldDark} size={18} />} style={{ flex: 2 }} onPress={() => void persist(true)} />
+        </View>
+      }
+    >
+      <View className="gap-7">
+        <View>
+          <View className="mb-3 flex-row items-center gap-2">
+            <ImagePlus color={colors.primary} size={22} />
+            <AppText variant="title">Property Photos</AppText>
+          </View>
+          <AppText muted className="mb-4">
+            Upload high-quality photos. Listings with better images get more enquiries in Ghana.
+          </AppText>
+
+          <FileUpload
+            label="Add Photo"
+            helperText="Upload property images"
+            mode="image"
+            uploadMode="multi"
+            purpose="propertyImage"
+            value={images}
+            onChange={(files) => {
+              setImages(files);
+              if (!coverUri && files[0]) setCoverUri(files[0].uri);
+            }}
+          />
+
+          <View className="mt-4 flex-row flex-wrap gap-3">
+            {images.map((file, index) => {
+              const imageUri = file.upload?.secure_url ?? file.uri;
+              const active = coverUri === file.uri || coverUri === imageUri;
+              return (
+                <Pressable key={file.uri} className="overflow-hidden rounded-2xl border" style={{ width: "47%", aspectRatio: 4 / 3, borderColor: active ? colors.primary : colors.border }} onPress={() => setCoverUri(file.uri)}>
+                  <Image source={{ uri: imageUri }} resizeMode="cover" style={{ width: "100%", height: "100%" }} />
+                  {active ? (
+                    <View className="absolute bottom-2 left-2 rounded-full px-2 py-1" style={{ backgroundColor: colors.gold }}>
+                      <AppText variant="caption" style={{ color: colors.goldDark, fontFamily: "Manrope_700Bold" }}>Cover</AppText>
+                    </View>
+                  ) : null}
+                  <Pressable className="absolute right-2 top-2 h-8 w-8 items-center justify-center rounded-full" style={{ backgroundColor: colors.error }} onPress={() => removeImage(file.uri)}>
+                    <X color="#fff" size={16} />
+                  </Pressable>
+                </Pressable>
+              );
+            })}
+            {!images.length ? (
+              <View className="w-full items-center justify-center rounded-2xl border border-dashed p-6" style={{ borderColor: colors.borderStrong, backgroundColor: colors.surfaceBlue }}>
+                <CloudUpload color={colors.primary} size={28} />
+                <AppText className="mt-2" style={{ color: colors.primary, fontFamily: "Manrope_700Bold" }}>Photos appear here</AppText>
+              </View>
+            ) : null}
+          </View>
+        </View>
+
+        <View>
+          <View className="mb-3 flex-row items-center gap-2">
+            <CheckCircle2 color={colors.primary} size={22} />
+            <AppText variant="title">Amenities</AppText>
+          </View>
+          <View className="gap-3">
+            {amenityOptions.map((amenity) => (
+              <AmenityRow key={amenity} label={amenity} active={amenities.includes(amenity)} onPress={() => toggleAmenity(amenity)} />
+            ))}
+          </View>
+        </View>
+
+        <AddPropertyPanel>
+          <AppText variant="title">Listing Summary</AppText>
+          <View className="mt-4 gap-3">
+            <View className="flex-row justify-between gap-3">
+              <AppText muted>Property Type:</AppText>
+              <AppText style={{ fontFamily: "Manrope_700Bold" }}>{draft.propertyType.replace("_", " ")}</AppText>
+            </View>
+            <View className="flex-row justify-between gap-3">
+              <AppText muted>Location:</AppText>
+              <AppText className="min-w-0 flex-1 text-right" style={{ fontFamily: "Manrope_700Bold" }}>{draft.area || "Area"}, {draft.city || "City"}</AppText>
+            </View>
+            <View className="flex-row justify-between gap-3">
+              <AppText muted>Price:</AppText>
+              <AppText style={{ color: colors.primary, fontFamily: "Manrope_800ExtraBold" }}>GHS {Number(draft.rentAmountCedis || 0).toLocaleString("en-GH")} / {draft.paymentPeriod.toLowerCase()}</AppText>
             </View>
           </View>
+        </AddPropertyPanel>
 
-          <FileUpload label="Property Images" helperText="Upload clear photos. Select the cover below." mode="image" uploadMode="multi" purpose="propertyImage" value={images} onChange={(files) => {
-            setImages(files);
-            if (!coverUri && files[0]) setCoverUri(files[0].uri);
-          }} />
-
-          {images.length ? (
-            <View>
-              <AppText variant="label" muted className="mb-2 ml-1">
-                Cover Image
-              </AppText>
-              <View className="flex-row flex-wrap gap-2">
-                {images.map((file, index) => (
-                  <Chip key={file.uri} label={`Image ${index + 1}`} active={coverUri === file.uri || coverUri === file.upload?.secure_url} onPress={() => setCoverUri(file.uri)} />
-                ))}
-              </View>
-            </View>
-          ) : null}
-
+        <View className="gap-4">
           <AppInput label="Contact Preferences" value={contactPreferences} onChangeText={setContactPreferences} />
           <AppInput label="Inspection Availability" value={inspectionAvailability} onChangeText={setInspectionAvailability} />
           <AppInput label="House Rules" value={houseRules} onChangeText={setHouseRules} multiline style={{ minHeight: 84, textAlignVertical: "top", paddingVertical: 12 }} />
+        </View>
 
-          <LandlordCard>
-            <AppText variant="title">Review Summary</AppText>
-            <AppText muted className="mt-2">
-              {draft.title || "Untitled property"} in {draft.area || "area"}, {draft.city || "city"}
-            </AppText>
-            <AppText className="mt-2" style={{ color: colors.primary, fontFamily: "Manrope_800ExtraBold" }}>
-              GH₵{Number(draft.rentAmountCedis || 0).toLocaleString("en-GH")} / {draft.paymentPeriod.toLowerCase()}
-            </AppText>
-            <AppText variant="caption" muted className="mt-2">
-              Submission status will become PENDING. Approval remains an administrator action.
-            </AppText>
-          </LandlordCard>
+        <View className="rounded-2xl p-4" style={{ backgroundColor: colors.surfaceBlue }}>
+          <Checkbox
+            checked={confirmed}
+            onChange={setConfirmed}
+            label={
+              <AppText muted className="min-w-0 flex-1">
+                I confirm that the information provided is accurate and I have the legal right to list this property.
+              </AppText>
+            }
+          />
+        </View>
 
-          {missingBasics ? (
-            <AppButton title="Complete Previous Steps" variant="secondary" onPress={() => router.replace("/landlord/properties/create/basics" as Href)} />
-          ) : (
-            <View className="gap-3">
-              <AppButton title="Save Draft" variant="secondary" loading={save.isPending} onPress={() => void persist(false)} />
-              <AppButton title="Submit for Approval" loading={save.isPending} onPress={() => void persist(true)} />
-            </View>
-          )}
-        </ScrollView>
-      </ScreenShell>
-    </View>
+        <AppButton title="Save as Draft" variant="secondary" loading={save.isPending} onPress={() => void persist(false)} />
+      </View>
+    </AddPropertyShell>
   );
 }
