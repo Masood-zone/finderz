@@ -1,31 +1,44 @@
-import { MessageCircle } from "lucide-react-native";
+// import { MessageCircle } from "lucide-react-native";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { AppText } from "@/components/ui/app-text";
 import { colors } from "@/components/ui/design-system";
-import { StateView } from "@/components/general/state-view";
-import { LandlordCard, LandlordTopBar, StatusPill } from "@/components/landlord/landlord-shell";
-import { getErrorMessage } from "@/lib/get-error-message";
+// import { StateView } from "@/components/general/state-view";
+import {
+  LandlordCard,
+  LandlordTopBar,
+  StatusPill,
+} from "@/components/landlord/landlord-shell";
+// import { getErrorMessage } from "@/lib/get-error-message";
 import { useLandlordEnquiries } from "@/services/queries/hooks";
 
 export default function LandlordEnquiriesScreen() {
   const enquiries = useLandlordEnquiries();
 
-  if (enquiries.isError) {
-    return (
-      <StateView
-        icon={<MessageCircle color={colors.primary} size={34} />}
-        title="Enquiries unavailable"
-        message={getErrorMessage(enquiries.error, "Unable to load enquiries.")}
-        primaryAction={{ title: "Try Again", onPress: () => void enquiries.refetch() }}
-      />
-    );
-  }
+  // if (enquiries.isError) {
+  //   return (
+  //     <StateView
+  //       icon={<MessageCircle color={colors.primary} size={34} />}
+  //       title="Enquiries unavailable"
+  //       message={getErrorMessage(enquiries.error, "Unable to load enquiries.")}
+  //       primaryAction={{ title: "Try Again", onPress: () => void enquiries.refetch() }}
+  //     />
+  //   );
+  // }
 
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
-      <LandlordTopBar title="Enquiries" subtitle="Tenant interest and inspection requests" />
+      <LandlordTopBar
+        title="Enquiries"
+        subtitle="Tenant interest and inspection requests"
+      />
       <ScrollView
-        refreshControl={<RefreshControl refreshing={enquiries.isRefetching} tintColor={colors.primary} onRefresh={() => void enquiries.refetch()} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={enquiries.isRefetching}
+            tintColor={colors.primary}
+            onRefresh={() => void enquiries.refetch()}
+          />
+        }
         contentContainerStyle={{ padding: 16, paddingBottom: 120, gap: 12 }}
         showsVerticalScrollIndicator={false}
       >
@@ -43,7 +56,10 @@ export default function LandlordEnquiriesScreen() {
                   Prefers {enquiry.preferredContactMethod.toLowerCase()}
                 </AppText>
               </View>
-              <StatusPill label={enquiry.status} tone={enquiry.status === "OPEN" ? "warning" : "neutral"} />
+              <StatusPill
+                label={enquiry.status}
+                tone={enquiry.status === "OPEN" ? "warning" : "neutral"}
+              />
             </View>
           </LandlordCard>
         ))}

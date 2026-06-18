@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import * as Linking from "expo-linking";
 import { authClient } from "@/lib/auth-client";
 import { getApiBaseUrl } from "@/lib/env";
 import type { ApiResponse } from "@/types/api";
@@ -33,6 +34,7 @@ export async function uploadFileToCloudinary({
   file,
   purpose,
 }: UploadFileInput): Promise<UploadedCloudinaryFile> {
+  const cookie = authClient.getCookie();
   const body = new FormData();
   body.append("purpose", purpose);
   body.append("file", {
@@ -43,9 +45,16 @@ export async function uploadFileToCloudinary({
 
   const res = await fetch(`${getApiBaseUrl()}/api/uploads`, {
     body,
-    credentials: "include",
+    credentials: "omit",
     headers: {
-      ...(authClient.getCookie() ? { Cookie: authClient.getCookie() } : {}),
+      ...(cookie
+        ? {
+            cookie,
+            "x-finderz-auth-cookie": cookie,
+          }
+        : {}),
+      "expo-origin": Linking.createURL("", { scheme: "finderz" }),
+      "x-skip-oauth-proxy": "true",
     },
     method: "POST",
   });

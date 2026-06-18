@@ -16,9 +16,21 @@ export class ApiGuardError extends Error {
   }
 }
 
+function getSessionHeaders(headers: Headers) {
+  const sessionHeaders = new Headers(headers);
+  const cookie = sessionHeaders.get("cookie");
+  const forwardedCookie = sessionHeaders.get("x-finderz-auth-cookie");
+
+  if (!cookie && forwardedCookie) {
+    sessionHeaders.set("cookie", forwardedCookie);
+  }
+
+  return sessionHeaders;
+}
+
 export async function getAuthenticatedUser(request: Request): Promise<AuthenticatedContext | null> {
   const session = await auth.api.getSession({
-    headers: request.headers,
+    headers: getSessionHeaders(request.headers),
   });
 
   if (!session?.user?.id) {

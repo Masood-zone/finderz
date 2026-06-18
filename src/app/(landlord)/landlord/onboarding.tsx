@@ -8,9 +8,11 @@ import { AppButton } from "@/components/ui/app-button";
 import { AppInput } from "@/components/ui/app-input";
 import { AppText } from "@/components/ui/app-text";
 import { colors } from "@/components/ui/design-system";
+import { FormError } from "@/components/ui/form-error";
 import { ScreenShell } from "@/components/ui/screen-shell";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useLandlordProfile, useSubmitLandlordOnboarding } from "@/services/queries/hooks";
+import { useState } from "react";
 
 const schema = z
   .object({
@@ -44,6 +46,7 @@ function Chip({ label, active, onPress }: { label: string; active: boolean; onPr
 export default function LandlordOnboardingScreen() {
   const profile = useLandlordProfile();
   const submit = useSubmitLandlordOnboarding();
+  const [submitError, setSubmitError] = useState<string | undefined>();
   const existing = profile.data?.profile;
 
   const form = useForm<FormValues>({
@@ -64,32 +67,37 @@ export default function LandlordOnboardingScreen() {
   const landlordType = form.watch("landlordType");
 
   const onSubmit = form.handleSubmit(async (values) => {
+    setSubmitError(undefined);
     const identity = values.identityFiles[0]?.upload;
     if (!identity) {
       form.setError("identityFiles", { message: "Upload a government accepted ID." });
       return;
     }
 
-    await submit.mutateAsync({
-      legalName: values.legalName,
-      phone: values.phone,
-      profileImage: values.profileFiles[0]?.upload
-        ? {
-            secureUrl: values.profileFiles[0].upload.secure_url,
-            publicId: values.profileFiles[0].upload.public_id,
-          }
-        : null,
-      landlordType: values.landlordType,
-      agencyName: values.agencyName,
-      address: values.address,
-      preferredContactMethod: values.preferredContactMethod,
-      identityDocumentType: values.identityDocumentType,
-      identityDocument: {
-        secureUrl: identity.secure_url,
-        publicId: identity.public_id,
-      },
-    });
-    router.replace("/landlord/verification-status" as Href);
+    try {
+      await submit.mutateAsync({
+        legalName: values.legalName,
+        phone: values.phone,
+        profileImage: values.profileFiles[0]?.upload
+          ? {
+              secureUrl: values.profileFiles[0].upload.secure_url,
+              publicId: values.profileFiles[0].upload.public_id,
+            }
+          : null,
+        landlordType: values.landlordType,
+        agencyName: values.agencyName,
+        address: values.address,
+        preferredContactMethod: values.preferredContactMethod,
+        identityDocumentType: values.identityDocumentType,
+        identityDocument: {
+          secureUrl: identity.secure_url,
+          publicId: identity.public_id,
+        },
+      });
+      router.replace("/landlord/verification-status" as Href);
+    } catch (error) {
+      setSubmitError(getErrorMessage(error, "Unable to submit onboarding. Please try again."));
+    }
   });
 
   return (
@@ -172,9 +180,7 @@ export default function LandlordOnboardingScreen() {
             )}
           />
 
-          {submit.isError ? (
-            <AppText style={{ color: colors.error }}>{getErrorMessage(submit.error, "Unable to submit onboarding.")}</AppText>
-          ) : null}
+          <FormError message={submitError} title="Onboarding submission failed" />
 
           <AppButton title="Submit for Review" loading={submit.isPending} onPress={onSubmit} />
         </ScrollView>
