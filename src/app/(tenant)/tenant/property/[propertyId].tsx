@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Alert, Image, Pressable, RefreshControl, ScrollView, Share, TextInput, View } from "react-native";
+import { Alert, Image, Linking, Pressable, RefreshControl, ScrollView, Share, TextInput, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import { ArrowLeft, Bath, BedDouble, Flag, Heart, MapPin, MessageCircle, Share2, ShieldAlert, ShieldCheck } from "lucide-react-native";
+import { ArrowLeft, Bath, BedDouble, Flag, Heart, MapPin, MessageCircle, Phone, Share2, ShieldAlert, ShieldCheck } from "lucide-react-native";
 import { AppButton } from "@/components/ui/app-button";
 import { AppText } from "@/components/ui/app-text";
 import { colors, radius } from "@/components/ui/design-system";
@@ -36,6 +36,8 @@ export default function TenantPropertyDetailScreen() {
   const unavailable = !property.isAvailable || property.approvalStatus !== "APPROVED";
   const existingEnquiry = property.tenantEnquiry;
   const hasSentEnquiry = Boolean(existingEnquiry);
+  const landlordPhone = property.landlord?.phone?.trim() ?? "";
+  const canCallLandlord = Boolean(landlordPhone);
 
   const startEnquiry = async () => {
     if (existingEnquiry) {
@@ -58,11 +60,30 @@ export default function TenantPropertyDetailScreen() {
     });
   };
 
+  const callLandlord = async () => {
+    if (!canCallLandlord) {
+      Alert.alert("Phone unavailable", "This landlord has not added a phone number yet.");
+      return;
+    }
+
+    const dialNumber = landlordPhone.replace(/[^+\d]/g, "");
+    if (!dialNumber) {
+      Alert.alert("Phone unavailable", "This landlord phone number is not valid for calling.");
+      return;
+    }
+
+    try {
+      await Linking.openURL(`tel:${dialNumber}`);
+    } catch {
+      Alert.alert("Unable to place call", "Your phone could not open the dialer right now.");
+    }
+  };
+
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <ScrollView
         refreshControl={<RefreshControl refreshing={propertyQuery.isRefetching} tintColor={colors.primary} onRefresh={() => void propertyQuery.refetch()} />}
-        contentContainerStyle={{ paddingBottom: 132 }}
+        contentContainerStyle={{ paddingBottom: 188 }}
         showsVerticalScrollIndicator={false}
       >
         <View className="relative" style={{ height: 360, backgroundColor: colors.surfaceBlue }}>
@@ -162,8 +183,16 @@ export default function TenantPropertyDetailScreen() {
               <AppText variant="caption" muted>
                 {property.landlord?.activeListings ?? 0} active listings
               </AppText>
+              {landlordPhone ? (
+                <AppText variant="caption" className="mt-1" style={{ color: colors.primary, fontFamily: "Manrope_700Bold" }}>
+                  {landlordPhone}
+                </AppText>
+              ) : null}
             </View>
             {property.landlord?.verified ? <ShieldCheck color={colors.primary} size={22} /> : null}
+          </View>
+          <View className="mt-4">
+            <AppButton title={canCallLandlord ? "Call Landlord" : "Phone Unavailable"} variant="secondary" icon={<Phone color={colors.primary} size={18} />} disabled={!canCallLandlord} onPress={() => void callLandlord()} />
           </View>
         </View>
 
@@ -204,16 +233,23 @@ export default function TenantPropertyDetailScreen() {
         </View>
       </ScrollView>
 
-      <View className="absolute bottom-0 left-0 right-0 flex-row gap-3 border-t p-4" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
-        <AppButton title="Report" variant="secondary" icon={<Flag color={colors.primary} size={18} />} onPress={() => Alert.alert("Report listing", "Reporting workflow will be connected in a later moderation slice.")} />
-        <View className="flex-1">
-          <AppButton
-            title={unavailable ? "Unavailable" : hasSentEnquiry ? "Enquiry Sent" : "Send Enquiry"}
-            loading={createEnquiry.isPending}
-            disabled={unavailable}
-            icon={<MessageCircle color={colors.goldDark} size={18} />}
-            onPress={startEnquiry}
-          />
+      <View className="absolute bottom-0 left-0 right-0 gap-3 border-t p-4" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
+        <View className="flex-row gap-3">
+          <View style={{ width: 132 }}>
+            <AppButton title={canCallLandlord ? "Call" : "No Phone"} variant="secondary" icon={<Phone color={colors.primary} size={18} />} disabled={!canCallLandlord} onPress={() => void callLandlord()} />
+          </View>
+          <View className="flex-1">
+            <AppButton
+              title={unavailable ? "Unavailable" : hasSentEnquiry ? "Enquiry Sent" : "Send Enquiry"}
+              loading={createEnquiry.isPending}
+              disabled={unavailable}
+              icon={<MessageCircle color={colors.goldDark} size={18} />}
+              onPress={startEnquiry}
+            />
+          </View>
+        </View>
+        <View>
+          <AppButton title="Report" variant="secondary" icon={<Flag color={colors.primary} size={18} />} onPress={() => Alert.alert("Report listing", "Reporting workflow will be connected in a later moderation slice.")} />
         </View>
       </View>
     </View>
