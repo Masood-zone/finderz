@@ -27,28 +27,44 @@ function firstParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
+function getModerationState(property: {
+  approvalStatus: string;
+  isAvailable: boolean;
+}) {
+  if (property.approvalStatus === "pending") return "pending";
+  if (!property.isAvailable) return "suspended";
+  if (property.approvalStatus === "approved") return "approved";
+  return "rejected";
+}
+
 export default function PropertyReviewDetailsScreen() {
   const params = useLocalSearchParams<{ propertyId?: string | string[] }>();
   const propertyId = firstParam(params.propertyId) ?? "";
-  const {
-    data: propertyQuery,
-    error,
-    isError,
-    isLoading,
-    refetch,
-  } = useSuperAdminProperty(propertyId);
-  const action = useSuperAdminPropertyAction();
+  const { data, error, isError, isLoading, refetch } =
+    useSuperAdminProperty(propertyId);
+  const moderationAction = useSuperAdminPropertyAction();
   const [reason, setReason] = useState("");
-  const property = propertyQuery?.property;
+  const [pendingAction, setPendingAction] = useState<
+    "approve" | "reject" | "request_changes" | "suspend" | null
+  >(null);
+  const property = data?.property;
+  const moderationState = property
+    ? getModerationState(property)
+    : "pending";
 
-  const submit = (
+  const submit = async (
     nextAction: "approve" | "reject" | "request_changes" | "suspend",
   ) => {
-    action.mutate({
-      propertyId: property?.id ?? propertyId,
-      action: nextAction,
-      reason,
-    });
+    setPendingAction(nextAction);
+    try {
+      await moderationAction.mutateAsync({
+        propertyId: property?.id ?? propertyId,
+        action: nextAction,
+        reason,
+      });
+    } finally {
+      setPendingAction(null);
+    }
   };
 
   return (
@@ -230,29 +246,55 @@ export default function PropertyReviewDetailsScreen() {
               placeholder="Describe what must change or why this action is needed."
             />
             <View style={styles.actionGrid}>
-              <AppButton
-                title="Approve"
-                loading={action.isPending}
-                onPress={() => submit("approve")}
-              />
-              <AppButton
-                title="Request Changes"
-                variant="secondary"
-                loading={action.isPending}
-                onPress={() => submit("request_changes")}
-              />
-              <AppButton
-                title="Reject"
-                variant="danger"
-                loading={action.isPending}
-                onPress={() => submit("reject")}
-              />
-              <AppButton
-                title="Suspend"
-                variant="danger"
-                loading={action.isPending}
-                onPress={() => submit("suspend")}
-              />
+              {moderationState === "pending" ? (
+                <>
+                  <AppButton
+                    title="Approve"
+                    loading={pendingAction === "approve"}
+                    disabled={Boolean(pendingAction) && pendingAction !== "approve"}
+                    onPress={() => void submit("approve")}
+                  />
+                  <AppButton
+                    title="Request Changes"
+                    variant="secondary"
+                    loading={pendingAction === "request_changes"}
+                    disabled={Boolean(pendingAction) && pendingAction !== "request_changes"}
+                    onPress={() => void submit("request_changes")}
+                  />
+                  <AppButton
+                    title="Reject"
+                    variant="danger"
+                    loading={pendingAction === "reject"}
+                    disabled={Boolean(pendingAction) && pendingAction !== "reject"}
+                    onPress={() => void submit("reject")}
+                  />
+                  <AppButton
+                    title="Suspend"
+                    variant="danger"
+                    loading={pendingAction === "suspend"}
+                    disabled={Boolean(pendingAction) && pendingAction !== "suspend"}
+                    onPress={() => void submit("suspend")}
+                  />
+                </>
+              ) : (
+                <>
+                  <AppButton
+                    title="Approved"
+                    variant={moderationState === "approved" ? "primary" : "secondary"}
+                    disabled
+                  />
+                  <AppButton
+                    title="Rejected"
+                    variant={moderationState === "rejected" ? "danger" : "secondary"}
+                    disabled
+                  />
+                  <AppButton
+                    title="Suspended"
+                    variant={moderationState === "suspended" ? "danger" : "secondary"}
+                    disabled
+                  />
+                </>
+              )}
             </View>
           </AdminCard>
         </>
