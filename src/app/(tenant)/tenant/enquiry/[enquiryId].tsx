@@ -3,6 +3,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
 import { AppText } from "@/components/ui/app-text";
 import { colors, radius } from "@/components/ui/design-system";
+import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import { TenantErrorState, TenantSkeleton } from "@/components/tenant/tenant-state";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useTenantEnquiry } from "@/services/queries/hooks";
@@ -17,15 +18,23 @@ export default function TenantEnquiryDetailScreen() {
   const enquiry = useTenantEnquiry(enquiryId);
 
   if (enquiry.isLoading) {
-    return <TenantSkeleton rows={4} />;
+    return (
+      <SafeAreaScreen>
+        <TenantSkeleton rows={4} />
+      </SafeAreaScreen>
+    );
   }
 
   if (enquiry.isError || !enquiry.data) {
-    return <TenantErrorState title="Conversation unavailable" message={getErrorMessage(enquiry.error, "Unable to load this enquiry.")} onRetry={() => void enquiry.refetch()} />;
+    return (
+      <SafeAreaScreen>
+        <TenantErrorState title="Conversation unavailable" message={getErrorMessage(enquiry.error, "Unable to load this enquiry.")} onRetry={() => void enquiry.refetch()} />
+      </SafeAreaScreen>
+    );
   }
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+    <SafeAreaScreen>
       <View className="flex-row items-center gap-3 px-4 py-4">
         <Pressable className="h-10 w-10 items-center justify-center" style={{ borderRadius: radius.lg, backgroundColor: colors.surface }} onPress={() => router.back()}>
           <ArrowLeft color={colors.primary} size={20} />
@@ -53,6 +62,6 @@ export default function TenantEnquiryDetailScreen() {
           );
         })}
       </ScrollView>
-    </View>
+    </SafeAreaScreen>
   );
 }

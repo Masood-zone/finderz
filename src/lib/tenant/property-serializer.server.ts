@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, gte, ilike, inArray, lte, or, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
-import { amenities, favourites, landlordProfiles, properties, propertyAmenities, propertyImages, user } from "@/db/schema";
+import { amenities, enquiries, favourites, landlordProfiles, properties, propertyAmenities, propertyImages, user } from "@/db/schema";
 import type { TenantFilters, TenantProperty, TenantPropertySort } from "@/types/tenant";
 
 const DEFAULT_PAGE_SIZE = 12;
@@ -201,13 +201,40 @@ async function getLandlordsForProfiles(landlordIds: string[]) {
   );
 }
 
+async function getTenantEnquiriesForProperties(userId: string, propertyIds: string[]) {
+  if (!propertyIds.length) {
+    return new Map<string, NonNullable<TenantProperty["tenantEnquiry"]>>();
+  }
+
+  const rows = await db.query.enquiries.findMany({
+    where: and(eq(enquiries.tenantId, userId), inArray(enquiries.propertyId, propertyIds)),
+    columns: {
+      id: true,
+      propertyId: true,
+      status: true,
+      updatedAt: true,
+    },
+    orderBy: [desc(enquiries.updatedAt)],
+  });
+
+  const map = new Map<string, NonNullable<TenantProperty["tenantEnquiry"]>>();
+  for (const row of rows) {
+    if (!map.has(row.propertyId)) {
+      map.set(row.propertyId, { id: row.id, status: row.status });
+    }
+  }
+
+  return map;
+}
+
 export async function serializeProperties(rows: PropertyRow[], userId: string): Promise<TenantProperty[]> {
   const propertyIds = rows.map((row) => row.id);
   const landlordIds = Array.from(new Set(rows.map((row) => row.landlordId)));
-  const [favouriteIds, amenitiesByProperty, landlordsByProfile] = await Promise.all([
+  const [favouriteIds, amenitiesByProperty, landlordsByProfile, tenantEnquiriesByProperty] = await Promise.all([
     getFavouritePropertyIds(userId, propertyIds),
     getAmenitiesForProperties(propertyIds),
     getLandlordsForProfiles(landlordIds),
+    getTenantEnquiriesForProperties(userId, propertyIds),
   ]);
 
   return rows.map((row) => {
@@ -247,6 +274,7 @@ export async function serializeProperties(rows: PropertyRow[], userId: string): 
       amenities: amenitiesByProperty.get(row.id) ?? [],
       landlord: landlordsByProfile.get(row.landlordId) ?? null,
       isFavourite: favouriteIds.has(row.id),
+      tenantEnquiry: tenantEnquiriesByProperty.get(row.id) ?? null,
     };
   });
 }

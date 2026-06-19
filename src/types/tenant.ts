@@ -52,6 +52,10 @@ export type TenantProperty = {
   }[];
   landlord: TenantLandlordSummary | null;
   isFavourite: boolean;
+  tenantEnquiry: {
+    id: string;
+    status: string;
+  } | null;
 };
 
 export type TenantFeedResponse = {

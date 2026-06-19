@@ -152,9 +152,12 @@ export function useCreateTenantEnquiry() {
 
   return useMutation({
     mutationFn: createTenantEnquiry,
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["tenant-enquiries"] });
       queryClient.invalidateQueries({ queryKey: queryKeys.tenantProfile });
+      queryClient.invalidateQueries({ queryKey: queryKeys.tenantProperty(variables.propertyId) });
+      queryClient.invalidateQueries({ queryKey: ["tenant-feed"] });
+      queryClient.invalidateQueries({ queryKey: ["tenant-properties"] });
     },
   });
 }
@@ -280,7 +283,10 @@ export function useSuperAdminPropertyAction() {
 
   return useMutation({
     mutationFn: (input: { propertyId: string; action: PropertyModerationAction; reason?: string }) => moderateSuperAdminProperty(input),
-    onSuccess: (_data, variables) => {
+    onSuccess: (data, variables) => {
+      if (data.property) {
+        queryClient.setQueryData(queryKeys.superAdminProperty(variables.propertyId), data);
+      }
       queryClient.invalidateQueries({ queryKey: queryKeys.superAdminDashboard });
       queryClient.invalidateQueries({ queryKey: ["super-admin-approvals"] });
       queryClient.invalidateQueries({ queryKey: queryKeys.superAdminProperty(variables.propertyId) });

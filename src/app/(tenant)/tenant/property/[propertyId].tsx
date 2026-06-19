@@ -34,8 +34,15 @@ export default function TenantPropertyDetailScreen() {
   const property = propertyQuery.data.property;
   const cover = property.coverImage;
   const unavailable = !property.isAvailable || property.approvalStatus !== "APPROVED";
+  const existingEnquiry = property.tenantEnquiry;
+  const hasSentEnquiry = Boolean(existingEnquiry);
 
   const startEnquiry = async () => {
+    if (existingEnquiry) {
+      router.push({ pathname: "/tenant/enquiry/[enquiryId]", params: { enquiryId: existingEnquiry.id } });
+      return;
+    }
+
     try {
       const result = await createEnquiry.mutateAsync({ propertyId: property.id, message, preferredContactMethod: "IN_APP" });
       router.push({ pathname: "/tenant/enquiry/[enquiryId]", params: { enquiryId: result.enquiryId } });
@@ -168,30 +175,45 @@ export default function TenantPropertyDetailScreen() {
         </View>
 
         <View className="mt-7 px-4">
-          <TenantSectionHeader title="Start Enquiry" />
-          <TextInput
-            multiline
-            value={message}
-            onChangeText={setMessage}
-            style={{
-              minHeight: 96,
-              borderRadius: radius.xl,
-              backgroundColor: colors.surface,
-              borderWidth: 1,
-              borderColor: colors.border,
-              padding: 14,
-              color: colors.text,
-              fontFamily: "Manrope_400Regular",
-              textAlignVertical: "top",
-            }}
-          />
+          <TenantSectionHeader title={hasSentEnquiry ? "Enquiry Sent" : "Start Enquiry"} />
+          {hasSentEnquiry ? (
+            <View className="rounded-2xl p-4" style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }}>
+              <AppText style={{ fontFamily: "Manrope_700Bold" }}>You have already contacted this landlord.</AppText>
+              <AppText className="mt-1" muted>
+                Open the conversation to continue chatting about this property.
+              </AppText>
+            </View>
+          ) : (
+            <TextInput
+              multiline
+              value={message}
+              onChangeText={setMessage}
+              style={{
+                minHeight: 96,
+                borderRadius: radius.xl,
+                backgroundColor: colors.surface,
+                borderWidth: 1,
+                borderColor: colors.border,
+                padding: 14,
+                color: colors.text,
+                fontFamily: "Manrope_400Regular",
+                textAlignVertical: "top",
+              }}
+            />
+          )}
         </View>
       </ScrollView>
 
       <View className="absolute bottom-0 left-0 right-0 flex-row gap-3 border-t p-4" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
         <AppButton title="Report" variant="secondary" icon={<Flag color={colors.primary} size={18} />} onPress={() => Alert.alert("Report listing", "Reporting workflow will be connected in a later moderation slice.")} />
         <View className="flex-1">
-          <AppButton title={unavailable ? "Unavailable" : "Send Enquiry"} loading={createEnquiry.isPending} disabled={unavailable} icon={<MessageCircle color={colors.goldDark} size={18} />} onPress={startEnquiry} />
+          <AppButton
+            title={unavailable ? "Unavailable" : hasSentEnquiry ? "Enquiry Sent" : "Send Enquiry"}
+            loading={createEnquiry.isPending}
+            disabled={unavailable}
+            icon={<MessageCircle color={colors.goldDark} size={18} />}
+            onPress={startEnquiry}
+          />
         </View>
       </View>
     </View>

@@ -2,7 +2,7 @@ import { and, count, desc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { enquiries, messages, properties, propertyImages, user } from "@/db/schema";
-import { internalServerErrorResponse, notFoundResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
+import { errorResponse, internalServerErrorResponse, notFoundResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
 import { guardErrorResponse, requireTenant } from "@/lib/auth-guards.server";
 import { findTenantPropertyById, serializeProperties } from "@/lib/tenant/property-serializer.server";
 import type { TenantEnquiry, TenantEnquiryStatusFilter } from "@/types/tenant";
@@ -131,6 +131,15 @@ export async function POST(request: Request) {
 
     if (!property || !property.landlord) {
       return notFoundResponse("This property is no longer available for enquiries.");
+    }
+
+    const existing = await db.query.enquiries.findFirst({
+      where: and(eq(enquiries.propertyId, property.id), eq(enquiries.tenantId, context.user.id)),
+      orderBy: [desc(enquiries.updatedAt)],
+    });
+
+    if (existing) {
+      return errorResponse("ENQUIRY_ALREADY_EXISTS", "You have already sent an enquiry for this property.", 409);
     }
 
     const enquiryId = crypto.randomUUID();

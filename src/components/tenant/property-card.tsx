@@ -83,37 +83,43 @@ export function PropertyCard({ property, horizontal = false, onToggleFavourite }
           <Heart color={property.isFavourite ? colors.error : colors.outline} fill={property.isFavourite ? colors.error : "transparent"} size={20} />
         </Pressable>
       </View>
-      <View className="gap-2 p-4">
-        <View className="flex-row items-start justify-between gap-3">
-          <AppText style={{ fontFamily: "Manrope_700Bold" }} numberOfLines={1}>
+      <View className="gap-3 p-4">
+        <View className="gap-2">
+          <AppText style={{ fontFamily: "Manrope_700Bold" }} numberOfLines={2}>
             {property.title}
           </AppText>
-          <AppText style={{ color: colors.primary, fontFamily: "Manrope_800ExtraBold" }}>
-            {formatGhanaCedi(property.rentAmount)}
-          </AppText>
-        </View>
-        <View className="flex-row items-center gap-1">
-          <MapPin color={colors.outline} size={16} />
-          <AppText variant="caption" muted numberOfLines={1}>
-            {property.area}, {property.city}
-          </AppText>
-        </View>
-        <View className="flex-row items-center gap-4 border-t pt-3" style={{ borderColor: colors.border }}>
           <View className="flex-row items-center gap-1">
-            <BedDouble color={colors.primary} size={16} />
-            <AppText variant="caption">{property.bedrooms} Beds</AppText>
+            <MapPin color={colors.outline} size={16} />
+            <AppText variant="caption" muted numberOfLines={1} className="flex-1">
+              {property.area}, {property.city}
+            </AppText>
           </View>
-          <View className="flex-row items-center gap-1">
-            <Bath color={colors.primary} size={16} />
-            <AppText variant="caption">{property.bathrooms} Baths</AppText>
-          </View>
-          <AppText variant="caption" muted numberOfLines={1}>
-            {formatEnumLabel(property.propertyType)}
-          </AppText>
         </View>
-        <AppText variant="caption" muted>
-          {formatPaymentPeriod(property.paymentPeriod)}
-        </AppText>
+        <View className="gap-3 border-t pt-3" style={{ borderColor: colors.border }}>
+          <View className="flex-row flex-wrap items-center gap-x-4 gap-y-2">
+            <View className="flex-row items-center gap-1">
+              <BedDouble color={colors.primary} size={16} />
+              <AppText variant="caption">{property.bedrooms} Beds</AppText>
+            </View>
+            <View className="flex-row items-center gap-1">
+              <Bath color={colors.primary} size={16} />
+              <AppText variant="caption">{property.bathrooms} Baths</AppText>
+            </View>
+            <AppText variant="caption" muted>
+              {formatEnumLabel(property.propertyType)}
+            </AppText>
+          </View>
+          <View className="flex-row items-end justify-end gap-3">
+            <View className="items-end">
+              <AppText style={{ color: colors.primary, fontFamily: "Manrope_800ExtraBold" }}>
+                {formatGhanaCedi(property.rentAmount)}
+              </AppText>
+              <AppText variant="caption" muted>
+                {formatPaymentPeriod(property.paymentPeriod)}
+              </AppText>
+            </View>
+          </View>
+        </View>
       </View>
     </Pressable>
   );
