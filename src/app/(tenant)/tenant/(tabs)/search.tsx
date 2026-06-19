@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Pressable, ScrollView, TextInput, View } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Building2, History, Home, MapPin, Search, X } from "lucide-react-native";
 import { AppText } from "@/components/ui/app-text";
 import { colors, radius } from "@/components/ui/design-system";
@@ -21,16 +21,32 @@ const categories = [
 ];
 
 export default function TenantSearchScreen() {
+  const params = useLocalSearchParams<{
+    region?: string;
+    city?: string;
+    area?: string;
+    latitude?: string;
+    longitude?: string;
+    radiusKm?: string;
+  }>();
   const [query, setQuery] = useState("");
   const [history, setHistory] = useState(["Modern Apartments in East Legon", "Land Plots in Prampram"]);
 
   const canSearch = useMemo(() => query.trim().length > 0, [query]);
+  const locationParams = {
+    region: params.region,
+    city: params.city,
+    area: params.area,
+    latitude: params.latitude,
+    longitude: params.longitude,
+    radiusKm: params.radiusKm,
+  };
 
   const submitSearch = (value = query) => {
     const next = value.trim();
     if (!next) return;
     setHistory((items) => [next, ...items.filter((item) => item !== next)].slice(0, 5));
-    router.push({ pathname: "/tenant/results", params: { q: next } });
+    router.push({ pathname: "/tenant/results", params: { ...locationParams, q: next } });
   };
 
   return (
@@ -129,7 +145,7 @@ export default function TenantSearchScreen() {
                   key={category.value}
                   className="w-[47%] items-center gap-3 rounded-2xl p-5"
                   style={{ backgroundColor: colors.surfaceBlue }}
-                  onPress={() => router.push({ pathname: "/tenant/results", params: { propertyType: category.value } })}
+                  onPress={() => router.push({ pathname: "/tenant/results", params: { ...locationParams, propertyType: category.value } })}
                 >
                   <View className="h-12 w-12 items-center justify-center rounded-full" style={{ backgroundColor: colors.gold }}>
                     <Icon color={colors.goldDark} size={26} />

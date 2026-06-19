@@ -81,10 +81,10 @@ export function useTenantDashboard() {
   });
 }
 
-export function useTenantFeed() {
+export function useTenantFeed(filters: Pick<TenantFilters, "latitude" | "longitude" | "radiusKm" | "city" | "region" | "area"> = {}) {
   return useQuery({
-    queryKey: queryKeys.tenantFeed,
-    queryFn: getTenantFeed,
+    queryKey: queryKeys.tenantFeed(filters),
+    queryFn: () => getTenantFeed(filters),
   });
 }
 
@@ -139,7 +139,7 @@ export function useToggleTenantFavourite() {
     mutationFn: ({ propertyId, favourite }: { propertyId: string; favourite: boolean }) =>
       favourite ? addTenantFavourite(propertyId) : removeTenantFavourite(propertyId),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.tenantFeed });
+      queryClient.invalidateQueries({ queryKey: ["tenant-feed"] });
       queryClient.invalidateQueries({ queryKey: queryKeys.tenantFavourites });
       queryClient.invalidateQueries({ queryKey: queryKeys.tenantProperty(variables.propertyId) });
       queryClient.invalidateQueries({ queryKey: ["tenant-properties"] });

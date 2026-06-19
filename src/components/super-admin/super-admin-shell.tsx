@@ -3,16 +3,28 @@ import { colors, radius, shadows } from "@/components/ui/design-system";
 import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import type { Href } from "expo-router";
 import { router, usePathname } from "expo-router";
-import { Bell, CheckSquare, Gauge, Gavel, Users } from "lucide-react-native";
+import {
+  // Bell,
+  CheckSquare,
+  Gauge,
+  // Gavel,
+  UserRound,
+  Users,
+} from "lucide-react-native";
 import type { ReactNode } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 const navItems = [
   { label: "Dashboard", href: "/super-admin" as Href, icon: Gauge },
-  { label: "Approvals", href: "/super-admin/approvals" as Href, icon: CheckSquare },
+  {
+    label: "Approvals",
+    href: "/super-admin/approvals" as Href,
+    icon: CheckSquare,
+  },
   { label: "Users", href: "/super-admin/users" as Href, icon: Users },
-  { label: "Reports", href: "/super-admin/reports" as Href, icon: Gavel },
-  { label: "Alerts", href: "/super-admin/notifications" as Href, icon: Bell },
+  // { label: "Reports", href: "/super-admin/reports" as Hresf, icon: Gavel },
+  // { label: "Alerts", href: "/super-admin/notifications" as Href, icon: Bell },
+  { label: "Profile", href: "/super-admin/profile" as Href, icon: UserRound },
 ];
 
 type SuperAdminShellProps = {
@@ -22,7 +34,12 @@ type SuperAdminShellProps = {
   scroll?: boolean;
 };
 
-export function SuperAdminShell({ title, subtitle, children, scroll = true }: SuperAdminShellProps) {
+export function SuperAdminShell({
+  title,
+  subtitle,
+  children,
+  scroll = true,
+}: SuperAdminShellProps) {
   const pathname = usePathname();
 
   const body = (
@@ -57,7 +74,11 @@ export function SuperAdminShell({ title, subtitle, children, scroll = true }: Su
   return (
     <SafeAreaScreen style={styles.screen}>
       {scroll ? (
-        <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
           {body}
         </ScrollView>
       ) : (
@@ -66,12 +87,21 @@ export function SuperAdminShell({ title, subtitle, children, scroll = true }: Su
       <View style={styles.nav}>
         {navItems.map((item) => {
           const href = String(item.href);
-          const active = pathname === href || (href !== "/super-admin" && pathname.startsWith(href));
+          const active =
+            pathname === href ||
+            (href !== "/super-admin" && pathname.startsWith(href));
           const Icon = item.icon;
           return (
-            <Pressable key={item.label} onPress={() => router.push(item.href)} style={[styles.navItem, active && styles.navItemActive]}>
+            <Pressable
+              key={item.label}
+              onPress={() => router.push(item.href)}
+              style={[styles.navItem, active && styles.navItemActive]}
+            >
               <Icon size={20} color={active ? colors.goldDark : colors.muted} />
-              <AppText variant="label" style={{ color: active ? colors.goldDark : colors.muted }}>
+              <AppText
+                variant="label"
+                style={{ color: active ? colors.goldDark : colors.muted }}
+              >
                 {item.label}
               </AppText>
             </Pressable>
@@ -82,11 +112,23 @@ export function SuperAdminShell({ title, subtitle, children, scroll = true }: Su
   );
 }
 
-export function AdminCard({ children, style }: { children: ReactNode; style?: object }) {
+export function AdminCard({
+  children,
+  style,
+}: {
+  children: ReactNode;
+  style?: object;
+}) {
   return <View style={[styles.card, style]}>{children}</View>;
 }
 
-export function StatusPill({ label, tone = "neutral" }: { label: string; tone?: "neutral" | "success" | "warning" | "danger" }) {
+export function StatusPill({
+  label,
+  tone = "neutral",
+}: {
+  label: string;
+  tone?: "neutral" | "success" | "warning" | "danger";
+}) {
   const palette = {
     neutral: { backgroundColor: colors.surfaceBlue, color: colors.primary },
     success: { backgroundColor: colors.successSoft, color: colors.success },

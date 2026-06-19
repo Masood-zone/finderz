@@ -207,10 +207,14 @@ export async function getAdminPropertyDetail(propertyId: string): Promise<SuperA
   if (!row) return null;
 
   const [property] = await serializeAdminProperties([row]);
-  const [reports, submissionHistory] = await Promise.all([
+  const [reportsResult, submissionHistoryResult] = await Promise.allSettled([
     getReportsForProperty(propertyId),
     getActivityForEntity("property", propertyId),
   ]);
+
+  const reports = reportsResult.status === "fulfilled" ? reportsResult.value : [];
+  const submissionHistory =
+    submissionHistoryResult.status === "fulfilled" ? submissionHistoryResult.value : [];
 
   return { ...property, reports, submissionHistory };
 }

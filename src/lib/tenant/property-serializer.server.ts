@@ -4,6 +4,7 @@ import { amenities, favourites, landlordProfiles, properties, propertyAmenities,
 import type { TenantFilters, TenantProperty, TenantPropertySort } from "@/types/tenant";
 
 const DEFAULT_PAGE_SIZE = 12;
+const DEFAULT_RADIUS_KM = 25;
 
 type PropertyRow = typeof properties.$inferSelect & {
   images?: (typeof propertyImages.$inferSelect)[];
@@ -21,12 +22,17 @@ function numberParam(value: string | null) {
 export function getTenantFiltersFromUrl(request: Request): TenantFilters {
   const url = new URL(request.url);
   const params = url.searchParams;
+  const latitude = numberParam(params.get("latitude"));
+  const longitude = numberParam(params.get("longitude"));
 
   return {
     q: params.get("q") ?? undefined,
     region: params.get("region") ?? undefined,
     city: params.get("city") ?? undefined,
     area: params.get("area") ?? undefined,
+    latitude,
+    longitude,
+    radiusKm: numberParam(params.get("radiusKm")) ?? (latitude !== undefined && longitude !== undefined ? DEFAULT_RADIUS_KM : undefined),
     minRent: numberParam(params.get("minRent")),
     maxRent: numberParam(params.get("maxRent")),
     paymentPeriod: params.get("paymentPeriod") ?? undefined,
@@ -40,6 +46,32 @@ export function getTenantFiltersFromUrl(request: Request): TenantFilters {
     sort: (params.get("sort") as TenantPropertySort | null) ?? undefined,
     page: numberParam(params.get("page")),
   };
+}
+
+function hasCoordinates(filters: TenantFilters) {
+  return filters.latitude !== undefined && filters.longitude !== undefined;
+}
+
+function distanceExpression(latitude: number, longitude: number) {
+  return sql<number>`(
+    6371 * acos(
+      least(
+        1,
+        greatest(
+          -1,
+          cos(radians(${latitude})) *
+          cos(radians(nullif(${properties.latitude}, '')::double precision)) *
+          cos(radians(nullif(${properties.longitude}, '')::double precision) - radians(${longitude})) +
+          sin(radians(${latitude})) *
+          sin(radians(nullif(${properties.latitude}, '')::double precision))
+        )
+      )
+    )
+  )`;
+}
+
+function coordinatePresenceSort() {
+  return sql<number>`case when ${properties.latitude} is null or ${properties.longitude} is null then 1 else 0 end`;
 }
 
 function buildPropertyConditions(filters: TenantFilters) {
@@ -61,6 +93,9 @@ function buildPropertyConditions(filters: TenantFilters) {
   if (filters.region) conditions.push(ilike(properties.region, `%${filters.region}%`));
   if (filters.city) conditions.push(ilike(properties.city, `%${filters.city}%`));
   if (filters.area) conditions.push(ilike(properties.area, `%${filters.area}%`));
+  if (hasCoordinates(filters) && filters.radiusKm) {
+    conditions.push(sql`${distanceExpression(filters.latitude!, filters.longitude!)} <= ${filters.radiusKm}`);
+  }
   if (filters.minRent !== undefined) conditions.push(gte(properties.rentAmount, filters.minRent));
   if (filters.maxRent !== undefined) conditions.push(lte(properties.rentAmount, filters.maxRent));
   if (filters.paymentPeriod) conditions.push(eq(properties.paymentPeriod, filters.paymentPeriod as typeof properties.paymentPeriod.enumValues[number]));
@@ -76,6 +111,14 @@ function getSort(sort: TenantPropertySort = "relevance") {
   if (sort === "lowest-price") return asc(properties.rentAmount);
   if (sort === "highest-price") return desc(properties.rentAmount);
   return desc(properties.createdAt);
+}
+
+export function getLocationSort(filters: TenantFilters) {
+  if (!hasCoordinates(filters)) {
+    return [];
+  }
+
+  return [asc(coordinatePresenceSort()), asc(distanceExpression(filters.latitude!, filters.longitude!))];
 }
 
 export async function getFavouritePropertyIds(userId: string, propertyIds: string[]) {
@@ -180,6 +223,9 @@ export async function serializeProperties(rows: PropertyRow[], userId: string): 
       city: row.city,
       area: row.area,
       address: row.address,
+      latitude: row.latitude,
+      longitude: row.longitude,
+      distanceKm: null,
       landmark: row.landmark,
       rentAmount: row.rentAmount,
       paymentPeriod: row.paymentPeriod,
@@ -217,7 +263,7 @@ export async function findTenantProperties(userId: string, filters: TenantFilter
     with: {
       images: true,
     },
-    orderBy: [getSort(filters.sort)],
+    orderBy: [...getLocationSort(filters), getSort(filters.sort)],
     limit: pageSize,
     offset: (page - 1) * pageSize,
   });

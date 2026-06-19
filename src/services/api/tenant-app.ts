@@ -31,8 +31,9 @@ function toParams(filters: TenantFilters) {
   return params.toString();
 }
 
-export async function getTenantFeed() {
-  const response = await apiClient.get<ApiSuccess<TenantFeedResponse>>("/api/tenant/feed");
+export async function getTenantFeed(filters: Pick<TenantFilters, "latitude" | "longitude" | "radiusKm" | "city" | "region" | "area"> = {}) {
+  const query = toParams(filters);
+  const response = await apiClient.get<ApiSuccess<TenantFeedResponse>>(`/api/tenant/feed${query ? `?${query}` : ""}`);
   return response.data.data;
 }
 

@@ -1,33 +1,110 @@
-import { AdminCard, StatusPill, SuperAdminShell } from "@/components/super-admin/super-admin-shell";
+import {
+  AdminCard,
+  StatusPill,
+  SuperAdminShell,
+} from "@/components/super-admin/super-admin-shell";
 import { AppButton } from "@/components/ui/app-button";
 import { AppInput } from "@/components/ui/app-input";
 import { AppText } from "@/components/ui/app-text";
 import { colors } from "@/components/ui/design-system";
-import { useSuperAdminProperty, useSuperAdminPropertyAction } from "@/services/queries/hooks";
+import { getErrorMessage } from "@/lib/get-error-message";
+import {
+  useSuperAdminProperty,
+  useSuperAdminPropertyAction,
+} from "@/services/queries/hooks";
 import { useLocalSearchParams } from "expo-router";
 import { AlertCircle, Bath, Bed, MapPin } from "lucide-react-native";
 import { useState } from "react";
-import { ActivityIndicator, Image, ScrollView, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
+
+function firstParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
 
 export default function PropertyReviewDetailsScreen() {
-  const { propertyId } = useLocalSearchParams<{ propertyId: string }>();
-  const propertyQuery = useSuperAdminProperty(propertyId ?? "");
+  const params = useLocalSearchParams<{ propertyId?: string | string[] }>();
+  const propertyId = firstParam(params.propertyId) ?? "";
+  const {
+    data: propertyQuery,
+    error,
+    isError,
+    isLoading,
+    refetch,
+  } = useSuperAdminProperty(propertyId);
   const action = useSuperAdminPropertyAction();
   const [reason, setReason] = useState("");
-  const property = propertyQuery.data?.property;
+  const property = propertyQuery?.property;
 
-  const submit = (nextAction: "approve" | "reject" | "request_changes" | "suspend") => {
-    action.mutate({ propertyId: propertyId ?? "", action: nextAction, reason });
+  const submit = (
+    nextAction: "approve" | "reject" | "request_changes" | "suspend",
+  ) => {
+    action.mutate({
+      propertyId: property?.id ?? propertyId,
+      action: nextAction,
+      reason,
+    });
   };
 
   return (
-    <SuperAdminShell title="Review Listing" subtitle="Inspect listing evidence, landlord verification, reports, and pricing.">
-      {propertyQuery.isLoading ? <ActivityIndicator color={colors.primary} /> : null}
+    <SuperAdminShell
+      title="Review Listing"
+      subtitle="Inspect listing evidence, landlord verification, reports, and pricing."
+    >
+      {isLoading ? <ActivityIndicator color={colors.primary} /> : null}
+      {isError ? (
+        <AdminCard>
+          <AppText variant="title" style={{ color: colors.error }}>
+            Unable to load listing
+          </AppText>
+          <AppText muted style={{ marginTop: 6 }}>
+            {getErrorMessage(error, "This review could not be loaded.")}
+          </AppText>
+          <View style={{ marginTop: 12 }}>
+            <AppButton
+              title="Try Again"
+              variant="secondary"
+              onPress={() => void refetch()}
+            />
+          </View>
+        </AdminCard>
+      ) : null}
+      {!isLoading && !isError && !property ? (
+        <AdminCard>
+          <AppText variant="title">Listing unavailable</AppText>
+          <AppText muted style={{ marginTop: 6 }}>
+            This listing could not be found or is no longer available for
+            review.
+          </AppText>
+        </AdminCard>
+      ) : null}
       {property ? (
         <>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.gallery}>
-            {(property.images.length ? property.images : [{ imageUrl: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6", id: "fallback" }]).map((image) => (
-              <Image key={image.id ?? image.imageUrl} source={{ uri: image.imageUrl }} style={styles.heroImage} />
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.gallery}
+          >
+            {(property.images.length
+              ? property.images
+              : [
+                  {
+                    imageUrl:
+                      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6",
+                    id: "fallback",
+                  },
+                ]
+            ).map((image) => (
+              <Image
+                key={image.id ?? image.imageUrl}
+                source={{ uri: image.imageUrl }}
+                style={styles.heroImage}
+              />
             ))}
           </ScrollView>
 
@@ -44,10 +121,19 @@ export default function PropertyReviewDetailsScreen() {
                   </AppText>
                 </View>
               </View>
-              <StatusPill label={property.approvalStatus} tone={property.approvalStatus === "pending" ? "warning" : "neutral"} />
+              <StatusPill
+                label={property.approvalStatus}
+                tone={
+                  property.approvalStatus === "pending" ? "warning" : "neutral"
+                }
+              />
             </View>
-            <AppText variant="title" style={{ color: colors.primary, marginTop: 8 }}>
-              GHS {(property.rentAmount / 100).toLocaleString()} / {property.paymentPeriod.toLowerCase()}
+            <AppText
+              variant="title"
+              style={{ color: colors.primary, marginTop: 8 }}
+            >
+              GHS {(property.rentAmount / 100).toLocaleString()} /{" "}
+              {property.paymentPeriod.toLowerCase()}
             </AppText>
             <View style={styles.specRow}>
               <View style={styles.spec}>
@@ -68,17 +154,27 @@ export default function PropertyReviewDetailsScreen() {
               {property.amenities.map((amenity) => (
                 <StatusPill key={amenity} label={amenity} />
               ))}
-              {!property.amenities.length ? <AppText muted>No amenities supplied.</AppText> : null}
+              {!property.amenities.length ? (
+                <AppText muted>No amenities supplied.</AppText>
+              ) : null}
             </View>
           </AdminCard>
 
           <AdminCard>
             <AppText variant="title">Landlord Profile</AppText>
-            <AppText>{property.landlord.legalName ?? property.landlord.user?.name ?? "Unknown landlord"}</AppText>
+            <AppText>
+              {property.landlord.legalName ??
+                property.landlord.user?.name ??
+                "Unknown landlord"}
+            </AppText>
             <AppText muted>{property.landlord.user?.email}</AppText>
             <StatusPill
               label={property.landlord.verificationStatus.replaceAll("_", " ")}
-              tone={property.landlord.verificationStatus === "APPROVED" ? "success" : "warning"}
+              tone={
+                property.landlord.verificationStatus === "APPROVED"
+                  ? "success"
+                  : "warning"
+              }
             />
           </AdminCard>
 
@@ -90,11 +186,15 @@ export default function PropertyReviewDetailsScreen() {
                   <AlertCircle size={18} color={colors.error} />
                   <View style={{ flex: 1 }}>
                     <AppText>{report.reason}</AppText>
-                    <AppText muted>{report.description ?? "No description"} - {report.status}</AppText>
+                    <AppText muted>
+                      {report.description ?? "No description"} - {report.status}
+                    </AppText>
                   </View>
                 </View>
               ))}
-              {!property.reports.length ? <AppText muted>No reports for this listing.</AppText> : null}
+              {!property.reports.length ? (
+                <AppText muted>No reports for this listing.</AppText>
+              ) : null}
             </View>
           </AdminCard>
 
@@ -106,22 +206,53 @@ export default function PropertyReviewDetailsScreen() {
                   <View style={styles.dot} />
                   <View style={{ flex: 1 }}>
                     <AppText>{item.action.replaceAll("_", " ")}</AppText>
-                    <AppText muted>{new Date(item.createdAt).toLocaleString()}</AppText>
+                    <AppText muted>
+                      {new Date(item.createdAt).toLocaleString()}
+                    </AppText>
                   </View>
                 </View>
               ))}
-              {!property.submissionHistory.length ? <AppText muted>Submitted {new Date(property.createdAt).toLocaleString()}</AppText> : null}
+              {!property.submissionHistory.length ? (
+                <AppText muted>
+                  Submitted {new Date(property.createdAt).toLocaleString()}
+                </AppText>
+              ) : null}
             </View>
           </AdminCard>
 
           <AdminCard>
             <AppText variant="title">Moderation Reason</AppText>
-            <AppInput label="Required for reject, changes, or suspension" value={reason} onChangeText={setReason} multiline placeholder="Describe what must change or why this action is needed." />
+            <AppInput
+              label="Required for reject, changes, or suspension"
+              value={reason}
+              onChangeText={setReason}
+              multiline
+              placeholder="Describe what must change or why this action is needed."
+            />
             <View style={styles.actionGrid}>
-              <AppButton title="Approve" loading={action.isPending} onPress={() => submit("approve")} />
-              <AppButton title="Request Changes" variant="secondary" loading={action.isPending} onPress={() => submit("request_changes")} />
-              <AppButton title="Reject" variant="danger" loading={action.isPending} onPress={() => submit("reject")} />
-              <AppButton title="Suspend" variant="danger" loading={action.isPending} onPress={() => submit("suspend")} />
+              <AppButton
+                title="Approve"
+                loading={action.isPending}
+                onPress={() => submit("approve")}
+              />
+              <AppButton
+                title="Request Changes"
+                variant="secondary"
+                loading={action.isPending}
+                onPress={() => submit("request_changes")}
+              />
+              <AppButton
+                title="Reject"
+                variant="danger"
+                loading={action.isPending}
+                onPress={() => submit("reject")}
+              />
+              <AppButton
+                title="Suspend"
+                variant="danger"
+                loading={action.isPending}
+                onPress={() => submit("suspend")}
+              />
             </View>
           </AdminCard>
         </>

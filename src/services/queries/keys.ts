@@ -1,7 +1,7 @@
 export const queryKeys = {
   currentUser: ["current-user"] as const,
   tenantDashboard: ["tenant-dashboard"] as const,
-  tenantFeed: ["tenant-feed"] as const,
+  tenantFeed: (filters?: unknown) => ["tenant-feed", filters ?? {}] as const,
   tenantProperties: (filters: unknown) => ["tenant-properties", filters] as const,
   tenantProperty: (propertyId: string) => ["tenant-property", propertyId] as const,
   tenantFavourites: ["tenant-favourites"] as const,

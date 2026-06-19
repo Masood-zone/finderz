@@ -23,6 +23,9 @@ export type TenantProperty = {
   city: string;
   area: string;
   address: string;
+  latitude: string | null;
+  longitude: string | null;
+  distanceKm?: number | null;
   landmark: string | null;
   rentAmount: number;
   paymentPeriod: string;
@@ -137,6 +140,9 @@ export type TenantFilters = {
   region?: string;
   city?: string;
   area?: string;
+  latitude?: number;
+  longitude?: number;
+  radiusKm?: number;
   minRent?: number;
   maxRent?: number;
   paymentPeriod?: string;

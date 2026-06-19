@@ -13,6 +13,7 @@ import { AppButton } from "@/components/ui/app-button";
 import { AppText } from "@/components/ui/app-text";
 import { colors } from "@/components/ui/design-system";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { useTenantLocation } from "@/hooks/use-tenant-location";
 import {
   useTenantFeed,
   useToggleTenantFavourite,
@@ -61,10 +62,21 @@ function SectionPropertyRail({
 }
 
 export default function TenantHomeScreen() {
-  const feed = useTenantFeed();
+  const tenantLocation = useTenantLocation();
+  const feed = useTenantFeed(tenantLocation.filters);
 
   const refresh = () => {
     void feed.refetch();
+  };
+
+  const openSearch = (params: Record<string, string | number | undefined> = {}) => {
+    router.push({
+      pathname: "/tenant/search",
+      params: {
+        ...tenantLocation.filters,
+        ...params,
+      },
+    });
   };
 
   if (feed.isLoading) {
@@ -94,7 +106,7 @@ export default function TenantHomeScreen() {
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <TenantTopBar
         title={`Good morning, ${data?.user.name.split(" ")[0] ?? "there"}`}
-        subtitle={data?.location ?? "Ghana"}
+        subtitle={tenantLocation.label ?? data?.location ?? (tenantLocation.isLoading ? "Finding nearby listings" : "Ghana")}
         userName={data?.user.name}
       />
       <ScrollView
@@ -118,7 +130,7 @@ export default function TenantHomeScreen() {
             placeholder="Search location, property or area"
             placeholderTextColor="#8a94a6"
             editable={false}
-            onPress={() => router.push("/tenant/search")}
+            onPress={() => openSearch()}
             style={{ color: colors.text, fontFamily: "Manrope_400Regular" }}
           />
           <Link href="/tenant/filters" asChild>
@@ -139,12 +151,9 @@ export default function TenantHomeScreen() {
                 label={category}
                 active={index === 0}
                 onPress={() =>
-                  router.push({
-                    pathname: "/tenant/search",
-                    params: {
-                      propertyType:
-                        category === "All" ? undefined : category.toUpperCase(),
-                    },
+                  openSearch({
+                    propertyType:
+                      category === "All" ? undefined : category.toUpperCase(),
                   })
                 }
               />
@@ -164,7 +173,7 @@ export default function TenantHomeScreen() {
             <View className="mt-5 self-start">
               <AppButton
                 title="Start Searching"
-                onPress={() => router.push("/tenant/search")}
+                onPress={() => openSearch()}
               />
             </View>
           </View>
@@ -175,7 +184,7 @@ export default function TenantHomeScreen() {
             title="No approved listings yet"
             message="Once landlords publish approved properties, your recommended homes and nearby affordable listings will appear here."
             actionTitle="Search anyway"
-            onAction={() => router.push("/tenant/search")}
+            onAction={() => openSearch()}
           />
         ) : null}
 
