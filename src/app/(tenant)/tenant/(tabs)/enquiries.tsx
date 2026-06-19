@@ -21,7 +21,7 @@ export default function TenantEnquiriesScreen() {
   const enquiries = useTenantEnquiries(status);
 
   if (enquiries.isLoading) {
-    return <TenantSkeleton rows={4} />;
+    return <TenantSkeleton variant="enquiries" />;
   }
 
   if (enquiries.isError) {

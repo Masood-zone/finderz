@@ -60,7 +60,7 @@ export default function TenantProfileScreen() {
   };
 
   if (profile.isLoading) {
-    return <TenantSkeleton rows={4} />;
+    return <TenantSkeleton variant="profile" />;
   }
 
   if (profile.isError || !profile.data) {

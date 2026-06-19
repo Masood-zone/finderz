@@ -23,7 +23,7 @@ export default function TenantGalleryScreen() {
   const images = useMemo(() => propertyQuery.data?.property.images ?? [], [propertyQuery.data?.property.images]);
 
   if (propertyQuery.isLoading) {
-    return <TenantSkeleton rows={4} />;
+    return <TenantSkeleton variant="gallery" />;
   }
 
   if (propertyQuery.isError || !propertyQuery.data?.property) {

@@ -14,7 +14,7 @@ export default function TenantFavouritesScreen() {
   const toggleFavourite = useToggleTenantFavourite();
 
   if (favourites.isLoading) {
-    return <TenantSkeleton rows={4} />;
+    return <TenantSkeleton variant="list" rows={4} />;
   }
 
   if (favourites.isError) {

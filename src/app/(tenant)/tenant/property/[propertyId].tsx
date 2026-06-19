@@ -24,7 +24,7 @@ export default function TenantPropertyDetailScreen() {
   const [message, setMessage] = useState("Hello, I’m interested in this FinderZ listing. Is it still available?");
 
   if (propertyQuery.isLoading) {
-    return <TenantSkeleton rows={4} />;
+    return <TenantSkeleton variant="property" />;
   }
 
   if (propertyQuery.isError || !propertyQuery.data?.property) {

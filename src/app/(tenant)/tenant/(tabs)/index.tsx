@@ -81,7 +81,7 @@ export default function TenantHomeScreen() {
   };
 
   if (feed.isLoading) {
-    return <TenantSkeleton rows={4} />;
+    return <TenantSkeleton variant="home" />;
   }
 
   if (feed.isError) {

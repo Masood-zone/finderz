@@ -53,7 +53,7 @@ export default function TenantResultsScreen() {
   const toggleFavourite = useToggleTenantFavourite();
 
   if (results.isLoading) {
-    return <TenantSkeleton rows={4} />;
+    return <TenantSkeleton variant="list" rows={4} />;
   }
 
   if (results.isError) {
