@@ -41,7 +41,7 @@ export default function VerificationStatusScreen() {
 
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
-      <StateView icon={icon} title={title} message={verification.data?.nextAction ?? "Submit your landlord details to continue."} primaryAction={primary} secondaryAction={{ title: "Back to Profile", onPress: () => router.push("/landlord/profile" as Href), variant: "secondary" }}>
+      <StateView icon={icon} title={title} message={verification.data?.nextAction ?? "Submit your landlord details to continue."} primaryAction={primary} secondaryAction={{ title: "Continue to Dashboard", onPress: () => router.replace("/landlord" as Href), variant: "secondary" }}>
         {verification.data?.notes ? (
           <View className="rounded-2xl border p-4" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
             <AppText variant="label" muted>

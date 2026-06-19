@@ -1,7 +1,8 @@
 import { router, type Href } from "expo-router";
-import { Bell, CheckSquare, Gavel, LogOut, ShieldCheck, UserRound, Users } from "lucide-react-native";
+import { Bell, CheckSquare, Gavel, LogOut, ShieldCheck, Users } from "lucide-react-native";
 import { Pressable, StyleSheet, View } from "react-native";
 import { AdminCard, StatusPill, SuperAdminShell } from "@/components/super-admin/super-admin-shell";
+import { TenantAvatar } from "@/components/tenant/tenant-shell";
 import { AppButton } from "@/components/ui/app-button";
 import { AppText } from "@/components/ui/app-text";
 import { colors } from "@/components/ui/design-system";
@@ -43,9 +44,7 @@ export default function SuperAdminProfileScreen() {
 
       <AdminCard>
         <View style={styles.profileHeader}>
-          <View style={styles.avatar}>
-            <UserRound color={colors.surface} size={34} />
-          </View>
+          <TenantAvatar name={user?.name} image={user?.image} size={72} />
           <AppText variant="headline" style={{ color: colors.primary }}>
             {user?.name ?? "Super Administrator"}
           </AppText>
@@ -64,6 +63,9 @@ export default function SuperAdminProfileScreen() {
             <AppText style={{ fontFamily: "Manrope_700Bold" }}>Administrator Access</AppText>
             <AppText muted>Marketplace moderation, approvals, reports, alerts, and user safety tools.</AppText>
           </View>
+        </View>
+        <View style={{ marginTop: 12 }}>
+          <AppButton title="Edit Profile" variant="secondary" onPress={() => router.push("/super-admin/edit-profile" as Href)} />
         </View>
       </AdminCard>
 
@@ -95,16 +97,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     gap: 12,
-  },
-  avatar: {
-    alignItems: "center",
-    backgroundColor: colors.primaryContainer,
-    borderColor: colors.gold,
-    borderRadius: 36,
-    borderWidth: 2,
-    height: 72,
-    justifyContent: "center",
-    width: 72,
   },
   pills: {
     flexDirection: "row",

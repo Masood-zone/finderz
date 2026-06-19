@@ -18,7 +18,7 @@ import { Pressable, View } from "react-native";
 
 function getRoleHome(role: string) {
   if (role === "LANDLORD") {
-    return "/landlord";
+    return "/landlord/verification-status";
   }
 
   if (role === "SUPER_ADMIN") {

@@ -7,6 +7,7 @@ import { internalServerErrorResponse, successResponse, validationErrorResponse }
 
 const updateProfileSchema = z.object({
   name: z.string().min(1).max(120).optional(),
+  image: z.string().url().nullable().optional(),
   phone: z.string().min(3).max(30).nullable().optional(),
 });
 
@@ -15,6 +16,8 @@ function serializeUser(currentUser: typeof user.$inferSelect) {
     id: currentUser.id,
     name: currentUser.name,
     email: currentUser.email,
+    emailVerified: currentUser.emailVerified,
+    image: currentUser.image,
     phone: currentUser.phone,
     role: currentUser.role,
     onboardingCompleted: currentUser.onboardingCompleted,

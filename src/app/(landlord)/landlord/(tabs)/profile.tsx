@@ -48,6 +48,7 @@ export default function LandlordProfileScreen() {
 
         <LandlordCard>
           <View className="gap-3">
+            <AppButton title="Edit Profile" variant="secondary" icon={<UserRound color={colors.primary} size={18} />} onPress={() => router.push("/landlord/edit-profile" as Href)} />
             <AppButton title="Verification Status" variant="secondary" icon={<ShieldCheck color={colors.primary} size={18} />} onPress={() => router.push("/landlord/verification-status" as Href)} />
             <AppButton title={landlord ? "Update Onboarding" : "Start Onboarding"} variant="secondary" icon={<FileCheck2 color={colors.primary} size={18} />} onPress={() => router.push("/landlord/onboarding" as Href)} />
             <AppButton title="Support" variant="ghost" onPress={() => Alert.alert("Support", "FinderZ support tools will be expanded in a later phase.")} />

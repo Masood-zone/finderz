@@ -1,4 +1,4 @@
-import { Alert, Pressable, ScrollView, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import { router } from "expo-router";
 import { Bell, ChevronRight, FileText, Heart, HelpCircle, Lock, LogOut, MessageCircle, Shield, UserRound } from "lucide-react-native";
 import { AppText } from "@/components/ui/app-text";
@@ -87,7 +87,7 @@ export default function TenantProfileScreen() {
         </View>
 
         <ProfileSection title="Personal">
-          <ProfileRow label="Edit Profile" icon={UserRound} onPress={() => Alert.alert("Edit Profile", "Profile editing will be expanded in a later account settings slice.")} />
+          <ProfileRow label="Edit Profile" icon={UserRound} onPress={() => router.push("/tenant/edit-profile")} />
           <ProfileRow label="Privacy & Security" icon={Lock} />
         </ProfileSection>
 

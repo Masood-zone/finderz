@@ -39,7 +39,7 @@ import {
   removeTenantFavourite,
   searchTenantProperties,
 } from "@/services/api/tenant-app";
-import { getCurrentUser, updateProfile } from "@/services/api/users";
+import { changePassword, getCurrentUser, updateProfile } from "@/services/api/users";
 import { queryKeys } from "./keys";
 import type { TenantEnquiryStatusFilter, TenantFilters } from "@/types/tenant";
 import type { LandlordPropertyStatus, SaveLandlordPropertyInput } from "@/types/landlord";
@@ -69,8 +69,14 @@ export function useUpdateProfile() {
   return useMutation({
     mutationFn: updateProfile,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.currentUser });
+      queryClient.invalidateQueries();
     },
+  });
+}
+
+export function useChangePassword() {
+  return useMutation({
+    mutationFn: changePassword,
   });
 }
 
