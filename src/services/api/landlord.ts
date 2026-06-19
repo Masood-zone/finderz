@@ -12,6 +12,12 @@ import type {
   SaveLandlordPropertyInput,
 } from "@/types/landlord";
 
+function requireId(value: string, label: string) {
+  if (!value) {
+    throw new Error(`${label} is required.`);
+  }
+}
+
 export async function getLandlordDashboard() {
   const response = await apiClient.get<ApiSuccess<LandlordDashboardResponse>>("/api/landlord/dashboard");
   return response.data.data;
@@ -38,19 +44,25 @@ export async function getLandlordProperties(status: LandlordPropertyStatus = "al
 }
 
 export async function getLandlordProperty(propertyId: string) {
+  requireId(propertyId, "Property ID");
   const response = await apiClient.get<ApiSuccess<{ property: LandlordProperty }>>(`/api/landlord/properties/${propertyId}`);
   return response.data.data;
 }
 
 export async function saveLandlordProperty(input: SaveLandlordPropertyInput) {
   const { id, ...body } = input;
-  const response = id
-    ? await apiClient.patch<ApiSuccess<{ property: LandlordProperty }>>(`/api/landlord/properties/${id}`, body)
-    : await apiClient.post<ApiSuccess<{ property: LandlordProperty }>>("/api/landlord/properties", body);
+  if (id) {
+    requireId(id, "Property ID");
+    const response = await apiClient.patch<ApiSuccess<{ property: LandlordProperty }>>(`/api/landlord/properties/${id}`, body);
+    return response.data.data;
+  }
+
+  const response = await apiClient.post<ApiSuccess<{ property: LandlordProperty }>>("/api/landlord/properties", body);
   return response.data.data;
 }
 
 export async function markLandlordPropertyAsRented(propertyId: string) {
+  requireId(propertyId, "Property ID");
   const response = await apiClient.patch<ApiSuccess<{ property: LandlordProperty }>>(`/api/landlord/properties/${propertyId}`, {
     action: "mark-rented",
   });
@@ -58,6 +70,7 @@ export async function markLandlordPropertyAsRented(propertyId: string) {
 }
 
 export async function duplicateLandlordProperty(propertyId: string) {
+  requireId(propertyId, "Property ID");
   const response = await apiClient.post<ApiSuccess<{ property: LandlordProperty }>>(`/api/landlord/properties/${propertyId}`, {
     action: "duplicate",
   });
@@ -65,6 +78,7 @@ export async function duplicateLandlordProperty(propertyId: string) {
 }
 
 export async function deleteLandlordProperty(propertyId: string) {
+  requireId(propertyId, "Property ID");
   const response = await apiClient.delete<ApiSuccess<{ propertyId: string }>>(`/api/landlord/properties/${propertyId}`);
   return response.data.data;
 }

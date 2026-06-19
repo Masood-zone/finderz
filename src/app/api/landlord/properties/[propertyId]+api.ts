@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { properties } from "@/db/schema";
-import { forbiddenResponse, internalServerErrorResponse, notFoundResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
+import { badRequestResponse, forbiddenResponse, internalServerErrorResponse, notFoundResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
 import { guardErrorResponse, requireLandlord } from "@/lib/auth-guards.server";
 import {
   getLandlordProfileForUser,
@@ -12,13 +12,11 @@ import {
 } from "@/lib/landlord/landlord.server";
 import { savePropertySchema } from "../properties+api";
 
-type RouteContext = {
-  params: {
-    propertyId: string;
-  };
+type RouteParams = {
+  propertyId: string;
 };
 
-export async function GET(request: Request, { params }: RouteContext) {
+export async function GET(request: Request, { propertyId }: RouteParams) {
   try {
     const context = await requireLandlord(request);
     const profile = await getLandlordProfileForUser(context.user.id);
@@ -27,7 +25,11 @@ export async function GET(request: Request, { params }: RouteContext) {
       return forbiddenResponse();
     }
 
-    const row = await getOwnedProperty(profile.id, params.propertyId);
+    if (!propertyId) {
+      return badRequestResponse("Property ID is required.");
+    }
+
+    const row = await getOwnedProperty(profile.id, propertyId);
     if (!row) {
       return notFoundResponse("Property not found.");
     }
@@ -38,12 +40,13 @@ export async function GET(request: Request, { params }: RouteContext) {
     try {
       return guardErrorResponse(error);
     } catch {
+      console.error("GET /api/landlord/properties/[propertyId] failed:", error);
       return internalServerErrorResponse();
     }
   }
 }
 
-export async function PATCH(request: Request, { params }: RouteContext) {
+export async function PATCH(request: Request, { propertyId }: RouteParams) {
   try {
     const context = await requireLandlord(request);
     const profile = await getLandlordProfileForUser(context.user.id);
@@ -52,7 +55,11 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       return forbiddenResponse();
     }
 
-    const existing = await getOwnedProperty(profile.id, params.propertyId);
+    if (!propertyId) {
+      return badRequestResponse("Property ID is required.");
+    }
+
+    const existing = await getOwnedProperty(profile.id, propertyId);
     if (!existing) {
       return notFoundResponse("Property not found.");
     }
@@ -113,12 +120,13 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     try {
       return guardErrorResponse(error);
     } catch {
+      console.error("PATCH /api/landlord/properties/[propertyId] failed:", error);
       return internalServerErrorResponse();
     }
   }
 }
 
-export async function POST(request: Request, { params }: RouteContext) {
+export async function POST(request: Request, { propertyId }: RouteParams) {
   try {
     const context = await requireLandlord(request);
     const profile = await getLandlordProfileForUser(context.user.id);
@@ -127,7 +135,11 @@ export async function POST(request: Request, { params }: RouteContext) {
       return forbiddenResponse();
     }
 
-    const existing = await getOwnedProperty(profile.id, params.propertyId);
+    if (!propertyId) {
+      return badRequestResponse("Property ID is required.");
+    }
+
+    const existing = await getOwnedProperty(profile.id, propertyId);
     if (!existing) {
       return notFoundResponse("Property not found.");
     }
@@ -167,12 +179,13 @@ export async function POST(request: Request, { params }: RouteContext) {
     try {
       return guardErrorResponse(error);
     } catch {
+      console.error("POST /api/landlord/properties/[propertyId] failed:", error);
       return internalServerErrorResponse();
     }
   }
 }
 
-export async function DELETE(request: Request, { params }: RouteContext) {
+export async function DELETE(request: Request, { propertyId }: RouteParams) {
   try {
     const context = await requireLandlord(request);
     const profile = await getLandlordProfileForUser(context.user.id);
@@ -181,7 +194,11 @@ export async function DELETE(request: Request, { params }: RouteContext) {
       return forbiddenResponse();
     }
 
-    const existing = await getOwnedProperty(profile.id, params.propertyId);
+    if (!propertyId) {
+      return badRequestResponse("Property ID is required.");
+    }
+
+    const existing = await getOwnedProperty(profile.id, propertyId);
     if (!existing) {
       return notFoundResponse("Property not found.");
     }
@@ -192,6 +209,7 @@ export async function DELETE(request: Request, { params }: RouteContext) {
     try {
       return guardErrorResponse(error);
     } catch {
+      console.error("DELETE /api/landlord/properties/[propertyId] failed:", error);
       return internalServerErrorResponse();
     }
   }

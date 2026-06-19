@@ -28,6 +28,10 @@ export function validationErrorResponse(error: ZodError) {
   return errorResponse("VALIDATION_ERROR", "Please check the submitted fields.", 400, error.flatten().fieldErrors);
 }
 
+export function badRequestResponse(message = "Bad request.") {
+  return errorResponse("BAD_REQUEST", message, 400);
+}
+
 export function unauthorizedResponse() {
   return errorResponse("UNAUTHORIZED", "You must be signed in to access this resource.", 401);
 }

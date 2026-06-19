@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { enquiries, messages, properties, propertyImages, user } from "@/db/schema";
-import { internalServerErrorResponse, notFoundResponse, successResponse } from "@/lib/api-response";
+import { badRequestResponse, internalServerErrorResponse, notFoundResponse, successResponse } from "@/lib/api-response";
 import { guardErrorResponse, requireTenant } from "@/lib/auth-guards.server";
 import type { TenantEnquiry } from "@/types/tenant";
 import { serializeProperties } from "@/lib/tenant/property-serializer.server";
@@ -18,11 +18,16 @@ type EnquiryDetailRow = typeof enquiries.$inferSelect & {
   messages?: (typeof messages.$inferSelect)[];
 };
 
-export async function GET(request: Request, { params }: { params: RouteParams }) {
+export async function GET(request: Request, { enquiryId }: RouteParams) {
   try {
     const context = await requireTenant(request);
+
+    if (!enquiryId) {
+      return badRequestResponse("Enquiry ID is required.");
+    }
+
     const row = await db.query.enquiries.findFirst({
-      where: eq(enquiries.id, params.enquiryId),
+      where: eq(enquiries.id, enquiryId),
       with: {
         landlord: true,
         property: {
@@ -84,6 +89,7 @@ export async function GET(request: Request, { params }: { params: RouteParams })
     try {
       return guardErrorResponse(error);
     } catch {
+      console.error("GET /api/tenant/enquiries/[enquiryId] failed:", error);
       return internalServerErrorResponse();
     }
   }

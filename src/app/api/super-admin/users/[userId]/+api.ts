@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { user } from "@/db/schema";
-import { internalServerErrorResponse, notFoundResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
+import { badRequestResponse, internalServerErrorResponse, notFoundResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
 import { guardErrorResponse, requireSuperAdmin } from "@/lib/auth-guards.server";
 import {
   ensureNotFinalActiveSuperAdmin,
@@ -17,19 +17,22 @@ const actionSchema = z.object({
   reason: z.string().trim().optional(),
 });
 
-type RouteContext = {
-  params: {
-    userId: string;
-  };
+type RouteParams = {
+  userId: string;
 };
 
-export async function PATCH(request: Request, { params }: RouteContext) {
+export async function PATCH(request: Request, { userId }: RouteParams) {
   try {
     const context = await requireSuperAdmin(request);
+
+    if (!userId) {
+      return badRequestResponse("User ID is required.");
+    }
+
     const parsed = actionSchema.safeParse(await request.json());
     if (!parsed.success) return validationErrorResponse(parsed.error);
 
-    const existing = await db.query.user.findFirst({ where: eq(user.id, params.userId), with: { landlordProfile: true } });
+    const existing = await db.query.user.findFirst({ where: eq(user.id, userId), with: { landlordProfile: true } });
     if (!existing) return notFoundResponse("User not found.");
 
     if (parsed.data.action === "suspend") {
@@ -54,6 +57,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       try {
         return guardErrorResponse(error);
       } catch {
+        console.error("PATCH /api/super-admin/users/[userId] failed:", error);
         return internalServerErrorResponse();
       }
     }

@@ -13,6 +13,12 @@ import type {
   UserModerationAction,
 } from "@/types/super-admin";
 
+function requireId(value: string, label: string) {
+  if (!value) {
+    throw new Error(`${label} is required.`);
+  }
+}
+
 type ListParams = {
   page?: number;
   pageSize?: number;
@@ -39,11 +45,13 @@ export async function getSuperAdminApprovals(input: ListParams = {}) {
 }
 
 export async function getSuperAdminProperty(propertyId: string) {
+  requireId(propertyId, "Property ID");
   const response = await apiClient.get<ApiSuccess<{ property: SuperAdminPropertyDetail }>>(`/api/super-admin/approvals/${propertyId}`);
   return response.data.data;
 }
 
 export async function moderateSuperAdminProperty(input: { propertyId: string; action: PropertyModerationAction; reason?: string }) {
+  requireId(input.propertyId, "Property ID");
   const response = await apiClient.patch<ApiSuccess<{ property: SuperAdminPropertyDetail }>>(`/api/super-admin/approvals/${input.propertyId}`, {
     action: input.action,
     reason: input.reason,
@@ -59,6 +67,7 @@ export async function getSuperAdminReports(input: ListParams = {}) {
 }
 
 export async function moderateSuperAdminReport(input: { reportId: string; action: ReportModerationAction; reason?: string }) {
+  requireId(input.reportId, "Report ID");
   const response = await apiClient.patch<ApiSuccess<{ report: SuperAdminReport | null }>>(`/api/super-admin/reports/${input.reportId}`, {
     action: input.action,
     reason: input.reason,
@@ -74,6 +83,7 @@ export async function getSuperAdminUsers(input: ListParams = {}) {
 }
 
 export async function moderateSuperAdminUser(input: { userId: string; action: UserModerationAction; reason?: string }) {
+  requireId(input.userId, "User ID");
   const response = await apiClient.patch<ApiSuccess<{ user: SuperAdminUser }>>(`/api/super-admin/users/${input.userId}`, {
     action: input.action,
     reason: input.reason,

@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { properties, propertyReports } from "@/db/schema";
-import { internalServerErrorResponse, notFoundResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
+import { badRequestResponse, internalServerErrorResponse, notFoundResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
 import { guardErrorResponse, requireSuperAdmin } from "@/lib/auth-guards.server";
 import { requireReason, serializeReport, writeAdminAuditLog } from "@/lib/super-admin/super-admin.server";
 
@@ -11,19 +11,22 @@ const actionSchema = z.object({
   reason: z.string().trim().optional(),
 });
 
-type RouteContext = {
-  params: {
-    reportId: string;
-  };
+type RouteParams = {
+  reportId: string;
 };
 
-export async function PATCH(request: Request, { params }: RouteContext) {
+export async function PATCH(request: Request, { reportId }: RouteParams) {
   try {
     const context = await requireSuperAdmin(request);
+
+    if (!reportId) {
+      return badRequestResponse("Report ID is required.");
+    }
+
     const parsed = actionSchema.safeParse(await request.json());
     if (!parsed.success) return validationErrorResponse(parsed.error);
 
-    const report = await db.query.propertyReports.findFirst({ where: eq(propertyReports.id, params.reportId) });
+    const report = await db.query.propertyReports.findFirst({ where: eq(propertyReports.id, reportId) });
     if (!report) return notFoundResponse("Report not found.");
 
     if (parsed.data.action === "suspend_listing") {
@@ -48,6 +51,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     try {
       return guardErrorResponse(error);
     } catch {
+      console.error("PATCH /api/super-admin/reports/[reportId] failed:", error);
       return internalServerErrorResponse();
     }
   }

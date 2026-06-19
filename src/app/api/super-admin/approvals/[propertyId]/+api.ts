@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "@/db";
 import { properties } from "@/db/schema";
 import {
+  badRequestResponse,
   internalServerErrorResponse,
   notFoundResponse,
   successResponse,
@@ -33,21 +34,7 @@ export async function GET(request: Request, { propertyId }: RouteContext) {
     await requireSuperAdmin(request);
 
     if (!propertyId) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: {
-            code: "PROPERTY_ID_REQUIRED",
-            message: "Property ID is required.",
-          },
-        }),
-        {
-          status: 400,
-          headers: {
-            "content-type": "application/json",
-          },
-        },
-      );
+      return badRequestResponse("Property ID is required.");
     }
 
     const property = await getAdminPropertyDetail(propertyId);
@@ -72,21 +59,7 @@ export async function PATCH(request: Request, { propertyId }: RouteContext) {
     const context = await requireSuperAdmin(request);
 
     if (!propertyId) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: {
-            code: "PROPERTY_ID_REQUIRED",
-            message: "Property ID is required.",
-          },
-        }),
-        {
-          status: 400,
-          headers: {
-            "content-type": "application/json",
-          },
-        },
-      );
+      return badRequestResponse("Property ID is required.");
     }
 
     const parsed = actionSchema.safeParse(await request.json());

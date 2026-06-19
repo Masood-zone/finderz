@@ -12,6 +12,12 @@ import type {
 } from "@/types/tenant";
 import type { ApiSuccess } from "@/types/api";
 
+function requireId(value: string, label: string) {
+  if (!value) {
+    throw new Error(`${label} is required.`);
+  }
+}
+
 function toParams(filters: TenantFilters) {
   const params = new URLSearchParams();
 
@@ -44,6 +50,7 @@ export async function searchTenantProperties(filters: TenantFilters) {
 }
 
 export async function getTenantProperty(propertyId: string) {
+  requireId(propertyId, "Property ID");
   const response = await apiClient.get<ApiSuccess<TenantPropertyDetailResponse>>(`/api/tenant/properties/${propertyId}`);
   return response.data.data;
 }
@@ -69,6 +76,7 @@ export async function getTenantEnquiries(status: TenantEnquiryStatusFilter = "ac
 }
 
 export async function getTenantEnquiry(enquiryId: string) {
+  requireId(enquiryId, "Enquiry ID");
   const response = await apiClient.get<ApiSuccess<TenantEnquiryDetailResponse>>(`/api/tenant/enquiries/${enquiryId}`);
   return response.data.data;
 }
