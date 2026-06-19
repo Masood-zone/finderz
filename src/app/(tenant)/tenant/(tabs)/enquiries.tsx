@@ -3,6 +3,7 @@ import { Image, Pressable, RefreshControl, ScrollView, View } from "react-native
 import { router } from "expo-router";
 import { AppText } from "@/components/ui/app-text";
 import { colors, radius } from "@/components/ui/design-system";
+import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import { TenantChip, TenantTopBar } from "@/components/tenant/tenant-shell";
 import { TenantEmptyState, TenantErrorState, TenantSkeleton } from "@/components/tenant/tenant-state";
 import { getErrorMessage } from "@/lib/get-error-message";
@@ -28,7 +29,7 @@ export default function TenantEnquiriesScreen() {
   }
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+    <SafeAreaScreen edges={["right", "bottom", "left"]}>
       <TenantTopBar />
       <View className="px-4 py-4">
         <View className="flex-row items-center justify-between">
@@ -82,6 +83,6 @@ export default function TenantEnquiriesScreen() {
           ))
         )}
       </ScrollView>
-    </View>
+    </SafeAreaScreen>
   );
 }

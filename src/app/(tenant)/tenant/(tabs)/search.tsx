@@ -5,6 +5,7 @@ import { Building2, History, Home, MapPin, Search, X } from "lucide-react-native
 import { AppText } from "@/components/ui/app-text";
 import { colors, radius } from "@/components/ui/design-system";
 import { FinderzLogo } from "@/components/ui/finderz-logo";
+import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import { TenantChip, TenantSectionHeader } from "@/components/tenant/tenant-shell";
 
 const suggestedLocations = [
@@ -50,7 +51,7 @@ export default function TenantSearchScreen() {
   };
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+    <SafeAreaScreen>
       <View className="flex-row items-center justify-between px-4 py-3">
         <View className="flex-row items-center gap-2">
           <FinderzLogo variant="mark" size="sm" />
@@ -169,6 +170,6 @@ export default function TenantSearchScreen() {
           </View>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaScreen>
   );
 }

@@ -5,6 +5,7 @@ import { AppButton } from "@/components/ui/app-button";
 import { AppText } from "@/components/ui/app-text";
 import { Checkbox } from "@/components/ui/checkbox";
 import { colors, radius } from "@/components/ui/design-system";
+import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import { TenantChip, TenantSectionHeader } from "@/components/tenant/tenant-shell";
 import { useTenantFilterStore } from "@/store/tenant-filter-store";
 import type { TenantFilters } from "@/types/tenant";
@@ -62,7 +63,7 @@ export default function TenantFiltersScreen() {
   };
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+    <SafeAreaScreen>
       <View className="flex-row items-center justify-between px-4 py-4" style={{ backgroundColor: colors.background }}>
         <Pressable className="h-10 w-10 items-center justify-center" style={{ borderRadius: radius.lg, backgroundColor: colors.surface }} onPress={() => router.back()}>
           <ArrowLeft color={colors.primary} size={20} />
@@ -194,6 +195,6 @@ export default function TenantFiltersScreen() {
         <AppButton title="Apply Filters" onPress={apply} />
         <AppButton title="Show Results" variant="secondary" onPress={apply} />
       </View>
-    </View>
+    </SafeAreaScreen>
   );
 }

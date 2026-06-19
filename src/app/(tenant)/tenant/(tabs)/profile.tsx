@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import { Bell, ChevronRight, FileText, Heart, HelpCircle, Lock, LogOut, MessageCircle, Shield, UserRound } from "lucide-react-native";
 import { AppText } from "@/components/ui/app-text";
 import { colors } from "@/components/ui/design-system";
+import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import { TenantAvatar, TenantTopBar } from "@/components/tenant/tenant-shell";
 import { TenantErrorState, TenantSkeleton } from "@/components/tenant/tenant-state";
 import { getErrorMessage } from "@/lib/get-error-message";
@@ -69,7 +70,7 @@ export default function TenantProfileScreen() {
   const user = profile.data.user;
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+    <SafeAreaScreen edges={["right", "bottom", "left"]}>
       <TenantTopBar userName={user.name} />
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 120, gap: 22 }} showsVerticalScrollIndicator={false}>
         <View className="items-center rounded-2xl p-5" style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }}>
@@ -110,6 +111,6 @@ export default function TenantProfileScreen() {
           <AppText style={{ color: colors.error, fontFamily: "Manrope_700Bold" }}>Sign Out</AppText>
         </Pressable>
       </ScrollView>
-    </View>
+    </SafeAreaScreen>
   );
 }

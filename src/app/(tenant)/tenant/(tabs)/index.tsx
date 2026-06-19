@@ -12,6 +12,7 @@ import {
 import { AppButton } from "@/components/ui/app-button";
 import { AppText } from "@/components/ui/app-text";
 import { colors } from "@/components/ui/design-system";
+import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useTenantLocation } from "@/hooks/use-tenant-location";
 import {
@@ -103,7 +104,7 @@ export default function TenantHomeScreen() {
   );
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+    <SafeAreaScreen edges={["right", "bottom", "left"]}>
       <TenantTopBar
         title={`Good morning, ${data?.user.name.split(" ")[0] ?? "there"}`}
         subtitle={tenantLocation.label ?? data?.location ?? (tenantLocation.isLoading ? "Finding nearby listings" : "Ghana")}
@@ -236,6 +237,6 @@ export default function TenantHomeScreen() {
           properties={data?.recentlyAdded ?? []}
         />
       </ScrollView>
-    </View>
+    </SafeAreaScreen>
   );
 }

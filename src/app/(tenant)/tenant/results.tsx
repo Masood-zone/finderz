@@ -4,6 +4,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { ArrowLeft, SlidersHorizontal, SortAsc } from "lucide-react-native";
 import { AppText } from "@/components/ui/app-text";
 import { colors, radius } from "@/components/ui/design-system";
+import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import { PropertyCard } from "@/components/tenant/property-card";
 import { TenantChip } from "@/components/tenant/tenant-shell";
 import { TenantEmptyState, TenantErrorState, TenantSkeleton } from "@/components/tenant/tenant-state";
@@ -63,7 +64,7 @@ export default function TenantResultsScreen() {
   const title = filters.q ? `${filters.q}` : filters.propertyType ? `${filters.propertyType.toLowerCase()} listings` : "Search Results";
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+    <SafeAreaScreen>
       <View className="px-4 pb-3 pt-4" style={{ backgroundColor: colors.background }}>
         <View className="flex-row items-center gap-3">
           <Pressable className="h-10 w-10 items-center justify-center" style={{ borderRadius: radius.lg, backgroundColor: colors.surface }} onPress={() => router.back()}>
@@ -112,6 +113,6 @@ export default function TenantResultsScreen() {
           {sortOptions.find((option) => option.value === sort)?.label}
         </AppText>
       </View>
-    </View>
+    </SafeAreaScreen>
   );
 }

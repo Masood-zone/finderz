@@ -2,6 +2,7 @@ import { RefreshControl, ScrollView, View } from "react-native";
 import { router } from "expo-router";
 import { AppText } from "@/components/ui/app-text";
 import { colors, radius } from "@/components/ui/design-system";
+import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import { PropertyCard } from "@/components/tenant/property-card";
 import { TenantTopBar } from "@/components/tenant/tenant-shell";
 import { TenantEmptyState, TenantErrorState, TenantSkeleton } from "@/components/tenant/tenant-state";
@@ -21,7 +22,7 @@ export default function TenantFavouritesScreen() {
   }
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+    <SafeAreaScreen edges={["right", "bottom", "left"]}>
       <TenantTopBar />
       <ScrollView
         refreshControl={<RefreshControl refreshing={favourites.isRefetching} tintColor={colors.primary} onRefresh={() => void favourites.refetch()} />}
@@ -47,6 +48,6 @@ export default function TenantFavouritesScreen() {
           </View>
         )}
       </ScrollView>
-    </View>
+    </SafeAreaScreen>
   );
 }
