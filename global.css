@@ -1,3 +1,23 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
+@import "nativewind/theme";
+
+/*
+ * NativeWind 5 uses Tailwind CSS 4's CSS-first configuration. Keep the
+ * FinderZ design tokens here so utility classes resolve on native and web.
+ */
+@theme {
+  --color-primary: #075e8f;
+  --color-primary-dark: #07324f;
+  --color-accent-gold: #f4c542;
+  --color-accent-teal: #0f766e;
+  --color-background: #f6f8fb;
+  --color-surface: #ffffff;
+  --color-text-primary: #111827;
+  --color-text-secondary: #5f6b7a;
+  --color-border: #d8e0ea;
+  --color-success: #159455;
+  --color-warning: #b7791f;
+  --color-error: #b42318;
+}

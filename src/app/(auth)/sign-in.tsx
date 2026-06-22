@@ -72,7 +72,7 @@ export default function SignInScreen() {
             render={({ field: { onChange, onBlur, value } }) => (
               <AppInput
                 label="Email"
-                placeholder="you@example.com"
+                placeholder="you@gmail.com"
                 autoCapitalize="none"
                 keyboardType="email-address"
                 textContentType="emailAddress"
