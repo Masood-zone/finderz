@@ -16,8 +16,20 @@ export const authClient = createAuthClient({
 });
 
 export const useSession = authClient.useSession;
-export const getSession = authClient.getSession;
 export const getCookie = authClient.getCookie;
+
+type AuthClientResult<TData = unknown> = {
+  data?: TData;
+  error?: { message?: string } | null;
+};
+
+function unwrapAuthResult<TData>(result: AuthClientResult<TData>) {
+  if (result.error) {
+    throw result.error;
+  }
+
+  return result.data;
+}
 
 export type SignUpInput = {
   name: string;
@@ -31,12 +43,16 @@ export type SignInInput = {
   password: string;
 };
 
-export function signUp(input: SignUpInput) {
-  return authClient.signUp.email(input);
+export async function getSession() {
+  return unwrapAuthResult(await authClient.getSession());
 }
 
-export function signIn(input: SignInInput) {
-  return authClient.signIn.email(input);
+export async function signUp(input: SignUpInput) {
+  return unwrapAuthResult(await authClient.signUp.email(input));
+}
+
+export async function signIn(input: SignInInput) {
+  return unwrapAuthResult(await authClient.signIn.email(input));
 }
 
 export function signOut() {

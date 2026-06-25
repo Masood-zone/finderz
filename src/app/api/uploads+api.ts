@@ -38,9 +38,8 @@ export async function POST(request: Request) {
       return Response.json({ success: false, error: { code: "VALIDATION_ERROR", message: "A file is required." } }, { status: 400 });
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
     const upload = await uploadBuffer({
-      buffer,
+      buffer: await file.arrayBuffer(),
       filename: file.name,
       folder: folders[parsed.data.purpose],
       resourceType: resourceTypes[parsed.data.purpose],

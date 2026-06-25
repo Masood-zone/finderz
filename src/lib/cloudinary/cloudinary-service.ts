@@ -1,5 +1,3 @@
-import { v2 as cloudinary } from "cloudinary"
-
 export interface CloudinaryUploadResponse {
   public_id: string
   secure_url: string
@@ -17,6 +15,11 @@ export type CloudinaryResourceType = "auto" | "image" | "raw"
 let configured = false
 let clockOffsetMs = 0
 let clockOffsetCheckedAt = 0
+let credentials: {
+  cloudName: string
+  apiKey: string
+  apiSecret: string
+} | null = null
 
 function ensureConfigured() {
   if (configured) return
@@ -29,13 +32,34 @@ function ensureConfigured() {
     throw new Error("Cloudinary credentials are missing from environment")
   }
 
-  cloudinary.config({
-    cloud_name: cloudName,
-    api_key: apiKey,
-    api_secret: apiSecret,
-  })
+  credentials = { cloudName, apiKey, apiSecret }
 
   configured = true
+}
+
+async function sha1Hex(value: string) {
+  const data = new TextEncoder().encode(value)
+  const hash = await crypto.subtle.digest("SHA-1", data)
+
+  return Array.from(new Uint8Array(hash))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("")
+}
+
+async function createSignature(params: Record<string, string | number>) {
+  ensureConfigured()
+
+  if (!credentials) {
+    throw new Error("Cloudinary credentials are missing from environment")
+  }
+
+  const payload = Object.entries(params)
+    .filter(([, value]) => value !== "" && value !== undefined && value !== null)
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([key, value]) => `${key}=${value}`)
+    .join("&")
+
+  return sha1Hex(`${payload}${credentials.apiSecret}`)
 }
 
 async function getUploadTimestamp(): Promise<number> {
@@ -68,40 +92,66 @@ async function getUploadTimestamp(): Promise<number> {
 }
 
 export async function uploadBuffer(args: {
-  buffer: Buffer
+  buffer: ArrayBuffer
   folder?: string
   filename?: string
   resourceType?: CloudinaryResourceType
 }): Promise<CloudinaryUploadResponse> {
   ensureConfigured()
+  if (!credentials) {
+    throw new Error("Cloudinary credentials are missing from environment")
+  }
 
   const resourceType = args.resourceType || "auto"
   const timestamp = await getUploadTimestamp()
+  const uploadParams = {
+    folder: args.folder || "finderz/uploads",
+    filename_override: args.filename || "",
+    resource_type: resourceType,
+    timestamp,
+    unique_filename: "true",
+    use_filename: "true",
+  }
+  const formData = new FormData()
 
-  const result = await new Promise<CloudinaryUploadResponse>(
-    (resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        {
-          folder: args.folder || "amanah-welfare/uploads",
-          filename_override: args.filename,
-          resource_type: resourceType,
-          timestamp,
-          unique_filename: true,
-          use_filename: true,
-        },
-        (error, uploadResult) => {
-          if (error) {
-            reject(error)
-            return
-          }
+  formData.append("file", new Blob([args.buffer]), args.filename || "upload")
+  formData.append("api_key", credentials.apiKey)
+  formData.append("folder", uploadParams.folder)
+  formData.append("resource_type", uploadParams.resource_type)
+  formData.append("timestamp", String(uploadParams.timestamp))
+  formData.append("unique_filename", uploadParams.unique_filename)
+  formData.append("use_filename", uploadParams.use_filename)
 
-          resolve(uploadResult as CloudinaryUploadResponse)
-        }
-      )
+  if (uploadParams.filename_override) {
+    formData.append("filename_override", uploadParams.filename_override)
+  }
 
-      stream.end(args.buffer)
-    }
-  )
+  const signatureParams: Record<string, string | number> = {
+    folder: uploadParams.folder,
+    resource_type: uploadParams.resource_type,
+    timestamp: uploadParams.timestamp,
+    unique_filename: uploadParams.unique_filename,
+    use_filename: uploadParams.use_filename,
+  }
+
+  if (uploadParams.filename_override) {
+    signatureParams.filename_override = uploadParams.filename_override
+  }
+
+  formData.append("signature", await createSignature(signatureParams))
+
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${credentials.cloudName}/${resourceType}/upload`, {
+    method: "POST",
+    body: formData,
+  })
+
+  const result = (await response.json()) as CloudinaryUploadResponse & {
+    error?: { message?: string }
+  }
+
+  if (!response.ok) {
+    throw new Error(result.error?.message || "Cloudinary upload failed")
+  }
 
   return {
     public_id: result.public_id,
@@ -117,7 +167,7 @@ export async function uploadBuffer(args: {
 }
 
 export async function uploadImageBuffer(args: {
-  buffer: Buffer
+  buffer: ArrayBuffer
   folder?: string
   filename?: string
 }): Promise<CloudinaryUploadResponse> {

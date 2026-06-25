@@ -17,6 +17,7 @@ apiClient.interceptors.request.use((config) => {
 
   if (cookies) {
     config.headers.Cookie = cookies;
+    config.headers["x-finderz-auth-cookie"] = cookies;
   }
 
   return config;
