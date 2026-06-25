@@ -40,13 +40,31 @@ function getExpoDevServerOrigin() {
   }
 }
 
+function getExpoRouterOrigin() {
+  const routerOrigin = Constants.expoConfig?.extra?.router?.origin;
+
+  if (typeof routerOrigin !== "string" || routerOrigin.length === 0) {
+    return null;
+  }
+
+  try {
+    return new URL(routerOrigin).origin;
+  } catch {
+    return null;
+  }
+}
+
 export function getApiBaseUrl() {
   const configuredUrl = publicEnv.EXPO_PUBLIC_API_URL;
+  const expoRouterOrigin = getExpoRouterOrigin();
   const expoDevServerOrigin = getExpoDevServerOrigin();
+  if (expoRouterOrigin && publicEnv.EXPO_PUBLIC_APP_ENV !== "development") {
+    return expoRouterOrigin;
+  }
 
   if (configuredUrl && (!isLoopbackHost(configuredUrl) || !expoDevServerOrigin)) {
     return configuredUrl;
   }
 
-  return expoDevServerOrigin ?? configuredUrl ?? "http://localhost:8081";
+  return expoRouterOrigin ?? expoDevServerOrigin ?? configuredUrl ?? "http://localhost:8081";
 }

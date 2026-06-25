@@ -20,13 +20,15 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_APP_ENV": "preview"
+        "EXPO_PUBLIC_APP_ENV": "preview",
+        "EXPO_UNSTABLE_DEPLOY_SERVER": "1"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_APP_ENV": "production"
+        "EXPO_PUBLIC_APP_ENV": "production",
+        "EXPO_UNSTABLE_DEPLOY_SERVER": "1"
       },
       "android": {
         "buildType": "app-bundle"

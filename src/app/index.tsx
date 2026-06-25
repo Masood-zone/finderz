@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { router } from "expo-router";
 import type { Href } from "expo-router";
 import { LoadingScreen } from "@/components/shared/loading-screen";
@@ -9,8 +9,21 @@ export default function Index() {
   const session = useTypedSession();
   const user = session.data?.user;
   const hasSeenPublicOnboarding = useOnboardingStore((state) => state.hasSeenPublicOnboarding);
-  const onboardingHydrated = useOnboardingStore.persist.hasHydrated();
+  const [onboardingHydrated, setOnboardingHydrated] = useState(() =>
+    useOnboardingStore.persist.hasHydrated(),
+  );
   let redirectHref: Href | null = null;
+
+  useEffect(() => {
+    if (useOnboardingStore.persist.hasHydrated()) {
+      setOnboardingHydrated(true);
+      return;
+    }
+
+    return useOnboardingStore.persist.onFinishHydration(() => {
+      setOnboardingHydrated(true);
+    });
+  }, []);
 
   if (!session.isPending && onboardingHydrated) {
     if (!user) {
