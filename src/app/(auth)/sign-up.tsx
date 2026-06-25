@@ -9,6 +9,7 @@ import { KeyboardAwareScreen } from "@/components/ui/keyboard-aware-screen";
 import { PasswordInput } from "@/components/ui/password-input";
 import { getSession } from "@/lib/auth-client";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { appendMonitoringReference, captureHandledError } from "@/lib/monitoring";
 import { signUpWithEmail } from "@/services/api/auth-flows";
 import { useAssignRole } from "@/services/queries/hooks";
 import { useOnboardingStore } from "@/store/onboarding-store";
@@ -87,10 +88,18 @@ export default function SignUpScreen() {
       setSelectedRole(null);
       router.replace("/");
     } catch (signUpError) {
+      const eventId = captureHandledError(signUpError, {
+        name: "auth-sign-up",
+        tags: { role, screen: "sign-up" },
+        extra: { emailDomain: values.email.trim().split("@")[1] ?? "unknown" },
+      });
       setError(
-        getErrorMessage(
-          signUpError,
-          "Unable to create your account. Please try again.",
+        appendMonitoringReference(
+          getErrorMessage(
+            signUpError,
+            "Unable to create your account. Please try again.",
+          ),
+          eventId,
         ),
       );
     }

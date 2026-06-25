@@ -1,6 +1,7 @@
 import { expo } from "@better-auth/expo";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { betterAuth } from "better-auth";
+import { bearer } from "better-auth/plugins";
 import { db } from "@/db";
 import * as relations from "@/db/relations";
 import * as schema from "@/db/schema";
@@ -61,5 +62,5 @@ export const auth = betterAuth({
   experimental: {
     joins: true,
   },
-  plugins: [expo()],
+  plugins: [expo(), bearer()],
 });

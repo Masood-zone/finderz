@@ -4,6 +4,7 @@ import { z } from "zod";
 const publicEnvSchema = z.object({
   EXPO_PUBLIC_API_URL: z.preprocess((value) => (value === "" ? undefined : value), z.string().url().optional()),
   EXPO_PUBLIC_APP_ENV: z.enum(["development", "preview", "production", "test"]).optional(),
+  EXPO_PUBLIC_SENTRY_DSN: z.preprocess((value) => (value === "" ? undefined : value), z.string().url().optional()),
 });
 
 export type PublicEnv = z.infer<typeof publicEnvSchema>;
@@ -11,6 +12,7 @@ export type PublicEnv = z.infer<typeof publicEnvSchema>;
 const parsedPublicEnv = publicEnvSchema.safeParse({
   EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL,
   EXPO_PUBLIC_APP_ENV: process.env.EXPO_PUBLIC_APP_ENV,
+  EXPO_PUBLIC_SENTRY_DSN: process.env.EXPO_PUBLIC_SENTRY_DSN,
 });
 
 export const publicEnv = parsedPublicEnv.success ? parsedPublicEnv.data : {};

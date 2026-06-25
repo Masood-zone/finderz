@@ -1,4 +1,7 @@
 import { AppProviders } from "@/providers/app-providers";
+import { SentrySessionContext } from "@/components/shared/sentry-session-context";
+import { useAppUpdates } from "@/hooks/use-app-updates";
+import { initializeMonitoring } from "@/lib/monitoring";
 import {
   Manrope_400Regular,
   Manrope_600SemiBold,
@@ -6,16 +9,16 @@ import {
   Manrope_800ExtraBold,
   useFonts,
 } from "@expo-google-fonts/manrope";
+import * as Sentry from "@sentry/react-native";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import * as Updates from "expo-updates";
 import { useEffect, useRef } from "react";
-import { Alert } from "react-native";
 import "../../global.css";
 
 void SplashScreen.preventAutoHideAsync();
+initializeMonitoring();
 
-export default function RootLayout() {
+function RootLayout() {
   const updatePromptShownRef = useRef(false);
   const [fontsLoaded] = useFonts({
     Manrope_400Regular,
@@ -30,49 +33,7 @@ export default function RootLayout() {
     }
   }, [fontsLoaded]);
 
-  useEffect(() => {
-    if (!fontsLoaded || updatePromptShownRef.current || !Updates.isEnabled) {
-      return;
-    }
-
-    updatePromptShownRef.current = true;
-
-    async function checkForUpdates() {
-      try {
-        const update = await Updates.checkForUpdateAsync();
-
-        if (!update.isAvailable) {
-          return;
-        }
-
-        Alert.alert(
-          "Update available",
-          "A new FinderZ preview update is ready to download and install.",
-          [
-            { text: "Not now", style: "cancel" },
-            {
-              text: "Download and install",
-              onPress: async () => {
-                try {
-                  await Updates.fetchUpdateAsync();
-                  await Updates.reloadAsync();
-                } catch (error) {
-                  Alert.alert(
-                    "Update failed",
-                    error instanceof Error ? error.message : "Please try again later.",
-                  );
-                }
-              },
-            },
-          ],
-        );
-      } catch {
-        updatePromptShownRef.current = false;
-      }
-    }
-
-    void checkForUpdates();
-  }, [fontsLoaded]);
+  useAppUpdates(fontsLoaded, updatePromptShownRef);
 
   if (!fontsLoaded) {
     return null;
@@ -80,7 +41,10 @@ export default function RootLayout() {
 
   return (
     <AppProviders>
+      <SentrySessionContext />
       <Stack screenOptions={{ headerShown: false }} />
     </AppProviders>
   );
 }
+
+export default Sentry.wrap(RootLayout);

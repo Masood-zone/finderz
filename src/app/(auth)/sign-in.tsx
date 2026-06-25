@@ -8,6 +8,7 @@ import { FormError } from "@/components/ui/form-error";
 import { KeyboardAwareScreen } from "@/components/ui/keyboard-aware-screen";
 import { PasswordInput } from "@/components/ui/password-input";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { appendMonitoringReference, captureHandledError } from "@/lib/monitoring";
 import { signInWithEmail } from "@/services/api/auth-flows";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, router } from "expo-router";
@@ -48,10 +49,18 @@ export default function SignInScreen() {
       });
       router.replace("/");
     } catch (signInError) {
+      const eventId = captureHandledError(signInError, {
+        name: "auth-sign-in",
+        tags: { screen: "sign-in" },
+        extra: { emailDomain: values.email.trim().split("@")[1] ?? "unknown" },
+      });
       setError(
-        getErrorMessage(
-          signInError,
-          "Unable to sign in. Please check your details and try again.",
+        appendMonitoringReference(
+          getErrorMessage(
+            signInError,
+            "Unable to sign in. Please check your details and try again.",
+          ),
+          eventId,
         ),
       );
     }

@@ -2,7 +2,7 @@
   "expo": {
     "name": "finderz",
     "slug": "finderz",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "finderz",
@@ -12,10 +12,12 @@
     },
     "ios": {
       "icon": "./assets/images/icon.png",
-      "bundleIdentifier": "com.finderz.mobile"
+      "bundleIdentifier": "com.finderz.mobile",
+      "buildNumber": "1"
     },
     "android": {
       "package": "com.finderz.mobile",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -41,7 +43,16 @@
         }
       ],
       "expo-secure-store",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "note": "Use SENTRY_AUTH_TOKEN env to authenticate with Sentry.",
+          "organization": "gree-software-company",
+          "project": "react-native"
+        }
+      ]
     ],
     "updates": {
       "url": "https://u.expo.dev/2406ab5d-c865-4e6d-b8c8-1519403e5e73",

@@ -5,6 +5,7 @@ import { FinderzLogo } from "@/components/ui/finderz-logo";
 import { FormError } from "@/components/ui/form-error";
 import { SafeAreaScreen } from "@/components/ui/safe-area-screen";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { appendMonitoringReference, captureHandledError } from "@/lib/monitoring";
 import { resendVerificationEmail } from "@/services/api/auth-flows";
 import { Link, useLocalSearchParams } from "expo-router";
 import { MailCheck, ShieldCheck } from "lucide-react-native";
@@ -39,10 +40,18 @@ export default function EmailVerificationScreen() {
         "Verification email sent. Check your inbox for the latest FinderZ link.",
       );
     } catch (verificationError) {
+      const eventId = captureHandledError(verificationError, {
+        name: "auth-resend-verification-email",
+        tags: { screen: "email-verification" },
+        extra: { emailDomain: email.split("@")[1] ?? "unknown" },
+      });
       setError(
-        getErrorMessage(
-          verificationError,
-          "Email verification delivery is not configured yet.",
+        appendMonitoringReference(
+          getErrorMessage(
+            verificationError,
+            "Email verification delivery is not configured yet.",
+          ),
+          eventId,
         ),
       );
     } finally {
