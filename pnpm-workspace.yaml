@@ -1,7 +1,10 @@
 allowBuilds:
+  '@sentry/cli': true
   esbuild: true
   unrs-resolver: true
 overrides:
   lightningcss: 1.30.1
 minimumReleaseAgeExclude:
   - tailwindcss@4.3.1
+  - expo-manifests@55.0.18
+  - expo-updates@55.0.25
