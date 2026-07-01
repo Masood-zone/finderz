@@ -6,6 +6,7 @@ export type SuperAdminStats = {
   totalTenants: number;
   totalLandlords: number;
   verifiedLandlords: number;
+  pendingLandlordVerifications: number;
   totalProperties: number;
   pendingApprovals: number;
   reportedListings: number;
@@ -95,6 +96,37 @@ export type SuperAdminNotification = {
   createdAt: string;
 };
 
+export type SuperAdminLandlordVerification = {
+  id: string;
+  userId: string;
+  legalName: string | null;
+  landlordType: LandlordProfile["landlordType"];
+  agencyName: string | null;
+  address: string | null;
+  preferredContactMethod: LandlordProfile["preferredContactMethod"];
+  identityDocumentType: string | null;
+  identityDocumentUrl: string | null;
+  verificationStatus: LandlordProfile["verificationStatus"];
+  verificationNotes: string | null;
+  verifiedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string | null;
+    image: string | null;
+    accountStatus: AccountStatus;
+    onboardingCompleted: boolean;
+  } | null;
+  listingCount: number;
+};
+
+export type SuperAdminLandlordVerificationDetail = SuperAdminLandlordVerification & {
+  reviewHistory: SuperAdminActivity[];
+};
+
 export type SuperAdminDashboardResponse = {
   user: {
     id: string;
@@ -121,3 +153,4 @@ export type SuperAdminListResponse<T> = {
 export type PropertyModerationAction = "approve" | "reject" | "request_changes" | "suspend";
 export type ReportModerationAction = "resolve" | "dismiss" | "suspend_listing";
 export type UserModerationAction = "suspend" | "reactivate";
+export type LandlordVerificationAction = "approve" | "request_changes" | "reject";

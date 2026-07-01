@@ -7,7 +7,7 @@ import { router, type Href } from "expo-router";
 import { Activity, CheckSquare, Home, MessageCircle, ShieldCheck, Users } from "lucide-react-native";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 
-const statIcons = [Users, Users, ShieldCheck, Home, CheckSquare, Activity, MessageCircle];
+const statIcons = [Users, Users, ShieldCheck, ShieldCheck, Home, CheckSquare, Activity, MessageCircle];
 
 export default function SuperAdminDashboardScreen() {
   const dashboard = useSuperAdminDashboard();
@@ -17,6 +17,7 @@ export default function SuperAdminDashboardScreen() {
         ["Total Users", stats.totalUsers],
         ["Tenants", stats.totalTenants],
         ["Verified Landlords", stats.verifiedLandlords],
+        ["Vendor Reviews", stats.pendingLandlordVerifications],
         ["Properties", stats.totalProperties],
         ["Pending Approvals", stats.pendingApprovals],
         ["Reported Listings", stats.reportedListings],
@@ -30,7 +31,7 @@ export default function SuperAdminDashboardScreen() {
       <View style={styles.grid}>
         {statRows.map(([label, value], index) => {
           const Icon = statIcons[index] ?? Activity;
-          const urgent = label === "Pending Approvals" || label === "Reported Listings";
+          const urgent = label === "Pending Approvals" || label === "Reported Listings" || label === "Vendor Reviews";
           return (
             <AdminCard key={label} style={styles.statCard}>
               <Icon size={22} color={urgent ? colors.error : colors.primary} />
@@ -49,6 +50,7 @@ export default function SuperAdminDashboardScreen() {
         <AppText variant="title">Quick Actions</AppText>
         <View style={styles.actions}>
           <AppButton title="Approve Listings" onPress={() => router.push("/super-admin/approvals" as Href)} />
+          <AppButton title="Vendor Reviews" variant="secondary" onPress={() => router.push("/super-admin/verifications" as Href)} />
           <AppButton title="User Management" variant="secondary" onPress={() => router.push("/super-admin/users" as Href)} />
           <AppButton title="Moderation" variant="secondary" onPress={() => router.push("/super-admin/reports" as Href)} />
           <AppButton title="Notifications" variant="secondary" onPress={() => router.push("/super-admin/notifications" as Href)} />
