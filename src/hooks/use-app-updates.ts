@@ -1,4 +1,3 @@
-import { captureHandledError } from "@/lib/monitoring";
 import * as Updates from "expo-updates";
 import { useEffect } from "react";
 import { Alert } from "react-native";
@@ -31,10 +30,6 @@ export function useAppUpdates(isReady: boolean, promptShownRef: { current: boole
                   await Updates.fetchUpdateAsync();
                   await Updates.reloadAsync();
                 } catch (error) {
-                  captureHandledError(error, {
-                    name: "expo-update-fetch",
-                    tags: { channel: Updates.channel },
-                  });
                   Alert.alert(
                     "Update failed",
                     error instanceof Error ? error.message : "Please try again later.",
@@ -44,13 +39,8 @@ export function useAppUpdates(isReady: boolean, promptShownRef: { current: boole
             },
           ],
         );
-      } catch (error) {
+      } catch {
         promptShownRef.current = false;
-        captureHandledError(error, {
-          name: "expo-update-check",
-          level: "warning",
-          tags: { channel: Updates.channel },
-        });
       }
     }
 

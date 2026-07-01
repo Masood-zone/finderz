@@ -2,7 +2,6 @@ import { AxiosError, create } from "axios";
 import { authClient } from "@/lib/auth-client";
 import { getStoredSessionToken } from "@/lib/auth-session-token";
 import { getApiBaseUrl } from "@/lib/env";
-import { captureHandledError } from "@/lib/monitoring";
 import type { ApiErrorBody } from "@/types/api";
 
 export const apiClient = create({
@@ -34,19 +33,6 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError<ApiErrorBody>) => {
-    captureHandledError(error, {
-      name: "api-response",
-      tags: {
-        method: error.config?.method,
-        status: error.response?.status,
-        code: error.response?.data?.error?.code,
-      },
-      extra: {
-        url: error.config?.url,
-        message: error.message,
-      },
-    });
-
     if (error.response?.data) {
       return Promise.reject(error.response.data);
     }

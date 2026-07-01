@@ -13,7 +13,6 @@ import { FormError } from "@/components/ui/form-error";
 import { KeyboardAwareScreen } from "@/components/ui/keyboard-aware-screen";
 import { ScreenShell } from "@/components/ui/screen-shell";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { appendMonitoringReference, captureHandledError } from "@/lib/monitoring";
 import { requestPasswordResetEmail } from "@/services/api/auth-flows";
 
 const forgotPasswordSchema = z.object({
@@ -42,16 +41,8 @@ export default function ForgotPasswordScreen() {
       await requestPasswordResetEmail(email.trim());
       setMessage("If that email exists, FinderZ will send password reset instructions.");
     } catch (resetError) {
-      const eventId = captureHandledError(resetError, {
-        name: "auth-password-reset-request",
-        tags: { screen: "forgot-password" },
-        extra: { emailDomain: email.trim().split("@")[1] ?? "unknown" },
-      });
       setError(
-        appendMonitoringReference(
-          getErrorMessage(resetError, "Password reset email delivery is not configured yet."),
-          eventId,
-        ),
+        getErrorMessage(resetError, "Password reset email delivery is not configured yet."),
       );
     }
   });

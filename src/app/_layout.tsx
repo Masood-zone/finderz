@@ -1,7 +1,5 @@
 import { AppProviders } from "@/providers/app-providers";
-import { SentrySessionContext } from "@/components/shared/sentry-session-context";
 import { useAppUpdates } from "@/hooks/use-app-updates";
-import { initializeMonitoring } from "@/lib/monitoring";
 import {
   Manrope_400Regular,
   Manrope_600SemiBold,
@@ -9,16 +7,14 @@ import {
   Manrope_800ExtraBold,
   useFonts,
 } from "@expo-google-fonts/manrope";
-import * as Sentry from "@sentry/react-native";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useRef } from "react";
 import "../../global.css";
 
 void SplashScreen.preventAutoHideAsync();
-initializeMonitoring();
 
-function RootLayout() {
+export default function RootLayout() {
   const updatePromptShownRef = useRef(false);
   const [fontsLoaded] = useFonts({
     Manrope_400Regular,
@@ -41,10 +37,7 @@ function RootLayout() {
 
   return (
     <AppProviders>
-      <SentrySessionContext />
       <Stack screenOptions={{ headerShown: false }} />
     </AppProviders>
   );
 }
-
-export default Sentry.wrap(RootLayout);
