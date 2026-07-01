@@ -86,6 +86,12 @@ export async function createTenantEnquiry(input: { propertyId: string; message: 
   return response.data.data;
 }
 
+export async function replyToTenantEnquiry(enquiryId: string, content: string) {
+  requireId(enquiryId, "Enquiry ID");
+  const response = await apiClient.post<ApiSuccess<TenantEnquiryDetailResponse>>(`/api/tenant/enquiries/${enquiryId}`, { content });
+  return response.data.data;
+}
+
 export async function getTenantProfile() {
   const response = await apiClient.get<ApiSuccess<TenantProfileResponse>>("/api/tenant/profile");
   return response.data.data;
