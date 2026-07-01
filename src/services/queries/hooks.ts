@@ -6,11 +6,13 @@ import {
   duplicateLandlordProperty,
   getLandlordDashboard,
   getLandlordEnquiries,
+  getLandlordEnquiry,
   getLandlordProfile,
   getLandlordProperties,
   getLandlordProperty,
   getLandlordVerificationStatus,
   markLandlordPropertyAsRented,
+  replyToLandlordEnquiry,
   saveLandlordProperty,
   submitLandlordOnboarding,
 } from "@/services/api/landlord";
@@ -37,6 +39,7 @@ import {
   getTenantProfile,
   getTenantProperty,
   removeTenantFavourite,
+  replyToTenantEnquiry,
   searchTenantProperties,
 } from "@/services/api/tenant-app";
 import { changePassword, getCurrentUser, updateProfile } from "@/services/api/users";
@@ -168,6 +171,20 @@ export function useCreateTenantEnquiry() {
   });
 }
 
+export function useReplyTenantEnquiry() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ enquiryId, content }: { enquiryId: string; content: string }) => replyToTenantEnquiry(enquiryId, content),
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData(queryKeys.tenantEnquiry(variables.enquiryId), data);
+      queryClient.invalidateQueries({ queryKey: ["tenant-enquiries"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.tenantProfile });
+      queryClient.invalidateQueries({ queryKey: ["tenant-feed"] });
+    },
+  });
+}
+
 export function useLandlordDashboard() {
   return useQuery({
     queryKey: queryKeys.landlordDashboard,
@@ -251,6 +268,27 @@ export function useLandlordEnquiries() {
   return useQuery({
     queryKey: queryKeys.landlordEnquiries,
     queryFn: getLandlordEnquiries,
+  });
+}
+
+export function useLandlordEnquiry(enquiryId: string) {
+  return useQuery({
+    queryKey: queryKeys.landlordEnquiry(enquiryId),
+    queryFn: () => getLandlordEnquiry(enquiryId),
+    enabled: Boolean(enquiryId),
+  });
+}
+
+export function useReplyLandlordEnquiry() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ enquiryId, content }: { enquiryId: string; content: string }) => replyToLandlordEnquiry(enquiryId, content),
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData(queryKeys.landlordEnquiry(variables.enquiryId), data);
+      queryClient.invalidateQueries({ queryKey: queryKeys.landlordEnquiries });
+      queryClient.invalidateQueries({ queryKey: queryKeys.landlordDashboard });
+    },
   });
 }
 

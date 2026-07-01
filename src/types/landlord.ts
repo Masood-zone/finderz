@@ -146,6 +146,17 @@ export type LandlordEnquiry = {
   };
 };
 
+export type LandlordEnquiryDetailResponse = {
+  enquiry: LandlordEnquiry;
+  messages: {
+    id: string;
+    senderId: string;
+    content: string;
+    isRead: boolean;
+    createdAt: string;
+  }[];
+};
+
 export type LandlordPropertyDraft = {
   id?: string;
   title: string;

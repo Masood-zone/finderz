@@ -3,6 +3,7 @@ import type { ApiSuccess } from "@/types/api";
 import type {
   LandlordDashboardResponse,
   LandlordEnquiry,
+  LandlordEnquiryDetailResponse,
   LandlordOnboardingInput,
   LandlordProfileResponse,
   LandlordProperty,
@@ -85,5 +86,17 @@ export async function deleteLandlordProperty(propertyId: string) {
 
 export async function getLandlordEnquiries() {
   const response = await apiClient.get<ApiSuccess<{ enquiries: LandlordEnquiry[] }>>("/api/landlord/enquiries");
+  return response.data.data;
+}
+
+export async function getLandlordEnquiry(enquiryId: string) {
+  requireId(enquiryId, "Enquiry ID");
+  const response = await apiClient.get<ApiSuccess<LandlordEnquiryDetailResponse>>(`/api/landlord/enquiries/${enquiryId}`);
+  return response.data.data;
+}
+
+export async function replyToLandlordEnquiry(enquiryId: string, content: string) {
+  requireId(enquiryId, "Enquiry ID");
+  const response = await apiClient.post<ApiSuccess<LandlordEnquiryDetailResponse>>(`/api/landlord/enquiries/${enquiryId}`, { content });
   return response.data.data;
 }
