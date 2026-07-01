@@ -106,7 +106,7 @@ export default function MyPropertiesScreen() {
             </View>
 
             <View className="mt-4 flex-row flex-wrap gap-2">
-              <AppButton title="View" variant="secondary" icon={<Eye color={colors.primary} size={16} />} style={{ flex: 1, minHeight: 42 }} onPress={() => router.push(`/tenant/property/${property.id}`)} />
+              <AppButton title="View" variant="secondary" icon={<Eye color={colors.primary} size={16} />} style={{ flex: 1, minHeight: 42 }} onPress={() => router.push(`/landlord/properties/${property.id}` as Href)} />
               <AppButton title="Edit" variant="secondary" icon={<Edit3 color={colors.primary} size={16} />} style={{ flex: 1, minHeight: 42 }} onPress={() => router.push(`/landlord/properties/${property.id}/edit` as Href)} />
             </View>
             <View className="mt-2 flex-row flex-wrap gap-2">
