@@ -4,6 +4,7 @@ import { AppInput } from "@/components/ui/app-input";
 import { AppText } from "@/components/ui/app-text";
 import { colors } from "@/components/ui/design-system";
 import { useSuperAdminUserAction, useSuperAdminUsers } from "@/services/queries/hooks";
+import { router, type Href } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 
@@ -53,7 +54,9 @@ export default function UserManagementScreen() {
               Landlord verification: {item.landlordVerificationStatus?.replaceAll("_", " ") ?? "N/A"} - Listings: {item.listingCount}
             </AppText>
             <View style={styles.actions}>
-              <AppButton title="View Account" variant="secondary" onPress={() => {}} />
+              {item.role === "LANDLORD" ? (
+                <AppButton title="Review Verification" variant="secondary" onPress={() => router.push("/super-admin/verifications" as Href)} />
+              ) : null}
               {item.accountStatus === "SUSPENDED" ? (
                 <AppButton title="Reactivate" loading={action.isPending} onPress={() => action.mutate({ userId: item.id, action: "reactivate" })} />
               ) : (
