@@ -16,6 +16,7 @@ import { errorResponse } from "@/lib/api-response";
 import type { AuthenticatedContext } from "@/lib/auth-guards.server";
 import type {
   SuperAdminActivity,
+  SuperAdminLandlordVerification,
   SuperAdminNotification,
   SuperAdminPropertyDetail,
   SuperAdminPropertySummary,
@@ -310,6 +311,49 @@ export async function serializeUsers(rows: (typeof user.$inferSelect & {
     createdAt: row.createdAt.toISOString(),
     landlordVerificationStatus: row.landlordProfile?.verificationStatus ?? null,
     listingCount: row.landlordProfile ? (listingMap.get(row.landlordProfile.id) ?? 0) : 0,
+  }));
+}
+
+export async function serializeLandlordVerifications(rows: (typeof landlordProfiles.$inferSelect & {
+  user?: typeof user.$inferSelect | null;
+})[]): Promise<SuperAdminLandlordVerification[]> {
+  const landlordIds = rows.map((row) => row.id);
+  const listingCounts = landlordIds.length
+    ? await db
+        .select({ landlordId: properties.landlordId, value: count() })
+        .from(properties)
+        .where(inArray(properties.landlordId, landlordIds))
+        .groupBy(properties.landlordId)
+    : [];
+  const listingMap = new Map(listingCounts.map((row) => [row.landlordId, row.value]));
+
+  return rows.map((row) => ({
+    id: row.id,
+    userId: row.userId,
+    legalName: row.legalName,
+    landlordType: row.landlordType,
+    agencyName: row.agencyName,
+    address: row.address,
+    preferredContactMethod: row.preferredContactMethod as SuperAdminLandlordVerification["preferredContactMethod"],
+    identityDocumentType: row.identityDocumentType,
+    identityDocumentUrl: row.identityDocumentUrl,
+    verificationStatus: row.verificationStatus,
+    verificationNotes: row.verificationNotes,
+    verifiedAt: row.verifiedAt?.toISOString() ?? null,
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
+    user: row.user
+      ? {
+          id: row.user.id,
+          name: row.user.name,
+          email: row.user.email,
+          phone: row.user.phone,
+          image: row.user.image,
+          accountStatus: row.user.accountStatus,
+          onboardingCompleted: row.user.onboardingCompleted,
+        }
+      : null,
+    listingCount: listingMap.get(row.id) ?? 0,
   }));
 }
 

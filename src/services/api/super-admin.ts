@@ -2,8 +2,11 @@ import { apiClient } from "./axios";
 import type { ApiSuccess } from "@/types/api";
 import type {
   PropertyModerationAction,
+  LandlordVerificationAction,
   ReportModerationAction,
   SuperAdminDashboardResponse,
+  SuperAdminLandlordVerification,
+  SuperAdminLandlordVerificationDetail,
   SuperAdminListResponse,
   SuperAdminNotification,
   SuperAdminPropertyDetail,
@@ -53,6 +56,28 @@ export async function getSuperAdminProperty(propertyId: string) {
 export async function moderateSuperAdminProperty(input: { propertyId: string; action: PropertyModerationAction; reason?: string }) {
   requireId(input.propertyId, "Property ID");
   const response = await apiClient.patch<ApiSuccess<{ property: SuperAdminPropertyDetail }>>(`/api/super-admin/approvals/${input.propertyId}`, {
+    action: input.action,
+    reason: input.reason,
+  });
+  return response.data.data;
+}
+
+export async function getSuperAdminLandlordVerifications(input: ListParams = {}) {
+  const response = await apiClient.get<ApiSuccess<SuperAdminListResponse<SuperAdminLandlordVerification>>>("/api/super-admin/verifications", {
+    params: params(input),
+  });
+  return response.data.data;
+}
+
+export async function getSuperAdminLandlordVerification(profileId: string) {
+  requireId(profileId, "Landlord profile ID");
+  const response = await apiClient.get<ApiSuccess<{ verification: SuperAdminLandlordVerificationDetail }>>(`/api/super-admin/verifications/${profileId}`);
+  return response.data.data;
+}
+
+export async function moderateSuperAdminLandlordVerification(input: { profileId: string; action: LandlordVerificationAction; reason?: string }) {
+  requireId(input.profileId, "Landlord profile ID");
+  const response = await apiClient.patch<ApiSuccess<{ verification: SuperAdminLandlordVerificationDetail }>>(`/api/super-admin/verifications/${input.profileId}`, {
     action: input.action,
     reason: input.reason,
   });

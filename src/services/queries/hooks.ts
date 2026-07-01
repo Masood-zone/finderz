@@ -19,11 +19,14 @@ import {
 import {
   getSuperAdminApprovals,
   getSuperAdminDashboard,
+  getSuperAdminLandlordVerification,
+  getSuperAdminLandlordVerifications,
   getSuperAdminNotifications,
   getSuperAdminProperty,
   getSuperAdminReports,
   getSuperAdminUsers,
   moderateSuperAdminProperty,
+  moderateSuperAdminLandlordVerification,
   moderateSuperAdminReport,
   moderateSuperAdminUser,
   updateSuperAdminNotifications,
@@ -46,7 +49,7 @@ import { changePassword, getCurrentUser, updateProfile } from "@/services/api/us
 import { queryKeys } from "./keys";
 import type { TenantEnquiryStatusFilter, TenantFilters } from "@/types/tenant";
 import type { LandlordPropertyStatus, SaveLandlordPropertyInput } from "@/types/landlord";
-import type { PropertyModerationAction, ReportModerationAction, UserModerationAction } from "@/types/super-admin";
+import type { LandlordVerificationAction, PropertyModerationAction, ReportModerationAction, UserModerationAction } from "@/types/super-admin";
 
 export function useCurrentUser() {
   return useQuery({
@@ -207,6 +210,7 @@ export function useSubmitLandlordOnboarding() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.landlordProfile });
       queryClient.invalidateQueries({ queryKey: queryKeys.landlordVerification });
+      queryClient.invalidateQueries({ queryKey: queryKeys.landlordDashboard });
       queryClient.invalidateQueries({ queryKey: queryKeys.currentUser });
     },
   });
@@ -335,6 +339,38 @@ export function useSuperAdminPropertyAction() {
       queryClient.invalidateQueries({ queryKey: ["super-admin-approvals"] });
       queryClient.invalidateQueries({ queryKey: queryKeys.superAdminProperty(variables.propertyId) });
       queryClient.invalidateQueries({ queryKey: ["super-admin-reports"] });
+    },
+  });
+}
+
+export function useSuperAdminLandlordVerifications(filters: { page?: number; pageSize?: number; status?: string; q?: string } = {}) {
+  return useQuery({
+    queryKey: queryKeys.superAdminLandlordVerifications(filters),
+    queryFn: () => getSuperAdminLandlordVerifications(filters),
+  });
+}
+
+export function useSuperAdminLandlordVerification(profileId: string) {
+  return useQuery({
+    queryKey: queryKeys.superAdminLandlordVerification(profileId),
+    queryFn: () => getSuperAdminLandlordVerification(profileId),
+    enabled: Boolean(profileId),
+  });
+}
+
+export function useSuperAdminLandlordVerificationAction() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: { profileId: string; action: LandlordVerificationAction; reason?: string }) => moderateSuperAdminLandlordVerification(input),
+    onSuccess: (data, variables) => {
+      if (data.verification) {
+        queryClient.setQueryData(queryKeys.superAdminLandlordVerification(variables.profileId), data);
+      }
+      queryClient.invalidateQueries({ queryKey: queryKeys.superAdminDashboard });
+      queryClient.invalidateQueries({ queryKey: ["super-admin-landlord-verifications"] });
+      queryClient.invalidateQueries({ queryKey: ["super-admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["super-admin-notifications"] });
     },
   });
 }

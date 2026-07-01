@@ -19,6 +19,8 @@ export const queryKeys = {
   superAdminDashboard: ["super-admin-dashboard"] as const,
   superAdminApprovals: (filters: unknown) => ["super-admin-approvals", filters] as const,
   superAdminProperty: (propertyId: string) => ["super-admin-property", propertyId] as const,
+  superAdminLandlordVerifications: (filters: unknown) => ["super-admin-landlord-verifications", filters] as const,
+  superAdminLandlordVerification: (profileId: string) => ["super-admin-landlord-verification", profileId] as const,
   superAdminReports: (filters: unknown) => ["super-admin-reports", filters] as const,
   superAdminUsers: (filters: unknown) => ["super-admin-users", filters] as const,
   superAdminNotifications: (filters: unknown) => ["super-admin-notifications", filters] as const,
