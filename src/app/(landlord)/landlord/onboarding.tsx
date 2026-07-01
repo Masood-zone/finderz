@@ -104,6 +104,27 @@ export default function LandlordOnboardingScreen() {
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <ScreenShell title="Landlord Onboarding" subtitle="Submit your details for review" showBack>
         <ScrollView contentContainerStyle={{ paddingTop: 20, paddingBottom: 80, gap: 18 }} showsVerticalScrollIndicator={false}>
+          {existing ? (
+            <View className="rounded-2xl border p-4" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
+              <AppText variant="label" muted>
+                Current Review Status
+              </AppText>
+              <AppText className="mt-1" style={{ fontFamily: "Manrope_700Bold", color: colors.primary }}>
+                {existing.verificationStatus.replaceAll("_", " ")}
+              </AppText>
+              {existing.verificationNotes ? (
+                <AppText className="mt-2" style={{ color: colors.warning }}>
+                  {existing.verificationNotes}
+                </AppText>
+              ) : null}
+              {existing.identityDocumentUrl ? (
+                <AppText className="mt-2" muted>
+                  A document is already on file. Upload a new one to resubmit your verification.
+                </AppText>
+              ) : null}
+            </View>
+          ) : null}
+
           <Controller control={form.control} name="legalName" render={({ field, fieldState }) => <AppInput label="Legal Name" value={field.value} onChangeText={field.onChange} error={fieldState.error?.message} />} />
           <Controller control={form.control} name="phone" render={({ field, fieldState }) => <AppInput label="Phone" value={field.value} onChangeText={field.onChange} keyboardType="phone-pad" error={fieldState.error?.message} />} />
 
@@ -182,7 +203,7 @@ export default function LandlordOnboardingScreen() {
 
           <FormError message={submitError} title="Onboarding submission failed" />
 
-          <AppButton title="Submit for Review" loading={submit.isPending} onPress={onSubmit} />
+          <AppButton title={existing ? "Resubmit for Review" : "Submit for Review"} loading={submit.isPending} onPress={onSubmit} />
         </ScrollView>
       </ScreenShell>
     </View>

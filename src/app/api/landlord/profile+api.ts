@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { landlordProfiles, user } from "@/db/schema";
+import { landlordProfiles, notifications, user } from "@/db/schema";
 import { internalServerErrorResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
 import { guardErrorResponse, requireLandlord } from "@/lib/auth-guards.server";
 import { getLandlordProfileForUser } from "@/lib/landlord/landlord.server";
@@ -36,6 +36,7 @@ function serializeProfile(profile: typeof landlordProfiles.$inferSelect | null) 
     address: profile.address,
     preferredContactMethod: profile.preferredContactMethod,
     identityDocumentType: profile.identityDocumentType,
+    identityDocumentUrl: profile.identityDocumentUrl,
     verificationStatus: profile.verificationStatus,
     verificationNotes: profile.verificationNotes,
     verifiedAt: profile.verifiedAt?.toISOString() ?? null,
@@ -119,6 +120,24 @@ export async function POST(request: Request) {
         updatedAt: now,
       })
       .where(eq(user.id, context.user.id));
+
+    const admins = await db.query.user.findMany({
+      where: eq(user.role, "SUPER_ADMIN"),
+      columns: { id: true },
+    });
+
+    if (admins.length) {
+      await db.insert(notifications).values(
+        admins.map((admin) => ({
+          id: crypto.randomUUID(),
+          userId: admin.id,
+          type: "LANDLORD_VERIFICATION",
+          title: existing ? "Vendor verification resubmitted" : "New vendor verification pending",
+          message: `${parsed.data.legalName} submitted landlord verification documents for review.`,
+          data: { profileId: profile.id, landlordUserId: context.user.id },
+        })),
+      );
+    }
 
     return successResponse({ profile: serializeProfile(profile) }, { status: existing ? 200 : 201 });
   } catch (error) {
