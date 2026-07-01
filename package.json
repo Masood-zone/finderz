@@ -11,6 +11,8 @@
     "export:web:api": "expo export --platform web --clear --api-only --max-workers 1",
     "deploy:staging": "npm run export:web:api && eas.cmd deploy --export-dir dist --alias staging --no-source-maps",
     "deploy:staging:web": "npm run export:web && eas.cmd deploy --export-dir dist --alias staging --no-source-maps",
+    "build:preview:android": "eas build --platform android --profile preview",
+    "update:preview": "eas update --channel preview",
     "db:auth-generate": "pnpm dlx auth@latest generate --config ./src/lib/auth.ts --output ./src/db/schema/auth.generated.ts --yes",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
