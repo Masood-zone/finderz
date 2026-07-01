@@ -1,9 +1,9 @@
-export function formatGhanaCedi(amount: number) {
+export function formatGhanaCedi(amountPesewas: number) {
   return new Intl.NumberFormat("en-GH", {
     style: "currency",
     currency: "GHS",
     maximumFractionDigits: 0,
-  }).format(amount);
+  }).format(amountPesewas / 100);
 }
 
 export function formatPaymentPeriod(period: string) {

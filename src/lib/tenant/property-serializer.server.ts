@@ -19,6 +19,10 @@ function numberParam(value: string | null) {
   return Number.isFinite(parsed) ? parsed : undefined;
 }
 
+function cedisToPesewas(amount: number | undefined) {
+  return amount === undefined ? undefined : Math.round(amount * 100);
+}
+
 export function getTenantFiltersFromUrl(request: Request): TenantFilters {
   const url = new URL(request.url);
   const params = url.searchParams;
@@ -96,8 +100,10 @@ function buildPropertyConditions(filters: TenantFilters) {
   if (hasCoordinates(filters) && filters.radiusKm) {
     conditions.push(sql`${distanceExpression(filters.latitude!, filters.longitude!)} <= ${filters.radiusKm}`);
   }
-  if (filters.minRent !== undefined) conditions.push(gte(properties.rentAmount, filters.minRent));
-  if (filters.maxRent !== undefined) conditions.push(lte(properties.rentAmount, filters.maxRent));
+  const minRentPesewas = cedisToPesewas(filters.minRent);
+  const maxRentPesewas = cedisToPesewas(filters.maxRent);
+  if (minRentPesewas !== undefined) conditions.push(gte(properties.rentAmount, minRentPesewas));
+  if (maxRentPesewas !== undefined) conditions.push(lte(properties.rentAmount, maxRentPesewas));
   if (filters.paymentPeriod) conditions.push(eq(properties.paymentPeriod, filters.paymentPeriod as typeof properties.paymentPeriod.enumValues[number]));
   if (filters.propertyType) conditions.push(eq(properties.propertyType, filters.propertyType as typeof properties.propertyType.enumValues[number]));
   if (filters.bedrooms !== undefined) conditions.push(gte(properties.bedrooms, filters.bedrooms));
