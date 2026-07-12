@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { properties } from "@/db/schema";
 import { forbiddenResponse, internalServerErrorResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
 import { guardErrorResponse, requireLandlord } from "@/lib/auth-guards.server";
-import { getLandlordCounts, getLandlordProfileForUser, replacePropertyAmenities, replacePropertyImages, serializeLandlordProperties } from "@/lib/landlord/landlord.server";
+import { getLandlordCounts, getLandlordProfileForUser, getOwnedProperty, replacePropertyAmenities, replacePropertyImages, serializeLandlordProperties } from "@/lib/landlord/landlord.server";
 import type { LandlordPropertyStatus } from "@/types/landlord";
 
 const coordinateString = (minimum: number, maximum: number, label: string) =>
@@ -18,6 +18,7 @@ const coordinateString = (minimum: number, maximum: number, label: string) =>
 
 export const savePropertySchema = z.object({
   id: z.string().optional(),
+  submissionId: z.string().min(8).max(100).optional(),
   title: z.string().trim().min(2).max(160),
   propertyType: z.enum(["APARTMENT", "HOUSE", "ROOM", "STUDIO", "HOSTEL", "COMMERCIAL"]),
   description: z.string().trim().min(10).max(2500),
@@ -127,7 +128,22 @@ export async function POST(request: Request) {
       return validationErrorResponse(parsed.error);
     }
 
-    const propertyId = crypto.randomUUID();
+    // The client keeps this ID for the lifetime of the create flow. If the
+    // property row was committed but a later relation write or the response
+    // failed, retrying repairs and returns that same property instead of
+    // creating a duplicate listing.
+    const propertyId = parsed.data.submissionId ?? crypto.randomUUID();
+    const existing = await getOwnedProperty(profile.id, propertyId);
+    if (existing) {
+      await Promise.all([
+        replacePropertyAmenities(propertyId, parsed.data.amenities),
+        replacePropertyImages(propertyId, parsed.data.images),
+      ]);
+      const repaired = await getOwnedProperty(profile.id, propertyId);
+      const [property] = await serializeLandlordProperties(repaired ? [repaired] : [existing]);
+      return successResponse({ property });
+    }
+
     const now = new Date();
     const [created] = await db
       .insert(properties)

@@ -1,6 +1,6 @@
 import { router, type Href } from "expo-router";
 import { ArrowLeft, Check, CheckCircle2, CloudUpload, ImagePlus, ShieldCheck, X } from "lucide-react-native";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Alert, Image, Pressable, View } from "react-native";
 import FileUpload, { type UploadedFileResult } from "@/components/general/file-upload";
 import { AddPropertyPanel, AddPropertyShell } from "@/components/landlord/add-property-shell";
@@ -38,6 +38,8 @@ function AmenityRow({ label, active, onPress }: { label: string; active: boolean
 export default function ReviewSubmitScreen() {
   const { draft, mergeDraft, resetDraft } = useLandlordPropertyDraftStore();
   const save = useSaveLandlordProperty();
+  const submissionIdRef = useRef(draft.submissionId ?? crypto.randomUUID());
+  const submittingRef = useRef(false);
   const [amenities, setAmenities] = useState(draft.amenities);
   const [images, setImages] = useState<UploadedFileResult[]>(
     draft.images.map((image, index) => ({
@@ -71,6 +73,7 @@ export default function ReviewSubmitScreen() {
 
   const currentDraft = () => ({
     ...draft,
+    submissionId: submissionIdRef.current,
     amenities,
     images: images
       .filter((file) => file.upload)
@@ -86,6 +89,8 @@ export default function ReviewSubmitScreen() {
   });
 
   const persist = async (submitForApproval: boolean) => {
+    if (submittingRef.current) return;
+
     const payload = currentDraft();
     mergeDraft(payload);
 
@@ -105,11 +110,14 @@ export default function ReviewSubmitScreen() {
     }
 
     try {
+      submittingRef.current = true;
       await save.mutateAsync({ ...payload, submitForApproval });
       resetDraft();
       router.replace(submitForApproval ? ("/landlord/property-submitted" as Href) : ("/landlord/properties" as Href));
     } catch (error) {
       Alert.alert("Unable to save property", getErrorMessage(error, "Please check the property details and try again."));
+    } finally {
+      submittingRef.current = false;
     }
   };
 

@@ -159,6 +159,7 @@ export type LandlordEnquiryDetailResponse = {
 
 export type LandlordPropertyDraft = {
   id?: string;
+  submissionId?: string;
   title: string;
   propertyType: string;
   description: string;
