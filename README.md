@@ -82,7 +82,7 @@ pnpm start
 
 Open the project in an Expo development build, or press `a` for an Android emulator / `i` for an iOS simulator.
 
-> The property map uses the native MapLibre module and therefore does not run in Expo Go. After installing or upgrading native dependencies, create a fresh development build with `pnpm exec eas build --platform android --profile development` (or the equivalent iOS profile) before testing maps on a device. Web maps continue to run with `pnpm web`.
+> Expo Go uses an embedded MapLibre compatibility map for property-location testing. Development and production builds use the native MapLibre renderer. After installing or upgrading native dependencies, create a fresh development build with `pnpm exec eas build --platform android --profile development` (or the equivalent iOS profile) before testing the native renderer. Web maps continue to run with `pnpm web`.
 
 ### 5. Useful commands
 
