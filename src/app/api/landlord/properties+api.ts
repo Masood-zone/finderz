@@ -6,6 +6,7 @@ import { forbiddenResponse, internalServerErrorResponse, successResponse, valida
 import { guardErrorResponse, requireLandlord } from "@/lib/auth-guards.server";
 import { getLandlordCounts, getLandlordProfileForUser, getOwnedProperty, replacePropertyAmenities, replacePropertyImages, serializeLandlordProperties } from "@/lib/landlord/landlord.server";
 import type { LandlordPropertyStatus } from "@/types/landlord";
+import { notifySuperAdmins } from "@/lib/notifications/dispatcher.server";
 
 const coordinateString = (minimum: number, maximum: number, label: string) =>
   z
@@ -181,6 +182,8 @@ export async function POST(request: Request) {
 
     await Promise.all([replacePropertyAmenities(propertyId, parsed.data.amenities), replacePropertyImages(propertyId, parsed.data.images)]);
     const [property] = await serializeLandlordProperties([{ ...created, images: [] }]);
+
+    if (parsed.data.submitForApproval) await notifySuperAdmins({ type: "PENDING_APPROVAL", category: "PROPERTY", eventKey: "property.submitted", title: "Property awaiting approval", message: `${context.user.name} submitted ${created.title} for review.`, deepLink: `/super-admin/approvals/${created.id}`, relatedEntityType: "property", relatedEntityId: created.id, deduplicationKey: `property-submitted:${created.id}:${created.updatedAt.toISOString()}` });
 
     return successResponse({ property }, { status: 201 });
   } catch (error) {

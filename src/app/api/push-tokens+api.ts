@@ -1,0 +1,8 @@
+import { eq } from "drizzle-orm";
+import { z } from "zod";
+import { db } from "@/db"; import { pushTokens } from "@/db/schema";
+import { guardErrorResponse, requireSession } from "@/lib/auth-guards.server";
+import { internalServerErrorResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
+const schema = z.object({ token: z.string().startsWith("ExponentPushToken["), platform: z.enum(["android", "ios", "web"]), deviceId: z.string().optional() });
+export async function PUT(request: Request) { try { const context = await requireSession(request); const parsed = schema.safeParse(await request.json()); if (!parsed.success) return validationErrorResponse(parsed.error); await db.insert(pushTokens).values({ id: crypto.randomUUID(), userId: context.user.id, ...parsed.data }).onConflictDoUpdate({ target: pushTokens.token, set: { userId: context.user.id, platform: parsed.data.platform, deviceId: parsed.data.deviceId, active: true, lastSeenAt: new Date() } }); return successResponse({ registered: true }); } catch(error) { try{return guardErrorResponse(error)}catch{return internalServerErrorResponse()} } }
+export async function DELETE(request: Request) { try { const context = await requireSession(request); const token = new URL(request.url).searchParams.get("token"); if (token) await db.update(pushTokens).set({ active: false }).where(eq(pushTokens.token, token)); else await db.update(pushTokens).set({ active: false }).where(eq(pushTokens.userId, context.user.id)); return successResponse({ revoked: true }); } catch(error) { try{return guardErrorResponse(error)}catch{return internalServerErrorResponse()} } }

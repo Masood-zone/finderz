@@ -11,6 +11,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useRef } from "react";
 import "../../global.css";
+import { PushNotificationManager } from "@/components/notifications/push-notification-manager";
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -37,6 +38,7 @@ export default function RootLayout() {
 
   return (
     <AppProviders>
+      <PushNotificationManager />
       <Stack screenOptions={{ headerShown: false }} />
     </AppProviders>
   );

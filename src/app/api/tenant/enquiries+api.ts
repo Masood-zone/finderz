@@ -5,6 +5,7 @@ import { enquiries, messages, properties, propertyImages, user } from "@/db/sche
 import { errorResponse, internalServerErrorResponse, notFoundResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
 import { guardErrorResponse, requireTenant } from "@/lib/auth-guards.server";
 import { findTenantPropertyById, serializeProperties } from "@/lib/tenant/property-serializer.server";
+import { dispatchNotification } from "@/lib/notifications/dispatcher.server";
 import type { TenantEnquiry, TenantEnquiryStatusFilter } from "@/types/tenant";
 
 const createEnquirySchema = z.object({
@@ -158,6 +159,7 @@ export async function POST(request: Request) {
       content: parsed.data.message,
       isRead: true,
     });
+    await dispatchNotification({ recipientIds: [property.landlord.id], type: "NEW_ENQUIRY", category: "ENQUIRY", eventKey: "enquiry.created", title: "New property enquiry", message: `${context.user.name} sent an enquiry about ${property.title}.`, deepLink: `/landlord/enquiries/${enquiryId}`, relatedEntityType: "enquiry", relatedEntityId: enquiryId, deduplicationKey: `enquiry-created:${enquiryId}` });
 
     return successResponse({ enquiryId }, { status: 201 });
   } catch (error) {

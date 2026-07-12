@@ -6,6 +6,7 @@ import { badRequestResponse, internalServerErrorResponse, notFoundResponse, succ
 import { guardErrorResponse, requireTenant } from "@/lib/auth-guards.server";
 import type { TenantEnquiry } from "@/types/tenant";
 import { serializeProperties } from "@/lib/tenant/property-serializer.server";
+import { dispatchNotification } from "@/lib/notifications/dispatcher.server";
 
 type RouteParams = {
   enquiryId: string;
@@ -144,6 +145,7 @@ export async function POST(request: Request, { enquiryId }: RouteParams) {
       .update(enquiries)
       .set({ status: "OPEN", updatedAt: new Date() })
       .where(eq(enquiries.id, existing.id));
+    await dispatchNotification({ recipientIds: [existing.landlordId], type: "ENQUIRY_REPLY", category: "ENQUIRY", eventKey: "enquiry.tenant_reply", title: "New tenant reply", message: `${context.user.name} replied about ${existing.property.title}.`, deepLink: `/landlord/enquiries/${existing.id}`, relatedEntityType: "enquiry", relatedEntityId: existing.id, deduplicationKey: `tenant-reply:${existing.id}:${crypto.randomUUID()}` });
 
     const updated = await getOwnedEnquiry(enquiryId, context.user.id);
     return successResponse(await serializeEnquiryDetail(updated ?? existing, context.user.id));

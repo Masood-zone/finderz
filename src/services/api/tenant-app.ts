@@ -92,6 +92,11 @@ export async function replyToTenantEnquiry(enquiryId: string, content: string) {
   return response.data.data;
 }
 
+export async function reportTenantProperty(input: { propertyId: string; reason: "SCAM" | "MISLEADING" | "UNAVAILABLE" | "DUPLICATE" | "OTHER"; description?: string }) {
+  const response = await apiClient.post<ApiSuccess<{ reportId: string }>>("/api/tenant/reports", input);
+  return response.data.data;
+}
+
 export async function getTenantProfile() {
   const response = await apiClient.get<ApiSuccess<TenantProfileResponse>>("/api/tenant/profile");
   return response.data.data;

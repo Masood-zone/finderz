@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { user } from "@/db/schema";
 import { badRequestResponse, internalServerErrorResponse, notFoundResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
 import { guardErrorResponse, requireSuperAdmin } from "@/lib/auth-guards.server";
+import { dispatchNotification } from "@/lib/notifications/dispatcher.server";
 import {
   ensureNotFinalActiveSuperAdmin,
   finalAdminResponse,
@@ -48,6 +49,7 @@ export async function PATCH(request: Request, { userId }: RouteParams) {
       nextStatus: accountStatus,
       reason: parsed.data.reason ?? null,
     });
+    await dispatchNotification({ recipientIds: [existing.id], type: "ACCOUNT_MODERATION", category: "ACCOUNT", eventKey: `account.${parsed.data.action}`, priority: "CRITICAL", title: parsed.data.action === "suspend" ? "Account suspended" : "Account reactivated", message: parsed.data.action === "suspend" ? `Your FinderZ account has been suspended. ${parsed.data.reason ?? "Contact support for help."}` : "Your FinderZ account has been reactivated.", deepLink: "/account-status", relatedEntityType: "user", relatedEntityId: existing.id, deduplicationKey: `account-${parsed.data.action}:${existing.id}:${updated.updatedAt.toISOString()}` });
     const [serialized] = await serializeUsers([{ ...updated, landlordProfile: existing.landlordProfile }]);
     return successResponse({ user: serialized }, { message: "User account updated." });
   } catch (error) {
