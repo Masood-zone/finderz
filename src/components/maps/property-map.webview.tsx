@@ -33,7 +33,7 @@ function createMapHtml(latitude: number, longitude: number, editable: boolean) {
       });
       map.touchZoomRotate.disableRotation();
       map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-left');
-      ${editable ? `map.on('dragend', () => { const center = map.getCenter(); window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'coordinates', latitude: center.lat, longitude: center.lng })); });` : `new maplibregl.Marker({ color: '${colors.primary}' }).setLngLat([${longitude}, ${latitude}]).addTo(map);`}
+      ${editable ? `map.on('moveend', (event) => { if (!event.originalEvent) return; const center = map.getCenter(); window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'coordinates', latitude: center.lat, longitude: center.lng })); });` : `new maplibregl.Marker({ color: '${colors.primary}' }).setLngLat([${longitude}, ${latitude}]).addTo(map);`}
       map.on('error', (event) => {
         if (!map.loaded()) window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'error' }));
       });
