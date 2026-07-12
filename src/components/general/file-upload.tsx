@@ -8,6 +8,7 @@ import { colors, radius } from "@/components/ui/design-system";
 import { useUploadFile, type UploadedCloudinaryFile, type UploadPurpose } from "@/services/uploads/uploads";
 
 export type UploadedFileResult = {
+  file?: File;
   name: string;
   uri: string;
   type?: string;
@@ -47,7 +48,7 @@ export default function FileUpload({
         mode === "image"
           ? await ImagePicker.launchImageLibraryAsync({
               allowsMultipleSelection: uploadMode === "multi",
-              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              mediaTypes: ["images"],
               quality: 0.82,
             })
           : await DocumentPicker.getDocumentAsync({
@@ -61,11 +62,13 @@ export default function FileUpload({
           ? []
           : mode === "image"
             ? (picked as ImagePicker.ImagePickerSuccessResult).assets.map((asset) => ({
+                file: asset.file,
                 name: asset.fileName ?? getNameFromUri(asset.uri, "image.jpg"),
                 type: asset.mimeType ?? "image/jpeg",
                 uri: asset.uri,
               }))
             : (picked as DocumentPicker.DocumentPickerSuccessResult).assets.map((asset) => ({
+                file: asset.file,
                 name: asset.name,
                 type: asset.mimeType ?? "application/octet-stream",
                 uri: asset.uri,
