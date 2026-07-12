@@ -1,7 +1,11 @@
-import { z } from "zod";
-import { internalServerErrorResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
+import {
+  internalServerErrorResponse,
+  successResponse,
+  validationErrorResponse,
+} from "@/lib/api-response";
 import { guardErrorResponse, requireSession } from "@/lib/auth-guards.server";
 import { uploadBuffer } from "@/lib/cloudinary/cloudinary-service";
+import { z } from "zod";
 
 const uploadSchema = z.object({
   purpose: z.enum(["userProfile", "landlordIdentity", "propertyImage"]),
@@ -35,7 +39,13 @@ export async function POST(request: Request) {
 
     const file = formData.get("file");
     if (!(file instanceof File)) {
-      return Response.json({ success: false, error: { code: "VALIDATION_ERROR", message: "A file is required." } }, { status: 400 });
+      return Response.json(
+        {
+          success: false,
+          error: { code: "VALIDATION_ERROR", message: "A file is required." },
+        },
+        { status: 400 },
+      );
     }
 
     const upload = await uploadBuffer({
@@ -57,6 +67,8 @@ export async function POST(request: Request) {
       width: upload.width,
     });
   } catch (error) {
+    console.log("[uploads] Uploade failed:", error);
+
     try {
       return guardErrorResponse(error);
     } catch {
