@@ -23,7 +23,7 @@ A mobile-first housing search platform built with Expo SDK 55, React Native, and
 - pnpm (or npm/yarn)
 - Expo CLI (`npm install -g expo-cli`)
 - A Neon PostgreSQL database
-- Expo Go app on your phone (or Android/iOS emulator)
+- An Expo development build on your phone (or Android/iOS emulator)
 
 ## Getting Started
 
@@ -80,7 +80,9 @@ pnpm db:studio
 pnpm start
 ```
 
-Scan the QR code with Expo Go (Android) or Camera (iOS), or press `a` for Android emulator / `i` for iOS simulator.
+Open the project in an Expo development build, or press `a` for an Android emulator / `i` for an iOS simulator.
+
+> The property map uses the native MapLibre module and therefore does not run in Expo Go. After installing or upgrading native dependencies, create a fresh development build with `pnpm exec eas build --platform android --profile development` (or the equivalent iOS profile) before testing maps on a device. Web maps continue to run with `pnpm web`.
 
 ### 5. Useful commands
 

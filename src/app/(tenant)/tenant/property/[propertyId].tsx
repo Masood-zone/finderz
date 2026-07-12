@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Alert, Image, Linking, Pressable, RefreshControl, ScrollView, Share, TextInput, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import { ArrowLeft, Bath, BedDouble, Flag, Heart, MapPin, MessageCircle, Phone, Share2, ShieldAlert, ShieldCheck } from "lucide-react-native";
+import { ArrowLeft, Bath, BedDouble, ExternalLink, Flag, Heart, MapPin, MessageCircle, Phone, Share2, ShieldAlert, ShieldCheck } from "lucide-react-native";
+import { PropertyMap } from "@/components/maps/property-map";
 import { AppButton } from "@/components/ui/app-button";
 import { AppText } from "@/components/ui/app-text";
 import { colors, radius } from "@/components/ui/design-system";
@@ -21,6 +22,7 @@ export default function TenantPropertyDetailScreen() {
   const propertyQuery = useTenantProperty(propertyId);
   const toggleFavourite = useToggleTenantFavourite();
   const createEnquiry = useCreateTenantEnquiry();
+  const [mapFailed, setMapFailed] = useState(false);
   const [message, setMessage] = useState("Hello, I’m interested in this FinderZ listing. Is it still available?");
 
   if (propertyQuery.isLoading) {
@@ -38,6 +40,11 @@ export default function TenantPropertyDetailScreen() {
   const hasSentEnquiry = Boolean(existingEnquiry);
   const landlordPhone = property.landlord?.phone?.trim() ?? "";
   const canCallLandlord = Boolean(landlordPhone);
+  const latitude = Number(property.latitude);
+  const longitude = Number(property.longitude);
+  const propertyCoordinates = property.latitude && property.longitude && Number.isFinite(latitude) && Number.isFinite(longitude)
+    ? { latitude, longitude }
+    : null;
 
   const startEnquiry = async () => {
     if (existingEnquiry) {
@@ -164,12 +171,33 @@ export default function TenantPropertyDetailScreen() {
 
         <View className="mt-7 px-4">
           <TenantSectionHeader title="Neighborhood" />
-          <View className="h-44 items-center justify-center overflow-hidden rounded-2xl" style={{ backgroundColor: colors.surfaceBlue, borderWidth: 1, borderColor: colors.border }}>
-            <MapPin color={colors.goldDark} size={36} />
-            <AppText className="mt-2" style={{ color: colors.primary, fontFamily: "Manrope_700Bold" }}>
-              {property.address}
-            </AppText>
+          {propertyCoordinates && !mapFailed ? (
+            <PropertyMap coordinates={propertyCoordinates} height={230} onMapError={() => setMapFailed(true)} />
+          ) : (
+            <View className="h-44 items-center justify-center overflow-hidden rounded-2xl px-5" style={{ backgroundColor: colors.surfaceBlue, borderWidth: 1, borderColor: colors.border }}>
+              <MapPin color={colors.goldDark} size={36} />
+              <AppText className="mt-2 text-center" style={{ color: colors.primary, fontFamily: "Manrope_700Bold" }}>{property.address}</AppText>
+              <AppText variant="caption" muted className="mt-1 text-center">
+                {mapFailed ? "The map could not be loaded. The saved address is still available." : "This legacy listing does not have an exact map pin yet."}
+              </AppText>
+            </View>
+          )}
+
+          <View className="mt-3 rounded-2xl p-4" style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }}>
+            <AppText style={{ fontFamily: "Manrope_700Bold" }}>{property.address}</AppText>
+            <AppText variant="caption" muted className="mt-1">{[property.landmark, property.area, property.city, property.region].filter(Boolean).join(" · ")}</AppText>
           </View>
+
+          {propertyCoordinates ? (
+            <View className="mt-3">
+              <AppButton
+                title="Open in Maps"
+                variant="secondary"
+                icon={<ExternalLink color={colors.primary} size={18} />}
+                onPress={() => void Linking.openURL(`https://www.openstreetmap.org/?mlat=${propertyCoordinates.latitude}&mlon=${propertyCoordinates.longitude}#map=18/${propertyCoordinates.latitude}/${propertyCoordinates.longitude}`)}
+              />
+            </View>
+          ) : null}
         </View>
 
         <View className="mt-7 px-4">

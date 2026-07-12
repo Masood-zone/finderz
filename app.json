@@ -13,7 +13,10 @@
     "ios": {
       "icon": "./assets/images/icon.png",
       "bundleIdentifier": "com.finderz.mobile",
-      "buildNumber": "1"
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "FinderZ uses your location only when you choose it to help position a property accurately on the map."
+      }
     },
     "android": {
       "package": "com.finderz.mobile",
@@ -43,7 +46,14 @@
         }
       ],
       "expo-secure-store",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "FinderZ uses your location only when you choose it to help position a property accurately on the map."
+        }
+      ],
+      "@maplibre/maplibre-react-native"
     ],
     "updates": {
       "url": "https://u.expo.dev/2406ab5d-c865-4e6d-b8c8-1519403e5e73",

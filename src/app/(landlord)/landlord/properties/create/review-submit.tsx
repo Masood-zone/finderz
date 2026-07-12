@@ -94,6 +94,11 @@ export default function ReviewSubmitScreen() {
       return;
     }
 
+    if (submitForApproval && (!payload.latitude || !payload.longitude)) {
+      Alert.alert("Property pin required", "Go back to Location & Pricing and select the property's exact position on the map before submitting for approval.");
+      return;
+    }
+
     if (submitForApproval && !confirmed) {
       Alert.alert("Confirmation required", "Confirm that the listing information is accurate before submitting.");
       return;
@@ -190,6 +195,12 @@ export default function ReviewSubmitScreen() {
             <View className="flex-row justify-between gap-3">
               <AppText muted>Location:</AppText>
               <AppText className="min-w-0 flex-1 text-right" style={{ fontFamily: "Manrope_700Bold" }}>{draft.area || "Area"}, {draft.city || "City"}</AppText>
+            </View>
+            <View className="flex-row justify-between gap-3">
+              <AppText muted>Map Pin:</AppText>
+              <AppText className="min-w-0 flex-1 text-right" style={{ color: draft.latitude && draft.longitude ? colors.success : colors.warning, fontFamily: "Manrope_700Bold" }}>
+                {draft.latitude && draft.longitude ? "Exact location selected" : "Required before submission"}
+              </AppText>
             </View>
             <View className="flex-row justify-between gap-3">
               <AppText muted>Price:</AppText>

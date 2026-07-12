@@ -7,6 +7,15 @@ import { guardErrorResponse, requireLandlord } from "@/lib/auth-guards.server";
 import { getLandlordCounts, getLandlordProfileForUser, replacePropertyAmenities, replacePropertyImages, serializeLandlordProperties } from "@/lib/landlord/landlord.server";
 import type { LandlordPropertyStatus } from "@/types/landlord";
 
+const coordinateString = (minimum: number, maximum: number, label: string) =>
+  z
+    .string()
+    .trim()
+    .refine((value) => Number.isFinite(Number(value)), `${label} must be a number.`)
+    .refine((value) => Number(value) >= minimum && Number(value) <= maximum, `${label} is outside the valid range.`)
+    .nullable()
+    .optional();
+
 export const savePropertySchema = z.object({
   id: z.string().optional(),
   title: z.string().trim().min(2).max(160),
@@ -21,8 +30,8 @@ export const savePropertySchema = z.object({
   area: z.string().trim().min(2).max(120),
   landmark: z.string().trim().max(160).nullable().optional(),
   address: z.string().trim().min(3).max(240),
-  latitude: z.string().trim().max(40).nullable().optional(),
-  longitude: z.string().trim().max(40).nullable().optional(),
+  latitude: coordinateString(-90, 90, "Latitude"),
+  longitude: coordinateString(-180, 180, "Longitude"),
   rentAmountCedis: z.coerce.number().min(0),
   paymentPeriod: z.enum(["MONTHLY", "QUARTERLY", "BIANNUALLY", "YEARLY"]),
   advancePeriodMonths: z.coerce.number().int().min(1).max(60),
@@ -44,6 +53,17 @@ export const savePropertySchema = z.object({
   inspectionAvailability: z.string().trim().max(500).nullable().optional(),
   houseRules: z.string().trim().max(1000).nullable().optional(),
   submitForApproval: z.boolean().default(false),
+}).superRefine((value, context) => {
+  const hasLatitude = value.latitude !== null && value.latitude !== undefined && value.latitude !== "";
+  const hasLongitude = value.longitude !== null && value.longitude !== undefined && value.longitude !== "";
+
+  if (hasLatitude !== hasLongitude) {
+    context.addIssue({ code: "custom", path: hasLatitude ? ["longitude"] : ["latitude"], message: "Latitude and longitude must be provided together." });
+  }
+
+  if (value.submitForApproval && (!hasLatitude || !hasLongitude)) {
+    context.addIssue({ code: "custom", path: ["latitude"], message: "Select the property's exact map location before submitting for approval." });
+  }
 });
 
 function statusToApproval(status: LandlordPropertyStatus | null) {
