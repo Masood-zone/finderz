@@ -14,6 +14,8 @@ export const initialLandlordPropertyDraft: LandlordPropertyDraft = {
   area: "",
   landmark: "",
   address: "",
+  latitude: null,
+  longitude: null,
   rentAmountCedis: 0,
   paymentPeriod: "MONTHLY",
   advancePeriodMonths: 1,

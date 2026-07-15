@@ -10,7 +10,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { signInWithEmail } from "@/services/api/auth-flows";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, router } from "expo-router";
+import { Link, router, useLocalSearchParams } from "expo-router";
 import { Mail } from "lucide-react-native";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -26,6 +26,7 @@ const signInSchema = z.object({
 type SignInFormValues = z.infer<typeof signInSchema>;
 
 export default function SignInScreen() {
+  const params = useLocalSearchParams<{ passwordReset?: string }>();
   const [error, setError] = useState<string | undefined>();
   const [googleMessage, setGoogleMessage] = useState<string | undefined>();
   const {
@@ -132,6 +133,14 @@ export default function SignInScreen() {
             title={error ? "Sign in failed" : "Google sign-in unavailable"}
             tone={error ? "error" : "info"}
           />
+
+          {params.passwordReset === "success" ? (
+            <FormError
+              title="Password reset complete"
+              message="Your password was updated successfully. Sign in with your new password."
+              tone="info"
+            />
+          ) : null}
 
           <AppButton
             title="Sign In"

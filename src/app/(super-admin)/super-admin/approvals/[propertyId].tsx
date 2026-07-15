@@ -6,6 +6,7 @@ import {
 import { AppButton } from "@/components/ui/app-button";
 import { AppInput } from "@/components/ui/app-input";
 import { AppText } from "@/components/ui/app-text";
+import { PropertyMap } from "@/components/maps/property-map";
 import { colors } from "@/components/ui/design-system";
 import { getErrorMessage } from "@/lib/get-error-message";
 import {
@@ -44,10 +45,16 @@ export default function PropertyReviewDetailsScreen() {
     useSuperAdminProperty(propertyId);
   const moderationAction = useSuperAdminPropertyAction();
   const [reason, setReason] = useState("");
+  const [mapFailed, setMapFailed] = useState(false);
   const [pendingAction, setPendingAction] = useState<
     "approve" | "reject" | "request_changes" | "suspend" | null
   >(null);
   const property = data?.property;
+  const latitude = Number(property?.latitude);
+  const longitude = Number(property?.longitude);
+  const propertyCoordinates = property?.latitude && property?.longitude && Number.isFinite(latitude) && Number.isFinite(longitude)
+    ? { latitude, longitude }
+    : null;
   const moderationState = property
     ? getModerationState(property)
     : "pending";
@@ -174,6 +181,23 @@ export default function PropertyReviewDetailsScreen() {
                 <AppText muted>No amenities supplied.</AppText>
               ) : null}
             </View>
+          </AdminCard>
+
+          <AdminCard>
+            <AppText variant="title">Exact Property Location</AppText>
+            <AppText muted style={{ marginBottom: 10, marginTop: 4 }}>
+              {property.address}, {property.area}, {property.city}
+            </AppText>
+            {propertyCoordinates && !mapFailed ? (
+              <PropertyMap coordinates={propertyCoordinates} height={260} onMapError={() => setMapFailed(true)} />
+            ) : (
+              <View style={{ alignItems: "center", backgroundColor: colors.surfaceBlue, borderRadius: 12, padding: 24 }}>
+                <MapPin size={28} color={colors.primary} />
+                <AppText muted style={{ marginTop: 8, textAlign: "center" }}>
+                  {mapFailed ? "The map could not be loaded. Review the saved address above." : "This listing has no exact map pin."}
+                </AppText>
+              </View>
+            )}
           </AdminCard>
 
           <AdminCard>

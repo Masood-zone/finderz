@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as Location from "expo-location";
 import { router, type Href } from "expo-router";
-import { ArrowLeft, ArrowRight, CalendarDays, Check, ChevronDown, Handshake, Info, Landmark, MapPin, Navigation, WalletCards } from "lucide-react-native";
+import { ArrowLeft, ArrowRight, CalendarDays, Check, ChevronDown, Crosshair, Handshake, Info, Landmark, MapPin, Navigation, RotateCcw, WalletCards } from "lucide-react-native";
 import type { ComponentType } from "react";
 import { useMemo, useState } from "react";
 import { Controller, useForm, type Resolver } from "react-hook-form";
@@ -8,6 +9,8 @@ import { Modal, Pressable, ScrollView, View, useWindowDimensions } from "react-n
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { z } from "zod";
 import { AddPropertyNote, AddPropertyPanel, AddPropertyShell } from "@/components/landlord/add-property-shell";
+import { PropertyMap } from "@/components/maps/property-map";
+import type { PropertyCoordinates } from "@/components/maps/property-map.types";
 import { AppButton } from "@/components/ui/app-button";
 import { AppInput } from "@/components/ui/app-input";
 import { AppText } from "@/components/ui/app-text";
@@ -157,6 +160,15 @@ export default function LocationPricingScreen() {
   const { draft, mergeDraft } = useLandlordPropertyDraftStore();
   const locations = useGhanaLocations();
   const monthOptions = useMemo(() => getNextMonths(12), []);
+  const [coordinates, setCoordinates] = useState<PropertyCoordinates | null>(() => {
+    const latitude = Number(draft.latitude);
+    const longitude = Number(draft.longitude);
+    return Number.isFinite(latitude) && Number.isFinite(longitude) && draft.latitude && draft.longitude ? { latitude, longitude } : null;
+  });
+  const [locating, setLocating] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [mapError, setMapError] = useState(false);
+  const [mapKey, setMapKey] = useState(0);
   const form = useForm<FormValues>({
     resolver: zodResolver(schema) as Resolver<FormValues>,
     defaultValues: {
@@ -189,9 +201,30 @@ export default function LocationPricingScreen() {
     mergeDraft({
       ...values,
       city,
+      latitude: coordinates ? String(coordinates.latitude) : null,
+      longitude: coordinates ? String(coordinates.longitude) : null,
     });
     router.push("/landlord/properties/create/review-submit" as Href);
   });
+
+  const handleUseCurrentLocation = async () => {
+    setLocating(true);
+    setLocationError(null);
+    try {
+      const permission = await Location.requestForegroundPermissionsAsync();
+      if (permission.status !== "granted") {
+        setLocationError("Location permission was not granted. You can still move the map manually to the property.");
+        return;
+      }
+
+      const position = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+      setCoordinates({ latitude: position.coords.latitude, longitude: position.coords.longitude });
+    } catch {
+      setLocationError("FinderZ could not determine your current position. Check location services and try again, or place the pin manually.");
+    } finally {
+      setLocating(false);
+    }
+  };
 
   return (
     <AddPropertyShell
@@ -245,6 +278,58 @@ export default function LocationPricingScreen() {
             <Controller control={form.control} name="area" render={({ field, fieldState }) => <AppInput label="Area / Neighborhood" value={field.value} onChangeText={field.onChange} error={fieldState.error?.message} />} />
             <Controller control={form.control} name="landmark" render={({ field }) => <AppInput label="Landmark" value={field.value} onChangeText={field.onChange} left={<Landmark color={colors.outline} size={18} />} />} />
             <Controller control={form.control} name="address" render={({ field, fieldState }) => <AppInput label="Address" value={field.value} onChangeText={field.onChange} error={fieldState.error?.message} left={<Navigation color={colors.outline} size={18} />} />} />
+
+            <View>
+              <View className="mb-2 flex-row items-end justify-between gap-3">
+                <View className="min-w-0 flex-1">
+                  <AppText variant="label" muted>Exact Property Pin</AppText>
+                  <AppText variant="caption" muted className="mt-1">Use your location, then move the map until the pin is on the property.</AppText>
+                </View>
+              </View>
+
+              <View className="mb-3">
+                <AppButton
+                  title={coordinates ? "Recenter to My Location" : "Use My Current Location"}
+                  variant="secondary"
+                  loading={locating}
+                  icon={<Crosshair color={colors.primary} size={18} />}
+                  onPress={() => void handleUseCurrentLocation()}
+                />
+              </View>
+
+              <PropertyMap
+                key={mapKey}
+                editable
+                coordinates={coordinates}
+                onCoordinatesChange={(next) => {
+                  setCoordinates(next);
+                  setLocationError(null);
+                }}
+                onMapError={() => setMapError(true)}
+              />
+
+              <View className="mt-3 rounded-xl p-3" style={{ backgroundColor: coordinates ? colors.successSoft : colors.warningSoft }}>
+                <AppText variant="caption" style={{ color: coordinates ? colors.success : colors.warning, fontFamily: "Manrope_700Bold" }}>
+                  {coordinates
+                    ? `Pin selected: ${coordinates.latitude.toFixed(6)}, ${coordinates.longitude.toFixed(6)}`
+                    : "No exact pin selected yet. A pin is required before approval submission."}
+                </AppText>
+              </View>
+
+              {locationError ? <AppText variant="caption" className="mt-2" style={{ color: colors.error }}>{locationError}</AppText> : null}
+              {mapError ? (
+                <Pressable
+                  className="mt-2 flex-row items-center gap-2"
+                  onPress={() => {
+                    setMapError(false);
+                    setMapKey((value) => value + 1);
+                  }}
+                >
+                  <RotateCcw color={colors.primary} size={16} />
+                  <AppText variant="caption" style={{ color: colors.primary, fontFamily: "Manrope_700Bold" }}>Map failed to load. Retry</AppText>
+                </Pressable>
+              ) : null}
+            </View>
           </View>
         </AddPropertyPanel>
 

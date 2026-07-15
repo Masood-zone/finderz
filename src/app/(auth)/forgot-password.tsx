@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "expo-router";
+import { Link, router, type Href } from "expo-router";
 import { Mail, ShieldCheck } from "lucide-react-native";
 import { Pressable, View } from "react-native";
 import { z } from "zod";
@@ -13,7 +13,7 @@ import { FormError } from "@/components/ui/form-error";
 import { KeyboardAwareScreen } from "@/components/ui/keyboard-aware-screen";
 import { ScreenShell } from "@/components/ui/screen-shell";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { requestPasswordResetEmail } from "@/services/api/auth-flows";
+import { requestPasswordResetOtp } from "@/services/api/auth-flows";
 
 const forgotPasswordSchema = z.object({
   email: z.email("Enter a valid email address."),
@@ -22,7 +22,6 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPasswordScreen() {
-  const [message, setMessage] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
   const {
     control,
@@ -34,15 +33,15 @@ export default function ForgotPasswordScreen() {
   });
 
   const onSubmit = handleSubmit(async ({ email }) => {
-    setMessage(undefined);
     setError(undefined);
 
     try {
-      await requestPasswordResetEmail(email.trim());
-      setMessage("If that email exists, FinderZ will send password reset instructions.");
+      const normalizedEmail = email.trim().toLowerCase();
+      await requestPasswordResetOtp(normalizedEmail);
+      router.push({ pathname: "/verify-reset-code", params: { email: normalizedEmail } } as unknown as Href);
     } catch (resetError) {
       setError(
-        getErrorMessage(resetError, "Password reset email delivery is not configured yet."),
+        getErrorMessage(resetError, "Unable to start password reset. Please try again."),
       );
     }
   });
@@ -58,7 +57,7 @@ export default function ForgotPasswordScreen() {
         <View className="mt-8">
           <AppText variant="display">Forgot Password?</AppText>
           <AppText muted className="mt-3">
-            Enter your email address and FinderZ will send secure reset instructions when email delivery is enabled.
+            Enter your registered email address and FinderZ will send you a six-digit verification code.
           </AppText>
         </View>
         <View className="mt-8 gap-4">
@@ -69,13 +68,8 @@ export default function ForgotPasswordScreen() {
               <AppInput label="Email" placeholder="you@example.com" keyboardType="email-address" autoCapitalize="none" value={value} onBlur={onBlur} onChangeText={onChange} error={errors.email?.message} left={<Mail color={colors.outline} size={20} />} />
             )}
           />
-          {message ? (
-            <AppText style={{ color: colors.success, fontFamily: "Manrope_700Bold" }}>
-              {message}
-            </AppText>
-          ) : null}
           <FormError message={error} />
-          <AppButton title="Send Reset Link" loading={isSubmitting} onPress={onSubmit} />
+          <AppButton title="Send Verification Code" loading={isSubmitting} onPress={onSubmit} />
         </View>
         <View className="mt-8 flex-row justify-center gap-1">
           <AppText muted>Remembered your password?</AppText>

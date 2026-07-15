@@ -5,6 +5,7 @@ import { enquiries, messages, properties, user } from "@/db/schema";
 import { badRequestResponse, internalServerErrorResponse, notFoundResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
 import { guardErrorResponse, requireLandlord } from "@/lib/auth-guards.server";
 import type { LandlordEnquiryDetailResponse } from "@/types/landlord";
+import { dispatchNotification } from "@/lib/notifications/dispatcher.server";
 
 type RouteParams = {
   enquiryId: string;
@@ -128,6 +129,7 @@ export async function POST(request: Request, { enquiryId }: RouteParams) {
       .update(enquiries)
       .set({ status: "RESPONDED", updatedAt: new Date() })
       .where(eq(enquiries.id, existing.id));
+    await dispatchNotification({ recipientIds: [existing.tenantId], type: "ENQUIRY_REPLY", category: "ENQUIRY", eventKey: "enquiry.landlord_reply", title: "Landlord replied", message: `${context.user.name} replied about ${existing.property.title}.`, deepLink: `/tenant/enquiry/${existing.id}`, relatedEntityType: "enquiry", relatedEntityId: existing.id, deduplicationKey: `landlord-reply:${existing.id}:${crypto.randomUUID()}` });
 
     const updated = await getOwnedEnquiry(enquiryId, context.user.id);
     return successResponse(serializeEnquiry(updated ?? existing));

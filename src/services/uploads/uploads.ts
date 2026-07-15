@@ -23,6 +23,7 @@ export interface UploadedCloudinaryFile {
 
 export interface UploadFileInput {
   file: {
+    file?: File;
     uri: string;
     name: string;
     type?: string;
@@ -37,11 +38,15 @@ export async function uploadFileToCloudinary({
   const cookie = authClient.getCookie();
   const body = new FormData();
   body.append("purpose", purpose);
-  body.append("file", {
-    uri: file.uri,
-    name: file.name,
-    type: file.type ?? "application/octet-stream",
-  } as unknown as Blob);
+  body.append(
+    "file",
+    file.file ??
+      ({
+        uri: file.uri,
+        name: file.name,
+        type: file.type ?? "application/octet-stream",
+      } as unknown as Blob),
+  );
 
   const res = await fetch(`${getApiBaseUrl()}/api/uploads`, {
     body,

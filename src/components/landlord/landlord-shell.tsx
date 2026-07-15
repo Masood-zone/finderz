@@ -6,9 +6,12 @@ import { AppText } from "@/components/ui/app-text";
 import { colors, radius } from "@/components/ui/design-system";
 import { FinderzLogo } from "@/components/ui/finderz-logo";
 import { TenantAvatar } from "@/components/tenant/tenant-shell";
+import { router, type Href } from "expo-router";
+import { useNotifications } from "@/services/queries/hooks";
 
 export function LandlordTopBar({ title, subtitle, userName, image, right }: { title?: string; subtitle?: string; userName?: string; image?: string | null; right?: ReactNode }) {
   const insets = useSafeAreaInsets();
+  const notifications = useNotifications();
 
   return (
     <View className="flex-row items-center justify-between px-4 pb-3" style={{ backgroundColor: colors.background, paddingTop: Math.max(insets.top, 12) }}>
@@ -26,8 +29,9 @@ export function LandlordTopBar({ title, subtitle, userName, image, right }: { ti
         </View>
       </View>
       {right ?? (
-        <Pressable className="h-10 w-10 items-center justify-center" style={{ borderRadius: radius.xl, backgroundColor: colors.surface }}>
+        <Pressable onPress={() => router.push("/landlord/notifications" as Href)} className="h-10 w-10 items-center justify-center" style={{ borderRadius: radius.xl, backgroundColor: colors.surface }}>
           <Bell color={colors.primary} size={20} />
+          {(notifications.data?.unreadCount ?? 0) > 0 ? <View className="absolute right-2 top-2 h-2 w-2 rounded-full" style={{ backgroundColor: colors.error }} /> : null}
         </Pressable>
       )}
     </View>

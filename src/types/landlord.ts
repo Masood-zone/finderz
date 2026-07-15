@@ -159,6 +159,7 @@ export type LandlordEnquiryDetailResponse = {
 
 export type LandlordPropertyDraft = {
   id?: string;
+  submissionId?: string;
   title: string;
   propertyType: string;
   description: string;
@@ -171,6 +172,8 @@ export type LandlordPropertyDraft = {
   area: string;
   landmark?: string | null;
   address: string;
+  latitude?: string | null;
+  longitude?: string | null;
   rentAmountCedis: number;
   paymentPeriod: string;
   advancePeriodMonths: number;

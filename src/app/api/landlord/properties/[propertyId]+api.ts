@@ -1,7 +1,13 @@
-import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { properties } from "@/db/schema";
-import { badRequestResponse, forbiddenResponse, internalServerErrorResponse, notFoundResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
+import { enquiries, properties } from "@/db/schema";
+import {
+  badRequestResponse,
+  forbiddenResponse,
+  internalServerErrorResponse,
+  notFoundResponse,
+  successResponse,
+  validationErrorResponse,
+} from "@/lib/api-response";
 import { guardErrorResponse, requireLandlord } from "@/lib/auth-guards.server";
 import {
   getLandlordProfileForUser,
@@ -10,7 +16,9 @@ import {
   replacePropertyImages,
   serializeLandlordProperties,
 } from "@/lib/landlord/landlord.server";
+import { and, eq, inArray } from "drizzle-orm";
 import { savePropertySchema } from "../properties+api";
+import { dispatchNotification, notifySuperAdmins } from "@/lib/notifications/dispatcher.server";
 
 type RouteParams = {
   propertyId: string;
@@ -68,10 +76,18 @@ export async function PATCH(request: Request, { propertyId }: RouteParams) {
     if (body?.action === "mark-rented") {
       const [updated] = await db
         .update(properties)
-        .set({ approvalStatus: "RENTED", isAvailable: false, updatedAt: new Date() })
+        .set({
+          approvalStatus: "RENTED",
+          isAvailable: false,
+          updatedAt: new Date(),
+        })
         .where(eq(properties.id, existing.id))
         .returning();
-      const [property] = await serializeLandlordProperties([{ ...updated, images: existing.images }]);
+      const [property] = await serializeLandlordProperties([
+        { ...updated, images: existing.images },
+      ]);
+      const interested = await db.select({ tenantId: enquiries.tenantId }).from(enquiries).where(and(eq(enquiries.propertyId, existing.id), inArray(enquiries.status, ["OPEN", "RESPONDED"])));
+      if (interested.length) await dispatchNotification({ recipientIds: interested.map((item) => item.tenantId), type: "PROPERTY_UNAVAILABLE", category: "PROPERTY", eventKey: "property.rented", title: "Property is no longer available", message: `${existing.title} has been marked as rented.`, deepLink: `/tenant/property/${existing.id}`, relatedEntityType: "property", relatedEntityId: existing.id, deduplicationKey: `property-rented:${existing.id}` });
       return successResponse({ property });
     }
 
@@ -102,25 +118,40 @@ export async function PATCH(request: Request, { propertyId }: RouteParams) {
         furnishingStatus: parsed.data.furnishingStatus,
         isNegotiable: parsed.data.isNegotiable,
         isAvailable: parsed.data.isAvailable,
-        approvalStatus: parsed.data.submitForApproval ? "PENDING" : existing.approvalStatus === "DRAFT" ? "DRAFT" : existing.approvalStatus,
+        approvalStatus: parsed.data.submitForApproval
+          ? "PENDING"
+          : existing.approvalStatus === "DRAFT"
+            ? "DRAFT"
+            : existing.approvalStatus,
         contactPreferences: parsed.data.contactPreferences ?? null,
         inspectionAvailability: parsed.data.inspectionAvailability ?? null,
         houseRules: parsed.data.houseRules ?? null,
-        availableFrom: parsed.data.availableFrom ? new Date(parsed.data.availableFrom) : null,
+        availableFrom: parsed.data.availableFrom
+          ? new Date(parsed.data.availableFrom)
+          : null,
         updatedAt: new Date(),
       })
       .where(eq(properties.id, existing.id))
       .returning();
 
-    await Promise.all([replacePropertyAmenities(existing.id, parsed.data.amenities), replacePropertyImages(existing.id, parsed.data.images)]);
+    await Promise.all([
+      replacePropertyAmenities(existing.id, parsed.data.amenities),
+      replacePropertyImages(existing.id, parsed.data.images),
+    ]);
     const row = await getOwnedProperty(profile.id, existing.id);
-    const [property] = await serializeLandlordProperties(row ? [row] : [{ ...updated, images: [] }]);
+    const [property] = await serializeLandlordProperties(
+      row ? [row] : [{ ...updated, images: [] }],
+    );
+    if (parsed.data.submitForApproval && existing.approvalStatus !== "PENDING") await notifySuperAdmins({ type: "PENDING_APPROVAL", category: "PROPERTY", eventKey: "property.resubmitted", title: "Property resubmitted", message: `${context.user.name} resubmitted ${updated.title} for review.`, deepLink: `/super-admin/approvals/${updated.id}`, relatedEntityType: "property", relatedEntityId: updated.id, deduplicationKey: `property-resubmitted:${updated.id}:${updated.updatedAt.toISOString()}` });
     return successResponse({ property });
   } catch (error) {
     try {
       return guardErrorResponse(error);
     } catch {
-      console.error("PATCH /api/landlord/properties/[propertyId] failed:", error);
+      console.error(
+        "PATCH /api/landlord/properties/[propertyId] failed:",
+        error,
+      );
       return internalServerErrorResponse();
     }
   }
@@ -173,13 +204,18 @@ export async function POST(request: Request, { propertyId }: RouteParams) {
       })),
     );
 
-    const [property] = await serializeLandlordProperties([{ ...created, images: [] }]);
+    const [property] = await serializeLandlordProperties([
+      { ...created, images: [] },
+    ]);
     return successResponse({ property }, { status: 201 });
   } catch (error) {
     try {
       return guardErrorResponse(error);
     } catch {
-      console.error("POST /api/landlord/properties/[propertyId] failed:", error);
+      console.error(
+        "POST /api/landlord/properties/[propertyId] failed:",
+        error,
+      );
       return internalServerErrorResponse();
     }
   }
@@ -203,13 +239,18 @@ export async function DELETE(request: Request, { propertyId }: RouteParams) {
       return notFoundResponse("Property not found.");
     }
 
+    const interested = await db.select({ tenantId: enquiries.tenantId }).from(enquiries).where(and(eq(enquiries.propertyId, existing.id), inArray(enquiries.status, ["OPEN", "RESPONDED"])));
     await db.delete(properties).where(eq(properties.id, existing.id));
+    if (interested.length) await dispatchNotification({ recipientIds: interested.map((item) => item.tenantId), type: "PROPERTY_UNAVAILABLE", category: "PROPERTY", eventKey: "property.removed", title: "Property removed", message: `${existing.title} is no longer available on FinderZ.`, relatedEntityType: "property", relatedEntityId: existing.id, deduplicationKey: `property-removed:${existing.id}` });
     return successResponse({ propertyId: existing.id });
   } catch (error) {
     try {
       return guardErrorResponse(error);
     } catch {
-      console.error("DELETE /api/landlord/properties/[propertyId] failed:", error);
+      console.error(
+        "DELETE /api/landlord/properties/[propertyId] failed:",
+        error,
+      );
       return internalServerErrorResponse();
     }
   }

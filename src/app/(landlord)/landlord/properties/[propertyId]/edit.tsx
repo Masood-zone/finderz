@@ -28,6 +28,8 @@ export default function EditPropertyScreen() {
       area: item.area,
       landmark: item.landmark,
       address: item.address,
+      latitude: item.latitude,
+      longitude: item.longitude,
       rentAmountCedis: item.rentAmount / 100,
       paymentPeriod: item.paymentPeriod,
       advancePeriodMonths: item.advancePeriodMonths,

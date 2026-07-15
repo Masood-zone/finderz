@@ -1,10 +1,11 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { landlordProfiles, notifications, user } from "@/db/schema";
+import { landlordProfiles, user } from "@/db/schema";
 import { internalServerErrorResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
 import { guardErrorResponse, requireLandlord } from "@/lib/auth-guards.server";
 import { getLandlordProfileForUser } from "@/lib/landlord/landlord.server";
+import { notifySuperAdmins } from "@/lib/notifications/dispatcher.server";
 
 const onboardingSchema = z.object({
   legalName: z.string().trim().min(2).max(160),
@@ -121,23 +122,7 @@ export async function POST(request: Request) {
       })
       .where(eq(user.id, context.user.id));
 
-    const admins = await db.query.user.findMany({
-      where: eq(user.role, "SUPER_ADMIN"),
-      columns: { id: true },
-    });
-
-    if (admins.length) {
-      await db.insert(notifications).values(
-        admins.map((admin) => ({
-          id: crypto.randomUUID(),
-          userId: admin.id,
-          type: "LANDLORD_VERIFICATION",
-          title: existing ? "Vendor verification resubmitted" : "New vendor verification pending",
-          message: `${parsed.data.legalName} submitted landlord verification documents for review.`,
-          data: { profileId: profile.id, landlordUserId: context.user.id },
-        })),
-      );
-    }
+    await notifySuperAdmins({ type: "LANDLORD_VERIFICATION", category: "VERIFICATION", eventKey: existing ? "verification.resubmitted" : "verification.submitted", title: existing ? "Landlord verification resubmitted" : "New landlord verification", message: `${parsed.data.legalName} submitted verification documents for review.`, deepLink: `/super-admin/verifications/${profile.id}`, relatedEntityType: "landlord_verification", relatedEntityId: profile.id, deduplicationKey: `verification-submitted:${profile.id}:${profile.updatedAt.toISOString()}`, data: { landlordUserId: context.user.id } });
 
     return successResponse({ profile: serializeProfile(profile) }, { status: existing ? 200 : 201 });
   } catch (error) {

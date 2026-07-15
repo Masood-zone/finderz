@@ -43,9 +43,12 @@ import {
   getTenantProperty,
   removeTenantFavourite,
   replyToTenantEnquiry,
+  reportTenantProperty,
   searchTenantProperties,
 } from "@/services/api/tenant-app";
 import { changePassword, getCurrentUser, updateProfile } from "@/services/api/users";
+import { getNotificationPreferences, getNotifications, markNotificationRead, updateNotificationPreference } from "@/services/api/notifications";
+import type { NotificationPreference } from "@/types/notifications";
 import { queryKeys } from "./keys";
 import type { TenantEnquiryStatusFilter, TenantFilters } from "@/types/tenant";
 import type { LandlordPropertyStatus, SaveLandlordPropertyInput } from "@/types/landlord";
@@ -79,6 +82,11 @@ export function useUpdateProfile() {
     },
   });
 }
+
+export function useNotifications() { return useQuery({ queryKey: queryKeys.notifications, queryFn: () => getNotifications() }); }
+export function useNotificationAction() { const client = useQueryClient(); return useMutation({ mutationFn: (id?: string) => markNotificationRead(id), onSuccess: () => client.invalidateQueries({ queryKey: queryKeys.notifications }) }); }
+export function useNotificationPreferences() { return useQuery({ queryKey: queryKeys.notificationPreferences, queryFn: getNotificationPreferences }); }
+export function useUpdateNotificationPreference() { const client = useQueryClient(); return useMutation({ mutationFn: (input: NotificationPreference) => updateNotificationPreference(input), onSuccess: () => client.invalidateQueries({ queryKey: queryKeys.notificationPreferences }) }); }
 
 export function useChangePassword() {
   return useMutation({
@@ -173,6 +181,8 @@ export function useCreateTenantEnquiry() {
     },
   });
 }
+
+export function useReportTenantProperty() { return useMutation({ mutationFn: reportTenantProperty }); }
 
 export function useReplyTenantEnquiry() {
   const queryClient = useQueryClient();

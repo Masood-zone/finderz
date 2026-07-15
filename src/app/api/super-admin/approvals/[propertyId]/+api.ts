@@ -19,6 +19,7 @@ import {
   requireReason,
   writeAdminAuditLog,
 } from "@/lib/super-admin/super-admin.server";
+import { dispatchNotification } from "@/lib/notifications/dispatcher.server";
 
 const actionSchema = z.object({
   action: z.enum(["approve", "reject", "request_changes", "suspend"]),
@@ -123,6 +124,7 @@ export async function PATCH(request: Request, { propertyId }: RouteContext) {
     );
 
     const property = await getAdminPropertyDetail(existing.id);
+    if (property?.landlord?.userId) await dispatchNotification({ recipientIds: [property.landlord.userId], type: "PROPERTY_MODERATION", category: "PROPERTY", eventKey: `property.${parsed.data.action}`, priority: parsed.data.action === "suspend" ? "HIGH" : "NORMAL", title: parsed.data.action === "approve" ? "Property approved" : parsed.data.action === "request_changes" ? "Property changes requested" : parsed.data.action === "suspend" ? "Property suspended" : "Property rejected", message: parsed.data.action === "approve" ? `${existing.title} is now live on FinderZ.` : (parsed.data.reason ?? `${existing.title} was reviewed.`), deepLink: `/landlord/properties/${existing.id}`, relatedEntityType: "property", relatedEntityId: existing.id, deduplicationKey: `property-${parsed.data.action}:${existing.id}:${existing.updatedAt.toISOString()}` });
 
     return successResponse(
       { property },
