@@ -1,7 +1,7 @@
 import { and, count, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { notificationPreferences, notifications } from "@/db/schema";
+import { notifications } from "@/db/schema";
 import { internalServerErrorResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
 import { guardErrorResponse, requireSession } from "@/lib/auth-guards.server";
 import { processDueNotificationDeliveries } from "@/lib/notifications/dispatcher.server";
