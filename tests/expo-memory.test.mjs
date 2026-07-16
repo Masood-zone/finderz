@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildExpoNodeArgs, chooseExpoHeapMb } from "../scripts/expo-memory.mjs";
+import {
+  addDefaultMaxWorkers,
+  buildExpoNodeArgs,
+  chooseExpoHeapMb,
+  chooseExpoMaxWorkers,
+} from "../scripts/expo-memory.mjs";
 
 const gibibytes = (value) => value * 1024 * 1024 * 1024;
 
@@ -17,9 +22,27 @@ test("accepts a safe explicit heap override", () => {
   assert.equal(chooseExpoHeapMb(gibibytes(8), "5120"), 5120);
 });
 
+test("limits Metro concurrency on lower-memory laptops", () => {
+  assert.equal(chooseExpoMaxWorkers(gibibytes(4)), 1);
+  assert.equal(chooseExpoMaxWorkers(gibibytes(8)), 2);
+  assert.equal(chooseExpoMaxWorkers(gibibytes(16)), 4);
+  assert.equal(chooseExpoMaxWorkers(gibibytes(64)), 4);
+  assert.equal(chooseExpoMaxWorkers(gibibytes(8), "3"), 3);
+});
+
 test("rejects invalid heap overrides", () => {
   assert.throws(() => chooseExpoHeapMb(gibibytes(8), "512"), /whole number/);
   assert.throws(() => chooseExpoHeapMb(gibibytes(8), "a lot"), /whole number/);
+});
+
+test("adds a worker limit only when Expo supports it and preserves an explicit limit", () => {
+  assert.deepEqual(addDefaultMaxWorkers(["start"], 2), ["start", "--max-workers", "2"]);
+  assert.deepEqual(addDefaultMaxWorkers(["export", "--max-workers", "1"], 2), [
+    "export",
+    "--max-workers",
+    "1",
+  ]);
+  assert.deepEqual(addDefaultMaxWorkers(["lint"], 2), ["lint"]);
 });
 
 test("enables snapshots only for the profiling command", () => {

@@ -80,7 +80,7 @@ pnpm db:studio
 pnpm start
 ```
 
-The start script launches the local Expo CLI through Node with a RAM-aware V8 heap allowance. It uses 8 GB on machines with at least 24 GB of RAM, 6 GB on 16 GB machines, 4 GB on 12 GB machines, 3 GB on 8 GB machines, and 2 GB below that. This is a ceiling, not an upfront allocation. To override it for one run, set `EXPO_NODE_HEAP_MB` to a value from 1024 through 16384 before starting Expo.
+The start script launches the local Expo CLI through Node with a RAM-aware V8 heap allowance. It uses 8 GB on machines with at least 24 GB of RAM, 6 GB on 16 GB machines, 4 GB on 12 GB machines, 3 GB on 8 GB machines, and 2 GB below that. This is a ceiling, not an upfront allocation. Metro compilation is also limited to one worker below 8 GB of RAM, two workers below 16 GB, and four workers on larger machines to prevent route compilation from exhausting memory. To override these values for one run, set `EXPO_NODE_HEAP_MB` (1024 through 16384) or `EXPO_MAX_WORKERS` (1 through 16) before starting Expo.
 
 If the server still grows until it reaches the heap limit, reproduce it with profiling enabled:
 

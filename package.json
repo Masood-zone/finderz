@@ -23,7 +23,7 @@
     "db:check": "tsx src/scripts/db-check.ts",
     "test:memory": "node --test tests/expo-memory.test.mjs",
     "typecheck": "tsc --noEmit",
-    "lint": "expo lint"
+    "lint": "node ./scripts/run-expo.mjs lint"
   },
   "dependencies": {
     "@better-auth/drizzle-adapter": "^1.6.16",
