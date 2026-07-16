@@ -1,4 +1,5 @@
 import { router, type Href } from "expo-router";
+import { randomUUID } from "expo-crypto";
 import { ArrowLeft, Check, CheckCircle2, CloudUpload, ImagePlus, ShieldCheck, X } from "lucide-react-native";
 import { useRef, useState } from "react";
 import { Alert, Image, Pressable, View } from "react-native";
@@ -38,7 +39,7 @@ function AmenityRow({ label, active, onPress }: { label: string; active: boolean
 export default function ReviewSubmitScreen() {
   const { draft, mergeDraft, resetDraft } = useLandlordPropertyDraftStore();
   const save = useSaveLandlordProperty();
-  const submissionIdRef = useRef(draft.submissionId ?? crypto.randomUUID());
+  const submissionIdRef = useRef(draft.submissionId ?? randomUUID());
   const submittingRef = useRef(false);
   const [amenities, setAmenities] = useState(draft.amenities);
   const [images, setImages] = useState<UploadedFileResult[]>(
