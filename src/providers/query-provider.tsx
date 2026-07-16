@@ -1,4 +1,4 @@
-import { getNetworkStateAsync } from "expo-network";
+import { addNetworkStateListener, getNetworkStateAsync, type NetworkState } from "expo-network";
 import { focusManager, onlineManager, QueryClientProvider } from "@tanstack/react-query";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { AppState, AppStateStatus, Platform } from "react-native";
@@ -17,21 +17,21 @@ export function QueryProvider({ children }: PropsWithChildren) {
     const appStateSubscription = AppState.addEventListener("change", onAppStateChange);
     let isMounted = true;
 
-    const syncNetworkState = async () => {
-      const state = await getNetworkStateAsync();
-
+    const syncNetworkState = (state: NetworkState) => {
       if (isMounted) {
         onlineManager.setOnline(Boolean(state.isConnected && state.isInternetReachable !== false));
       }
     };
 
-    const interval = setInterval(syncNetworkState, 15_000);
-    syncNetworkState();
+    const networkSubscription = addNetworkStateListener(syncNetworkState);
+    void getNetworkStateAsync().then(syncNetworkState).catch(() => {
+      // Keep the last known state when the native network module cannot respond.
+    });
 
     return () => {
       isMounted = false;
       appStateSubscription.remove();
-      clearInterval(interval);
+      networkSubscription.remove();
     };
   }, []);
 

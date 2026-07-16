@@ -80,6 +80,16 @@ pnpm db:studio
 pnpm start
 ```
 
+The start script launches the local Expo CLI through Node with a RAM-aware V8 heap allowance. It uses 8 GB on machines with at least 24 GB of RAM, 6 GB on 16 GB machines, 4 GB on 12 GB machines, 3 GB on 8 GB machines, and 2 GB below that. This is a ceiling, not an upfront allocation. To override it for one run, set `EXPO_NODE_HEAP_MB` to a value from 1024 through 16384 before starting Expo.
+
+If the server still grows until it reaches the heap limit, reproduce it with profiling enabled:
+
+```bash
+pnpm start:profile
+```
+
+This writes up to two `*.heapsnapshot` files near the V8 limit. Snapshots can be several gigabytes, pause the dev server while being written, and may contain application data, so use this command only for a controlled reproduction and delete the files afterward. Heap snapshot and heap profile files are ignored by Git.
+
 Open the project in an Expo development build, or press `a` for an Android emulator / `i` for an iOS simulator.
 
 > Expo Go uses an embedded MapLibre compatibility map for property-location testing. Development and production builds use the native MapLibre renderer. After installing or upgrading native dependencies, create a fresh development build with `pnpm exec eas build --platform android --profile development` (or the equivalent iOS profile) before testing the native renderer. Web maps continue to run with `pnpm web`.
@@ -89,11 +99,13 @@ Open the project in an Expo development build, or press `a` for an Android emula
 | Command | Description |
 |---------|-------------|
 | `pnpm start` | Start Expo dev server |
+| `pnpm start:profile` | Start Expo with near-limit heap snapshots enabled |
 | `pnpm android` | Start on Android |
 | `pnpm ios` | Start on iOS |
 | `pnpm web` | Start on web |
 | `pnpm typecheck` | TypeScript type check |
 | `pnpm lint` | ESLint |
+| `pnpm test:memory` | Test the cross-platform Expo heap selection |
 | `pnpm db:generate` | Generate Drizzle migrations |
 | `pnpm db:migrate` | Run migrations |
 | `pnpm db:push` | Push schema to DB |
