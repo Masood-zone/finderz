@@ -88,7 +88,6 @@ export default function ReviewSubmitScreen() {
   );
   const submittingRef = useRef(false);
   const [amenities, setAmenities] = useState(draft.amenities);
-  bhityi8;
   const [images, setImages] = useState<UploadedFileResult[]>(
     draft.images.map((image, index) => ({
       name: `Property image ${index + 1}`,
