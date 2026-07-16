@@ -5,6 +5,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppText } from "@/components/ui/app-text";
 import { colors, radius } from "@/components/ui/design-system";
 import { FinderzLogo } from "@/components/ui/finderz-logo";
+import { router, type Href } from "expo-router";
+import { useNotifications } from "@/services/queries/hooks";
 
 export function TenantAvatar({ name, image, size = 40 }: { name?: string; image?: string | null; size?: number }) {
   const initials =
@@ -30,6 +32,7 @@ export function TenantAvatar({ name, image, size = 40 }: { name?: string; image?
 
 export function TenantTopBar({ title, subtitle, userName, right }: { title?: string; subtitle?: string; userName?: string; right?: ReactNode }) {
   const insets = useSafeAreaInsets();
+  const notifications = useNotifications();
 
   return (
     <View className="flex-row items-center justify-between px-4 pb-3" style={{ backgroundColor: colors.background, paddingTop: Math.max(insets.top, 12) }}>
@@ -47,9 +50,9 @@ export function TenantTopBar({ title, subtitle, userName, right }: { title?: str
         </View>
       </View>
       {right ?? (
-        <Pressable className="h-10 w-10 items-center justify-center" style={{ borderRadius: radius.xl, backgroundColor: colors.surface }}>
+        <Pressable onPress={() => router.push("/tenant/notifications" as Href)} className="h-10 w-10 items-center justify-center" style={{ borderRadius: radius.xl, backgroundColor: colors.surface }}>
           <Bell color={colors.primary} size={20} />
-          <View className="absolute right-2 top-2 h-2 w-2 rounded-full" style={{ backgroundColor: colors.error }} />
+          {(notifications.data?.unreadCount ?? 0) > 0 ? <View className="absolute right-2 top-2 h-2 w-2 rounded-full" style={{ backgroundColor: colors.error }} /> : null}
         </Pressable>
       )}
     </View>

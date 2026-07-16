@@ -10,6 +10,9 @@ import {
   landlordProfiles,
   messages,
   notifications,
+  notificationDeliveries,
+  notificationPreferences,
+  pushTokens,
   properties,
   propertyAmenities,
   propertyImages,
@@ -30,6 +33,8 @@ export const userRelations = relations(user, ({ many, one }) => ({
   reports: many(propertyReports, { relationName: "reporter_reports" }),
   reviewedReports: many(propertyReports, { relationName: "reviewed_reports" }),
   notifications: many(notifications),
+  notificationPreferences: many(notificationPreferences),
+  pushTokens: many(pushTokens),
   auditLogs: many(adminAuditLogs),
 }));
 
@@ -95,6 +100,18 @@ export const propertyReportRelations = relations(propertyReports, ({ one }) => (
 
 export const notificationRelations = relations(notifications, ({ one }) => ({
   user: one(user, { fields: [notifications.userId], references: [user.id] }),
+}));
+
+export const notificationPreferenceRelations = relations(notificationPreferences, ({ one }) => ({
+  user: one(user, { fields: [notificationPreferences.userId], references: [user.id] }),
+}));
+
+export const pushTokenRelations = relations(pushTokens, ({ one }) => ({
+  user: one(user, { fields: [pushTokens.userId], references: [user.id] }),
+}));
+
+export const notificationDeliveryRelations = relations(notificationDeliveries, ({ one }) => ({
+  notification: one(notifications, { fields: [notificationDeliveries.notificationId], references: [notifications.id] }),
 }));
 
 export const adminAuditLogRelations = relations(adminAuditLogs, ({ one }) => ({

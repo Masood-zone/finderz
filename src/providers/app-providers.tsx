@@ -9,10 +9,10 @@ import { QueryProvider } from "./query-provider";
 
 export function AppProviders({ children }: PropsWithChildren) {
   return (
-    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <KeyboardProvider>
-        <QueryProvider>{children}</QueryProvider>
-      </KeyboardProvider>
-    </SafeAreaProvider>
+    <QueryProvider>
+      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+        <KeyboardProvider>{children}</KeyboardProvider>
+      </SafeAreaProvider>
+    </QueryProvider>
   );
 }

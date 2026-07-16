@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { landlordProfiles, notifications } from "@/db/schema";
+import { landlordProfiles } from "@/db/schema";
 import { badRequestResponse, internalServerErrorResponse, notFoundResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
 import { guardErrorResponse, requireSuperAdmin } from "@/lib/auth-guards.server";
 import {
@@ -11,6 +11,7 @@ import {
   serializeLandlordVerifications,
   writeAdminAuditLog,
 } from "@/lib/super-admin/super-admin.server";
+import { dispatchNotification } from "@/lib/notifications/dispatcher.server";
 
 type RouteParams = {
   profileId: string;
@@ -104,19 +105,7 @@ export async function PATCH(request: Request, { profileId }: RouteParams) {
       reason: parsed.data.reason ?? null,
     });
 
-    if (existing.userId) {
-      await db.insert(notifications).values({
-        id: crypto.randomUUID(),
-        userId: existing.userId,
-        type: "LANDLORD_VERIFICATION",
-        title: parsed.data.action === "approve" ? "Verification approved" : parsed.data.action === "request_changes" ? "Verification changes requested" : "Verification rejected",
-        message:
-          parsed.data.action === "approve"
-            ? "Your landlord verification has been approved. You can now manage listings with verified status."
-            : (parsed.data.reason ?? "Please update your landlord verification details and resubmit."),
-        data: { profileId: existing.id, action: parsed.data.action },
-      });
-    }
+    await dispatchNotification({ recipientIds: [existing.userId], type: "LANDLORD_VERIFICATION", category: "VERIFICATION", eventKey: `verification.${parsed.data.action}`, title: parsed.data.action === "approve" ? "Verification approved" : parsed.data.action === "request_changes" ? "Verification changes requested" : "Verification rejected", message: parsed.data.action === "approve" ? "Your landlord verification has been approved." : (parsed.data.reason ?? "Please update your verification details."), deepLink: "/landlord/verification-status", relatedEntityType: "landlord_verification", relatedEntityId: existing.id, deduplicationKey: `verification-${parsed.data.action}:${existing.id}:${existing.updatedAt.toISOString()}` });
 
     const verification = await getVerificationDetail(existing.id);
     return successResponse({ verification }, { message: "Landlord verification review updated." });

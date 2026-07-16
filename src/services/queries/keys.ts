@@ -1,5 +1,7 @@
 export const queryKeys = {
   currentUser: ["current-user"] as const,
+  notifications: ["notifications"] as const,
+  notificationPreferences: ["notification-preferences"] as const,
   tenantDashboard: ["tenant-dashboard"] as const,
   tenantFeed: (filters?: unknown) => ["tenant-feed", filters ?? {}] as const,
   tenantProperties: (filters: unknown) => ["tenant-properties", filters] as const,

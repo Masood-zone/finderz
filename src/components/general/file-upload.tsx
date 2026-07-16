@@ -87,6 +87,7 @@ export default function FileUpload({
 
       onChange(uploadMode === "single" ? uploaded.slice(0, 1) : [...value, ...uploaded]);
     } catch (error) {
+       console.log(error);
       Alert.alert("Upload failed", error instanceof Error ? error.message : "Please try another file.");
     } finally {
       setUploading(false);

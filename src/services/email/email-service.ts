@@ -7,6 +7,8 @@ import { OnboardingReceivedEmail } from "@/services/email/onboarding-received-em
 import { PaymentSuccessEmail } from "@/services/email/payment-success-email"
 import { WelfareProgramDueReminderEmail } from "@/services/email/welfare-program-due-reminder-email"
 import { WelfareProgramEnrollmentEmail } from "@/services/email/welfare-program-enrollment-email"
+import { PasswordResetOtpEmail } from "@/services/email/password-reset-otp-email"
+import { PasswordResetSuccessEmail } from "@/services/email/password-reset-success-email"
 
 interface SendEmailOptions {
   html: string
@@ -67,6 +69,19 @@ interface PaymentSuccessEmailData {
   paidAt: string
   programTitle: string
   reference: string
+}
+
+interface PasswordResetOtpEmailData {
+  email: string
+  expiresInMinutes: number
+  name: string
+  otp: string
+}
+
+interface PasswordResetSuccessEmailData {
+  email: string
+  name: string
+  resetAt: string
 }
 
 class EmailService {
@@ -269,6 +284,39 @@ class EmailService {
       subject: `Payment confirmed: ${data.programTitle}`,
       html,
       text: `Hello ${data.memberName}, your payment of GHS ${data.amount.toFixed(2)} for ${data.programTitle} was confirmed. Reference: ${data.reference}. Paid at: ${data.paidAt}.`,
+    })
+  }
+
+  async sendPasswordResetOtpEmail(data: PasswordResetOtpEmailData): Promise<void> {
+    const html = await render(
+      PasswordResetOtpEmail({
+        expiresInMinutes: data.expiresInMinutes,
+        name: data.name,
+        otp: data.otp,
+      })
+    )
+
+    await this.sendEmail({
+      to: data.email,
+      subject: `${data.otp} is your FinderZ password reset code`,
+      html,
+      text: `Hello ${data.name}, your FinderZ password reset code is ${data.otp}. It expires in ${data.expiresInMinutes} minutes. Do not share this code.`,
+    })
+  }
+
+  async sendPasswordResetSuccessEmail(data: PasswordResetSuccessEmailData): Promise<void> {
+    const html = await render(
+      PasswordResetSuccessEmail({
+        name: data.name,
+        resetAt: data.resetAt,
+      })
+    )
+
+    await this.sendEmail({
+      to: data.email,
+      subject: "Your FinderZ password was changed",
+      html,
+      text: `Hello ${data.name}, your FinderZ password was changed successfully at ${data.resetAt}. All existing sessions were signed out. If this was not you, contact FinderZ support immediately.`,
     })
   }
 

@@ -13,7 +13,7 @@ import { colors } from "@/components/ui/design-system";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useSaveLandlordProperty } from "@/services/queries/hooks";
 import { useLandlordPropertyDraftStore } from "@/store/landlord-property-draft-store";
-import * as Crypto from "expo-crypto";
+import { randomUUID } from "expo-crypto";
 import { router, type Href } from "expo-router";
 import {
   ArrowLeft,
@@ -73,9 +73,10 @@ function AmenityRow({
 export default function ReviewSubmitScreen() {
   const { draft, mergeDraft, resetDraft } = useLandlordPropertyDraftStore();
   const save = useSaveLandlordProperty();
-  const submissionIdRef = useRef(draft.submissionId ?? Crypto.randomUUID());
+  const submissionIdRef = useRef(draft.submissionId ?? randomUUID());
   const submittingRef = useRef(false);
-  const [amenities, setAmenities] = useState(draft.amenities);         bhityi8    
+  const [amenities, setAmenities] = useState(draft.amenities);
+  bhityi8;
   const [images, setImages] = useState<UploadedFileResult[]>(
     draft.images.map((image, index) => ({
       name: `Property image ${index + 1}`,
