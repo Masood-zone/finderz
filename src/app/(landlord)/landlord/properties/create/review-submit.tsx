@@ -1,5 +1,4 @@
 import { router, type Href } from "expo-router";
-import { randomUUID } from "expo-crypto";
 import { ArrowLeft, Check, CheckCircle2, CloudUpload, ImagePlus, ShieldCheck, X } from "lucide-react-native";
 import { useRef, useState } from "react";
 import { Alert, Image, Pressable, View } from "react-native";
@@ -23,6 +22,13 @@ const amenityOptions = [
   "Backup Generator",
 ];
 
+function createSubmissionId() {
+  const timestamp = Date.now().toString(36);
+  const randomPart = `${Math.random().toString(36).slice(2)}${Math.random().toString(36).slice(2)}`.slice(0, 20);
+
+  return `property-${timestamp}-${randomPart}`;
+}
+
 function AmenityRow({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
   return (
     <Pressable className="flex-row items-center gap-3 rounded-2xl p-4" style={{ backgroundColor: active ? "#dce9ff" : colors.surfaceBlue }} onPress={onPress}>
@@ -39,7 +45,7 @@ function AmenityRow({ label, active, onPress }: { label: string; active: boolean
 export default function ReviewSubmitScreen() {
   const { draft, mergeDraft, resetDraft } = useLandlordPropertyDraftStore();
   const save = useSaveLandlordProperty();
-  const submissionIdRef = useRef(draft.submissionId ?? randomUUID());
+  const [submissionId] = useState(() => draft.submissionId ?? createSubmissionId());
   const submittingRef = useRef(false);
   const [amenities, setAmenities] = useState(draft.amenities);
   const [images, setImages] = useState<UploadedFileResult[]>(
@@ -74,7 +80,7 @@ export default function ReviewSubmitScreen() {
 
   const currentDraft = () => ({
     ...draft,
-    submissionId: submissionIdRef.current,
+    submissionId,
     amenities,
     images: images
       .filter((file) => file.upload)
