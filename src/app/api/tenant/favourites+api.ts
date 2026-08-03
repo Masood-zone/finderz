@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { favourites } from "@/db/schema";
 import { internalServerErrorResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
 import { guardErrorResponse, requireTenant } from "@/lib/auth-guards.server";
-import { findTenantPropertyById, serializeProperties } from "@/lib/tenant/property-serializer.server";
+import { findTenantPropertyById, findTenantVisiblePropertiesByIds } from "@/lib/tenant/property-serializer.server";
 
 const favouriteSchema = z.object({
   propertyId: z.string().min(1),
@@ -25,8 +25,8 @@ export async function GET(request: Request) {
       orderBy: [desc(favourites.createdAt)],
     });
 
-    const properties = rows.map((row) => row.property).filter(Boolean);
-    const serialized = await serializeProperties(properties, context.user.id);
+    const propertyIds = rows.map((row) => row.property?.id).filter((id): id is string => Boolean(id));
+    const serialized = await findTenantVisiblePropertiesByIds(propertyIds, context.user.id);
 
     return successResponse({ favourites: serialized });
   } catch (error) {

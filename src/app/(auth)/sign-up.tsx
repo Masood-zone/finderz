@@ -9,6 +9,7 @@ import { KeyboardAwareScreen } from "@/components/ui/keyboard-aware-screen";
 import { PasswordInput } from "@/components/ui/password-input";
 import { getSession } from "@/lib/auth-client";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { fullNameSchema } from "@/lib/validation/full-name";
 import { signUpWithEmail } from "@/services/api/auth-flows";
 import { useAssignRole } from "@/services/queries/hooks";
 import { useOnboardingStore } from "@/store/onboarding-store";
@@ -23,7 +24,7 @@ import { z } from "zod";
 
 const signUpSchema = z
   .object({
-    name: z.string().trim().min(2, "Enter your full name."),
+    name: fullNameSchema,
     email: z.email("Enter a valid email address."),
     phone: z.string().trim().min(9, "Enter a valid Ghana phone number."),
     password: z.string().min(8, "Use at least 8 characters."),

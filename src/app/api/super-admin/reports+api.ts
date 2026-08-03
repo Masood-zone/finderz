@@ -15,7 +15,14 @@ export async function GET(request: Request) {
       where ? db.select({ value: count() }).from(propertyReports).where(where) : db.select({ value: count() }).from(propertyReports),
       db.query.propertyReports.findMany({
         where,
-        with: { property: true, reporter: true },
+        with: {
+          property: {
+            with: {
+              landlord: { with: { user: true, properties: true } },
+            },
+          },
+          reporter: true,
+        },
         orderBy: [desc(propertyReports.createdAt)],
         limit: pageSize,
         offset,

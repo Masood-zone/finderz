@@ -4,7 +4,7 @@ import { enquiries, favourites, properties } from "@/db/schema";
 import { ghanaSampleLocations, propertyTypes } from "@/db/seed-data";
 import { internalServerErrorResponse, successResponse } from "@/lib/api-response";
 import { guardErrorResponse, requireTenant } from "@/lib/auth-guards.server";
-import { getLocationSort, getPopularLocations, getTenantFiltersFromUrl, serializeProperties } from "@/lib/tenant/property-serializer.server";
+import { countTenantVisibleFavourites, getLocationSort, getPopularLocations, getTenantFiltersFromUrl, serializeProperties, tenantVisiblePropertyCondition } from "@/lib/tenant/property-serializer.server";
 
 const categories = ["All", ...propertyTypes.map((type) => type.charAt(0) + type.slice(1).toLowerCase())];
 
@@ -43,7 +43,7 @@ export async function GET(request: Request) {
   try {
     const context = await requireTenant(request);
     const filters = getTenantFiltersFromUrl(request);
-    const baseWhere = and(eq(properties.approvalStatus, "APPROVED"), eq(properties.isAvailable, true));
+    const baseWhere = tenantVisiblePropertyCondition();
     const nearbyWhere = getNearbyWhere(baseWhere, filters);
     const locationOrder = getLocationSort(filters);
 
@@ -67,7 +67,7 @@ export async function GET(request: Request) {
         limit: 4,
       }),
       getPopularLocations(),
-      db.select({ value: count() }).from(favourites).where(eq(favourites.userId, context.user.id)),
+      countTenantVisibleFavourites(context.user.id),
       db.select({ value: count() }).from(enquiries).where(and(eq(enquiries.tenantId, context.user.id), eq(enquiries.status, "OPEN"))),
     ]);
 
@@ -110,7 +110,7 @@ export async function GET(request: Request) {
           }))
         : seededPopularLocations(),
       stats: {
-        savedProperties: savedProperties[0]?.value ?? 0,
+        savedProperties,
         openEnquiries: openEnquiries[0]?.value ?? 0,
       },
     });

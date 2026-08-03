@@ -1,20 +1,36 @@
-import { eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { properties, propertyReports } from "@/db/schema";
-import { badRequestResponse, internalServerErrorResponse, notFoundResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
+import {
+  adminAuditLogs,
+  properties,
+  propertyReports,
+  user,
+} from "@/db/schema";
+import {
+  badRequestResponse,
+  errorResponse,
+  internalServerErrorResponse,
+  notFoundResponse,
+  successResponse,
+  validationErrorResponse,
+} from "@/lib/api-response";
 import { guardErrorResponse, requireSuperAdmin } from "@/lib/auth-guards.server";
-import { requireReason, serializeReport, writeAdminAuditLog } from "@/lib/super-admin/super-admin.server";
 import { dispatchNotification } from "@/lib/notifications/dispatcher.server";
+import { requireReason, serializeReport } from "@/lib/super-admin/super-admin.server";
 
 const actionSchema = z.object({
-  action: z.enum(["resolve", "dismiss", "suspend_listing"]),
-  reason: z.string().trim().optional(),
+  action: z.enum([
+    "start_review",
+    "resolve",
+    "dismiss",
+    "suspend_listing",
+    "suspend_owner",
+  ]),
+  reason: z.string().trim().max(1000).optional(),
 });
 
-type RouteParams = {
-  reportId: string;
-};
+type RouteParams = { reportId: string };
 
 export async function PATCH(request: Request, { reportId }: RouteParams) {
   try {
@@ -27,34 +43,211 @@ export async function PATCH(request: Request, { reportId }: RouteParams) {
     const parsed = actionSchema.safeParse(await request.json());
     if (!parsed.success) return validationErrorResponse(parsed.error);
 
-    const report = await db.query.propertyReports.findFirst({ where: eq(propertyReports.id, reportId) });
-    if (!report) return notFoundResponse("Report not found.");
+    const report = await db.query.propertyReports.findFirst({
+      where: eq(propertyReports.id, reportId),
+      with: {
+        property: {
+          with: {
+            landlord: { with: { user: true, properties: true } },
+          },
+        },
+        reporter: true,
+      },
+    });
 
-    if (parsed.data.action === "suspend_listing") {
-      const reasonError = requireReason(parsed.data.reason);
-      if (reasonError) return reasonError;
-      await db.update(properties).set({ approvalStatus: "REJECTED", isAvailable: false, rejectionReason: parsed.data.reason, updatedAt: new Date() }).where(eq(properties.id, report.propertyId));
+    if (!report) return notFoundResponse("Report not found.");
+    if (report.status === "RESOLVED" || report.status === "DISMISSED") {
+      return errorResponse(
+        "REPORT_ALREADY_CLOSED",
+        "This report has already been closed.",
+        409,
+      );
     }
 
-    const status = parsed.data.action === "dismiss" ? "DISMISSED" : "RESOLVED";
-    await db.update(propertyReports).set({ status, reviewedBy: context.user.id, reviewedAt: new Date() }).where(eq(propertyReports.id, report.id));
-    await writeAdminAuditLog(context, `REPORT_${parsed.data.action.toUpperCase()}`, "property_report", report.id, {
-      propertyId: report.propertyId,
-      reason: parsed.data.reason ?? null,
+    const { action, reason } = parsed.data;
+    if (action === "start_review" && report.status !== "OPEN") {
+      return errorResponse(
+        "REPORT_ALREADY_IN_REVIEW",
+        "This report is already being reviewed.",
+        409,
+      );
+    }
+
+    if (action === "suspend_listing" || action === "suspend_owner") {
+      const reasonError = requireReason(reason);
+      if (reasonError) return reasonError;
+    }
+
+    const owner = report.property?.landlord?.user;
+    const ownerProfile = report.property?.landlord;
+    if (action === "suspend_owner" && (!owner || !ownerProfile)) {
+      return badRequestResponse("The property owner could not be identified.");
+    }
+
+    const affectedListings =
+      action === "suspend_owner" ? (ownerProfile?.properties ?? []) : [];
+    const nextStatus =
+      action === "start_review"
+        ? "REVIEWING"
+        : action === "dismiss"
+          ? "DISMISSED"
+          : "RESOLVED";
+
+    await db.transaction(async (tx) => {
+      if (action === "suspend_listing" && report.property) {
+        await tx
+          .update(properties)
+          .set({
+            approvalStatus: "REJECTED",
+            isAvailable: false,
+            rejectionReason: reason,
+            updatedAt: new Date(),
+          })
+          .where(eq(properties.id, report.property.id));
+      }
+
+      if (action === "suspend_owner" && owner && ownerProfile) {
+        await tx
+          .update(user)
+          .set({ accountStatus: "SUSPENDED", updatedAt: new Date() })
+          .where(eq(user.id, owner.id));
+        await tx
+          .update(properties)
+          .set({ isAvailable: false, updatedAt: new Date() })
+          .where(eq(properties.landlordId, ownerProfile.id));
+      }
+
+      await tx
+        .update(propertyReports)
+        .set({
+          status: nextStatus,
+          reviewedBy: context.user.id,
+          reviewedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(propertyReports.id, report.id),
+            inArray(propertyReports.status, ["OPEN", "REVIEWING"]),
+          ),
+        );
+
+      await tx.insert(adminAuditLogs).values({
+        id: crypto.randomUUID(),
+        administratorId: context.user.id,
+        action: `REPORT_${action.toUpperCase()}`,
+        entityType: "property_report",
+        entityId: report.id,
+        metadata: {
+          propertyId: report.propertyId,
+          ownerUserId: owner?.id ?? null,
+          reason: reason ?? null,
+          previousReportStatus: report.status,
+          nextReportStatus: nextStatus,
+          previousPropertyStatus: report.property?.approvalStatus ?? null,
+          previousPropertyAvailability: report.property?.isAvailable ?? null,
+          previousOwnerStatus: owner?.accountStatus ?? null,
+          affectedListingIds: affectedListings.map((listing) => listing.id),
+          affectedListings: affectedListings.map((listing) => ({
+            id: listing.id,
+            approvalStatus: listing.approvalStatus,
+            isAvailable: listing.isAvailable,
+          })),
+        },
+      });
     });
 
     const updated = await db.query.propertyReports.findFirst({
       where: eq(propertyReports.id, report.id),
-      with: { property: true, reporter: true },
+      with: {
+        property: {
+          with: {
+            landlord: { with: { user: true, properties: true } },
+          },
+        },
+        reporter: true,
+      },
     });
-    await dispatchNotification({ recipientIds: [report.reporterId], type: "REPORT_MODERATION", category: "REPORT", eventKey: `report.${parsed.data.action}`, title: parsed.data.action === "dismiss" ? "Report dismissed" : parsed.data.action === "suspend_listing" ? "Reported listing suspended" : "Report resolved", message: parsed.data.reason ?? "FinderZ has completed its review of your property report.", deepLink: `/tenant/property/${report.propertyId}`, relatedEntityType: "property_report", relatedEntityId: report.id, deduplicationKey: `report-${parsed.data.action}:${report.id}` });
-    if (parsed.data.action === "suspend_listing") { const property = await db.query.properties.findFirst({ where: eq(properties.id, report.propertyId), with: { landlord: true } }); if (property?.landlord?.userId) await dispatchNotification({ recipientIds: [property.landlord.userId], type: "PROPERTY_SUSPENDED", category: "PROPERTY", eventKey: "property.suspended_from_report", priority: "HIGH", title: "Property suspended", message: parsed.data.reason ?? `${property.title} was suspended after a report review.`, deepLink: `/landlord/properties/${property.id}`, relatedEntityType: "property", relatedEntityId: property.id, deduplicationKey: `property-report-suspended:${report.id}` }); }
-    return successResponse({ report: updated ? serializeReport(updated) : null }, { message: "Report updated." });
+
+    const reporterTitle =
+      action === "start_review"
+        ? "Property report under review"
+        : action === "dismiss"
+          ? "Property report dismissed"
+          : action === "suspend_owner"
+            ? "Property owner suspended"
+            : action === "suspend_listing"
+              ? "Reported listing suspended"
+              : "Property report resolved";
+
+    await dispatchNotification({
+      recipientIds: [report.reporterId],
+      type: "REPORT_MODERATION",
+      category: "REPORT",
+      eventKey: `report.${action}`,
+      title: reporterTitle,
+      message:
+        reason ??
+        (action === "start_review"
+          ? "FinderZ has started reviewing your property report."
+          : "FinderZ has completed its review of your property report."),
+      deepLink:
+        action === "suspend_listing" || action === "suspend_owner"
+          ? "/property-unavailable?reason=suspended"
+          : `/tenant/property/${report.propertyId}`,
+      relatedEntityType: "property_report",
+      relatedEntityId: report.id,
+      deduplicationKey: `report-${action}:${report.id}`,
+    });
+
+    if (
+      owner &&
+      (action === "suspend_listing" || action === "suspend_owner")
+    ) {
+      await dispatchNotification({
+        recipientIds: [owner.id],
+        type:
+          action === "suspend_owner"
+            ? "ACCOUNT_MODERATION"
+            : "PROPERTY_SUSPENDED",
+        category: action === "suspend_owner" ? "ACCOUNT" : "PROPERTY",
+        eventKey:
+          action === "suspend_owner"
+            ? "account.suspended_from_report"
+            : "property.suspended_from_report",
+        priority: "HIGH",
+        title:
+          action === "suspend_owner"
+            ? "Account suspended"
+            : "Property suspended",
+        message:
+          reason ??
+          (action === "suspend_owner"
+            ? "Your FinderZ account has been suspended after a report review."
+            : `${report.property?.title ?? "Your property"} was suspended after a report review.`),
+        deepLink:
+          action === "suspend_owner"
+            ? "/account-status"
+            : `/landlord/properties/${report.propertyId}`,
+        relatedEntityType:
+          action === "suspend_owner" ? "user" : "property",
+        relatedEntityId:
+          action === "suspend_owner" ? owner.id : report.propertyId,
+        deduplicationKey: `report-${action}-owner:${report.id}`,
+      });
+    }
+
+    return successResponse(
+      { report: updated ? serializeReport(updated) : null },
+      { message: "Report updated." },
+    );
   } catch (error) {
     try {
       return guardErrorResponse(error);
-    } catch {
-      console.error("PATCH /api/super-admin/reports/[reportId] failed:", error);
+    } catch (unexpectedError) {
+      console.error(
+        "PATCH /api/super-admin/reports/[reportId] failed:",
+        unexpectedError,
+      );
       return internalServerErrorResponse();
     }
   }

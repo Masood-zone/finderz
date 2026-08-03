@@ -13,11 +13,12 @@ import { colors } from "@/components/ui/design-system";
 import { FormError } from "@/components/ui/form-error";
 import { PasswordInput } from "@/components/ui/password-input";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { fullNameSchema } from "@/lib/validation/full-name";
 import { useChangePassword, useCurrentUser, useUpdateProfile } from "@/services/queries/hooks";
 
 const accountEditorSchema = z
   .object({
-    name: z.string().trim().min(2, "Enter your name.").max(120, "Use 120 characters or fewer."),
+    name: fullNameSchema,
     phone: z.string().trim().max(30, "Use 30 characters or fewer.").optional(),
     profileFiles: z.array(z.custom<UploadedFileResult>()).default([]),
     currentPassword: z.string().optional(),

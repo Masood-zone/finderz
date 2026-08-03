@@ -4,9 +4,10 @@ import { db } from "@/db";
 import { user } from "@/db/schema";
 import { guardErrorResponse, requireSession } from "@/lib/auth-guards.server";
 import { internalServerErrorResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
+import { fullNameSchema } from "@/lib/validation/full-name";
 
 const updateProfileSchema = z.object({
-  name: z.string().min(1).max(120).optional(),
+  name: fullNameSchema.optional(),
   image: z.string().url().nullable().optional(),
   phone: z.string().min(3).max(30).nullable().optional(),
 });

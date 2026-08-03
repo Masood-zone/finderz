@@ -1,6 +1,7 @@
 import { expo } from "@better-auth/expo";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { betterAuth } from "better-auth";
+import { APIError } from "better-auth/api";
 import { bearer } from "better-auth/plugins";
 import { db } from "@/db";
 import * as relations from "@/db/relations";
@@ -8,6 +9,10 @@ import * as schema from "@/db/schema";
 import { getServerEnv } from "./env.server";
 import { sendPasswordResetOtp } from "./password-reset.server";
 import { emailService } from "@/services/email/email-service";
+import {
+  FULL_NAME_ERROR_MESSAGE,
+  fullNameSchema,
+} from "@/lib/validation/full-name";
 
 const serverEnv = getServerEnv();
 
@@ -21,6 +26,42 @@ export const auth = betterAuth({
       ...relations,
     },
   }),
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (nextUser) => {
+          const result = fullNameSchema.safeParse(nextUser.name);
+
+          if (!result.success) {
+            throw new APIError("BAD_REQUEST", {
+              code: "INVALID_FULL_NAME",
+              message: FULL_NAME_ERROR_MESSAGE,
+            });
+          }
+
+          return { data: { ...nextUser, name: result.data } };
+        },
+      },
+      update: {
+        before: async (nextUser) => {
+          if (typeof nextUser.name !== "string") {
+            return;
+          }
+
+          const result = fullNameSchema.safeParse(nextUser.name);
+
+          if (!result.success) {
+            throw new APIError("BAD_REQUEST", {
+              code: "INVALID_FULL_NAME",
+              message: FULL_NAME_ERROR_MESSAGE,
+            });
+          }
+
+          return { data: { ...nextUser, name: result.data } };
+        },
+      },
+    },
+  },
   emailAndPassword: {
     enabled: true,
     resetPasswordTokenExpiresIn: 60 * 15,

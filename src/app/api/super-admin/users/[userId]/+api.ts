@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { user } from "@/db/schema";
+import { adminAuditLogs, properties, user } from "@/db/schema";
 import { badRequestResponse, internalServerErrorResponse, notFoundResponse, successResponse, validationErrorResponse } from "@/lib/api-response";
 import { guardErrorResponse, requireSuperAdmin } from "@/lib/auth-guards.server";
 import { dispatchNotification } from "@/lib/notifications/dispatcher.server";
@@ -10,7 +10,6 @@ import {
   finalAdminResponse,
   requireReason,
   serializeUsers,
-  writeAdminAuditLog,
 } from "@/lib/super-admin/super-admin.server";
 
 const actionSchema = z.object({
@@ -43,12 +42,56 @@ export async function PATCH(request: Request, { userId }: RouteParams) {
     }
 
     const accountStatus = parsed.data.action === "reactivate" ? "ACTIVE" : "SUSPENDED";
-    const [updated] = await db.update(user).set({ accountStatus, updatedAt: new Date() }).where(eq(user.id, existing.id)).returning();
-    await writeAdminAuditLog(context, `USER_${parsed.data.action.toUpperCase()}`, "user", existing.id, {
-      previousStatus: existing.accountStatus,
-      nextStatus: accountStatus,
-      reason: parsed.data.reason ?? null,
+    const ownedListings = existing.landlordProfile
+      ? await db.query.properties.findMany({
+          where: eq(properties.landlordId, existing.landlordProfile.id),
+        })
+      : [];
+    let updated: typeof user.$inferSelect | undefined;
+
+    await db.transaction(async (tx) => {
+      [updated] = await tx
+        .update(user)
+        .set({ accountStatus, updatedAt: new Date() })
+        .where(eq(user.id, existing.id))
+        .returning();
+
+      if (parsed.data.action === "suspend" && existing.landlordProfile) {
+        await tx
+          .update(properties)
+          .set({ isAvailable: false, updatedAt: new Date() })
+          .where(eq(properties.landlordId, existing.landlordProfile.id));
+      }
+
+      await tx.insert(adminAuditLogs).values({
+        id: crypto.randomUUID(),
+        administratorId: context.user.id,
+        action: `USER_${parsed.data.action.toUpperCase()}`,
+        entityType: "user",
+        entityId: existing.id,
+        metadata: {
+          previousStatus: existing.accountStatus,
+          nextStatus: accountStatus,
+          reason: parsed.data.reason ?? null,
+          affectedListingIds:
+            parsed.data.action === "suspend"
+              ? ownedListings.map((listing) => listing.id)
+              : [],
+          previousListings:
+            parsed.data.action === "suspend"
+              ? ownedListings.map((listing) => ({
+                  id: listing.id,
+                  isAvailable: listing.isAvailable,
+                  approvalStatus: listing.approvalStatus,
+                }))
+              : [],
+        },
+      });
     });
+
+    if (!updated) {
+      return internalServerErrorResponse();
+    }
     await dispatchNotification({ recipientIds: [existing.id], type: "ACCOUNT_MODERATION", category: "ACCOUNT", eventKey: `account.${parsed.data.action}`, priority: "CRITICAL", title: parsed.data.action === "suspend" ? "Account suspended" : "Account reactivated", message: parsed.data.action === "suspend" ? `Your FinderZ account has been suspended. ${parsed.data.reason ?? "Contact support for help."}` : "Your FinderZ account has been reactivated.", deepLink: "/account-status", relatedEntityType: "user", relatedEntityId: existing.id, deduplicationKey: `account-${parsed.data.action}:${existing.id}:${updated.updatedAt.toISOString()}` });
     const [serialized] = await serializeUsers([{ ...updated, landlordProfile: existing.landlordProfile }]);
     return successResponse({ user: serialized }, { message: "User account updated." });

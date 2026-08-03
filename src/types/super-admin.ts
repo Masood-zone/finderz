@@ -64,6 +64,16 @@ export type SuperAdminReport = {
     area: string;
     city: string;
     approvalStatus: string;
+    isAvailable: boolean;
+  } | null;
+  owner: {
+    profileId: string;
+    userId: string;
+    name: string;
+    email: string;
+    phone: string | null;
+    accountStatus: AccountStatus;
+    listingCount: number;
   } | null;
   reporter: {
     id: string;
@@ -151,6 +161,11 @@ export type SuperAdminListResponse<T> = {
 };
 
 export type PropertyModerationAction = "approve" | "reject" | "request_changes" | "suspend";
-export type ReportModerationAction = "resolve" | "dismiss" | "suspend_listing";
+export type ReportModerationAction =
+  | "start_review"
+  | "resolve"
+  | "dismiss"
+  | "suspend_listing"
+  | "suspend_owner";
 export type UserModerationAction = "suspend" | "reactivate";
 export type LandlordVerificationAction = "approve" | "request_changes" | "reject";

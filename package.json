@@ -22,6 +22,7 @@
     "db:seed": "tsx src/db/seed.ts",
     "db:check": "tsx src/scripts/db-check.ts",
     "test:memory": "node --test tests/expo-memory.test.mjs",
+    "test:features": "tsx --test tests/full-name.test.ts",
     "typecheck": "tsc --noEmit",
     "lint": "node ./scripts/run-expo.mjs lint"
   },

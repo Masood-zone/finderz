@@ -78,14 +78,22 @@ function coordinatePresenceSort() {
   return sql<number>`case when ${properties.latitude} is null or ${properties.longitude} is null then 1 else 0 end`;
 }
 
-function buildPropertyConditions(filters: TenantFilters) {
-  const conditions: SQL[] = [eq(properties.approvalStatus, "APPROVED")];
+export function tenantVisiblePropertyCondition() {
+  const activeLandlordProfiles = db
+    .select({ id: landlordProfiles.id })
+    .from(landlordProfiles)
+    .innerJoin(user, eq(landlordProfiles.userId, user.id))
+    .where(eq(user.accountStatus, "ACTIVE"));
 
-  if (filters.availability === "unavailable") {
-    conditions.push(eq(properties.isAvailable, false));
-  } else if (filters.availability !== "any") {
-    conditions.push(eq(properties.isAvailable, true));
-  }
+  return and(
+    eq(properties.approvalStatus, "APPROVED"),
+    eq(properties.isAvailable, true),
+    inArray(properties.landlordId, activeLandlordProfiles),
+  )!;
+}
+
+function buildPropertyConditions(filters: TenantFilters) {
+  const conditions: SQL[] = [tenantVisiblePropertyCondition()];
 
   if (filters.q) {
     const query = `%${filters.q.trim()}%`;
@@ -315,7 +323,7 @@ export async function findTenantProperties(userId: string, filters: TenantFilter
 
 export async function findTenantPropertyById(propertyId: string, userId: string) {
   const row = await db.query.properties.findFirst({
-    where: eq(properties.id, propertyId),
+    where: and(eq(properties.id, propertyId), tenantVisiblePropertyCondition()),
     with: {
       images: true,
     },
@@ -329,6 +337,40 @@ export async function findTenantPropertyById(propertyId: string, userId: string)
   return property;
 }
 
+export async function findTenantVisiblePropertiesByIds(
+  propertyIds: string[],
+  userId: string,
+) {
+  if (!propertyIds.length) {
+    return [];
+  }
+
+  const rows = await db.query.properties.findMany({
+    where: and(
+      inArray(properties.id, propertyIds),
+      tenantVisiblePropertyCondition(),
+    ),
+    with: { images: true },
+  });
+
+  return serializeProperties(rows, userId);
+}
+
+export async function countTenantVisibleFavourites(userId: string) {
+  const [result] = await db
+    .select({ value: sql<number>`count(*)` })
+    .from(favourites)
+    .innerJoin(properties, eq(favourites.propertyId, properties.id))
+    .where(
+      and(
+        eq(favourites.userId, userId),
+        tenantVisiblePropertyCondition(),
+      ),
+    );
+
+  return Number(result?.value ?? 0);
+}
+
 export async function getPopularLocations() {
   return db
     .select({
@@ -337,7 +379,7 @@ export async function getPopularLocations() {
       count: sql<number>`count(${properties.id})`,
     })
     .from(properties)
-    .where(and(eq(properties.approvalStatus, "APPROVED"), eq(properties.isAvailable, true)))
+    .where(tenantVisiblePropertyCondition())
     .groupBy(properties.region, properties.city)
     .orderBy(desc(sql<number>`count(${properties.id})`))
     .limit(6);

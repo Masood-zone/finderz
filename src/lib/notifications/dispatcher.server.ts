@@ -29,10 +29,10 @@ async function dispatchNotificationInternal(input: DispatchInput) {
     if (!created) continue;
 
     const preference = await db.query.notificationPreferences.findFirst({ where: and(eq(notificationPreferences.userId, userId), eq(notificationPreferences.category, input.category)) });
-    const critical = input.priority === "CRITICAL";
+    const defaultSmsEnabled = input.category === "ACCOUNT";
     const channels = [
       preference?.emailEnabled ?? true ? "EMAIL" : null,
-      (critical || preference?.smsEnabled) ? "SMS" : null,
+      preference?.smsEnabled ?? defaultSmsEnabled ? "SMS" : null,
       preference?.pushEnabled ?? true ? "PUSH" : null,
     ].filter(Boolean) as ("EMAIL" | "SMS" | "PUSH")[];
     if (channels.length) await db.insert(notificationDeliveries).values(channels.map((channel) => ({ id: crypto.randomUUID(), notificationId: id, channel })));

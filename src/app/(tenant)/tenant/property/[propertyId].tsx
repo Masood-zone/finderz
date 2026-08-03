@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Image, Linking, Pressable, RefreshControl, ScrollView, Share, TextInput, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { ArrowLeft, Bath, BedDouble, ExternalLink, Flag, Heart, MapPin, MessageCircle, Phone, Share2, ShieldAlert, ShieldCheck } from "lucide-react-native";
@@ -8,9 +8,14 @@ import { AppText } from "@/components/ui/app-text";
 import { colors, radius } from "@/components/ui/design-system";
 import { TenantChip, TenantSectionHeader } from "@/components/tenant/tenant-shell";
 import { TenantErrorState, TenantSkeleton } from "@/components/tenant/tenant-state";
+import {
+  PropertyReportModal,
+  type PropertyReportReason,
+} from "@/components/tenant/property-report-modal";
 import { formatEnumLabel, formatGhanaCedi, formatPaymentPeriod } from "@/lib/tenant/format";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useCreateTenantEnquiry, useReportTenantProperty, useTenantProperty, useToggleTenantFavourite } from "@/services/queries/hooks";
+import type { ApiErrorBody } from "@/types/api";
 
 function firstParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -24,9 +29,22 @@ export default function TenantPropertyDetailScreen() {
   const createEnquiry = useCreateTenantEnquiry();
   const reportProperty = useReportTenantProperty();
   const [mapFailed, setMapFailed] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const [message, setMessage] = useState("Hello, I’m interested in this FinderZ listing. Is it still available?");
 
-  if (propertyQuery.isLoading) {
+  const propertyError = propertyQuery.error as ApiErrorBody | null;
+  const propertyNotFound = propertyError?.error?.code === "NOT_FOUND";
+
+  useEffect(() => {
+    if (propertyNotFound) {
+      router.replace({
+        pathname: "/property-unavailable",
+        params: { reason: "suspended" },
+      });
+    }
+  }, [propertyNotFound]);
+
+  if (propertyQuery.isLoading || propertyNotFound) {
     return <TenantSkeleton variant="property" />;
   }
 
@@ -87,11 +105,10 @@ export default function TenantPropertyDetailScreen() {
     }
   };
 
-  const submitReport = () => Alert.alert("Report listing", "Tell FinderZ what is wrong with this listing.", [
-    { text: "Cancel", style: "cancel" },
-    { text: "Unavailable", onPress: () => void reportProperty.mutateAsync({ propertyId: property.id, reason: "UNAVAILABLE" }).then(() => Alert.alert("Report received", "FinderZ will review this listing.")).catch((error) => Alert.alert("Unable to report", getErrorMessage(error, "Please try again."))) },
-    { text: "Misleading", onPress: () => void reportProperty.mutateAsync({ propertyId: property.id, reason: "MISLEADING" }).then(() => Alert.alert("Report received", "FinderZ will review this listing.")).catch((error) => Alert.alert("Unable to report", getErrorMessage(error, "Please try again."))) },
-  ]);
+  const submitReport = (input: {
+    reason: PropertyReportReason;
+    description?: string;
+  }) => reportProperty.mutateAsync({ propertyId: property.id, ...input });
 
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
@@ -284,9 +301,15 @@ export default function TenantPropertyDetailScreen() {
           </View>
         </View>
         <View>
-          <AppButton title="Report" loading={reportProperty.isPending} variant="secondary" icon={<Flag color={colors.primary} size={18} />} onPress={submitReport} />
+          <AppButton title="Report" variant="secondary" icon={<Flag color={colors.primary} size={18} />} onPress={() => setReportOpen(true)} />
         </View>
       </View>
+      <PropertyReportModal
+        visible={reportOpen}
+        propertyTitle={property.title}
+        onClose={() => setReportOpen(false)}
+        onSubmit={submitReport}
+      />
     </View>
   );
 }

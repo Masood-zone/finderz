@@ -8,7 +8,7 @@ import {
   CheckSquare,
   Gauge,
   ShieldCheck,
-  // Gavel,
+  Gavel,
   UserRound,
   Users,
 } from "lucide-react-native";
@@ -24,7 +24,7 @@ const navItems = [
   },
   { label: "Vendors", href: "/super-admin/verifications" as Href, icon: ShieldCheck },
   { label: "Users", href: "/super-admin/users" as Href, icon: Users },
-  // { label: "Reports", href: "/super-admin/reports" as Hresf, icon: Gavel },
+  { label: "Reports", href: "/super-admin/reports" as Href, icon: Gavel },
   // { label: "Alerts", href: "/super-admin/notifications" as Href, icon: Bell },
   { label: "Profile", href: "/super-admin/profile" as Href, icon: UserRound },
 ];

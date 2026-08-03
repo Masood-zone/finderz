@@ -223,14 +223,26 @@ export async function getAdminPropertyDetail(propertyId: string): Promise<SuperA
 export async function getReportsForProperty(propertyId: string): Promise<SuperAdminReport[]> {
   const rows = await db.query.propertyReports.findMany({
     where: eq(propertyReports.propertyId, propertyId),
-    with: { property: true, reporter: true },
+    with: {
+      property: {
+        with: {
+          landlord: { with: { user: true, properties: true } },
+        },
+      },
+      reporter: true,
+    },
     orderBy: [desc(propertyReports.createdAt)],
   });
   return rows.map(serializeReport);
 }
 
 export function serializeReport(row: typeof propertyReports.$inferSelect & {
-  property?: typeof properties.$inferSelect | null;
+  property?: (typeof properties.$inferSelect & {
+    landlord?: (typeof landlordProfiles.$inferSelect & {
+      user?: typeof user.$inferSelect | null;
+      properties?: (typeof properties.$inferSelect)[];
+    }) | null;
+  }) | null;
   reporter?: typeof user.$inferSelect | null;
 }): SuperAdminReport {
   return {
@@ -247,6 +259,18 @@ export function serializeReport(row: typeof propertyReports.$inferSelect & {
           area: row.property.area,
           city: row.property.city,
           approvalStatus: row.property.approvalStatus,
+          isAvailable: row.property.isAvailable,
+        }
+      : null,
+    owner: row.property?.landlord?.user
+      ? {
+          profileId: row.property.landlord.id,
+          userId: row.property.landlord.user.id,
+          name: row.property.landlord.user.name,
+          email: row.property.landlord.user.email,
+          phone: row.property.landlord.user.phone,
+          accountStatus: row.property.landlord.user.accountStatus,
+          listingCount: row.property.landlord.properties?.length ?? 0,
         }
       : null,
     reporter: row.reporter
