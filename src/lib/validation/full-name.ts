@@ -21,4 +21,3 @@ export const fullNameSchema = z
       )
       .regex(/^\p{L}+(?: \p{L}+)+$/u, FULL_NAME_ERROR_MESSAGE),
   );
-
