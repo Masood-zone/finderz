@@ -18,10 +18,13 @@ import { AppInput } from "@/components/ui/app-input";
 import { AppText } from "@/components/ui/app-text";
 import { colors } from "@/components/ui/design-system";
 import { FormError } from "@/components/ui/form-error";
+import { Checkbox } from "@/components/ui/checkbox";
 import { getErrorMessage } from "@/lib/get-error-message";
 import {
   useSuperAdminReportAction,
   useSuperAdminReports,
+  useNotificationPreferences,
+  useUpdateNotificationPreference,
 } from "@/services/queries/hooks";
 import type {
   ReportModerationAction,
@@ -43,6 +46,34 @@ export default function ReportedListingsScreen() {
   const [error, setError] = useState<string>();
   const reports = useSuperAdminReports({ pageSize: 30, status });
   const action = useSuperAdminReportAction();
+  const preferences = useNotificationPreferences();
+  const preferenceAction = useUpdateNotificationPreference();
+  const reportPreference = preferences.data?.preferences.find(
+    (preference) => preference.category === "REPORT",
+  ) ?? {
+    category: "REPORT" as const,
+    emailEnabled: true,
+    smsEnabled: false,
+    pushEnabled: true,
+  };
+
+  const setReportChannel = (
+    channel: "emailEnabled" | "smsEnabled" | "pushEnabled",
+    enabled: boolean,
+  ) => {
+    preferenceAction.mutate(
+      { ...reportPreference, [channel]: enabled },
+      {
+        onError: (preferenceError) =>
+          setError(
+            getErrorMessage(
+              preferenceError,
+              "Unable to update your report alert preferences.",
+            ),
+          ),
+      },
+    );
+  };
 
   const runAction = async (
     report: SuperAdminReport,
@@ -121,6 +152,33 @@ export default function ReportedListingsScreen() {
           );
         })}
       </View>
+
+      <AdminCard>
+        <AppText variant="title">My report alerts</AppText>
+        <AppText muted style={styles.description}>
+          Choose how FinderZ should alert this administrator account when a tenant reports a property.
+        </AppText>
+        <View style={styles.preferenceList}>
+          <Checkbox
+            checked={reportPreference.emailEnabled}
+            onChange={(enabled) => setReportChannel("emailEnabled", enabled)}
+            label={<AppText>Email alerts</AppText>}
+          />
+          <Checkbox
+            checked={reportPreference.smsEnabled}
+            onChange={(enabled) => setReportChannel("smsEnabled", enabled)}
+            label={<AppText>SMS alerts</AppText>}
+          />
+          <Checkbox
+            checked={reportPreference.pushEnabled}
+            onChange={(enabled) => setReportChannel("pushEnabled", enabled)}
+            label={<AppText>Push alerts</AppText>}
+          />
+        </View>
+        {preferenceAction.isPending ? (
+          <ActivityIndicator color={colors.primary} />
+        ) : null}
+      </AdminCard>
 
       <FormError title="Moderation failed" message={error} />
       {reports.isLoading ? <ActivityIndicator color={colors.primary} /> : null}
@@ -305,6 +363,7 @@ const styles = StyleSheet.create({
   grow: { flex: 1 },
   description: { marginTop: 10 },
   detailGrid: { gap: 10, marginVertical: 14 },
+  preferenceList: { gap: 12, marginTop: 14 },
   detailRow: { alignItems: "flex-start", flexDirection: "row", gap: 10 },
   actions: { gap: 10, marginTop: 12 },
   actionRow: { flexDirection: "row", gap: 10 },

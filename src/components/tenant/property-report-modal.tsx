@@ -7,6 +7,7 @@ import { AppText } from "@/components/ui/app-text";
 import { colors, radius, shadows } from "@/components/ui/design-system";
 import { FormError } from "@/components/ui/form-error";
 import { getErrorMessage } from "@/lib/get-error-message";
+import type { PropertyReportReason } from "@/lib/validation/property-report";
 
 export const PROPERTY_REPORT_REASONS = [
   { value: "SCAM", label: "Scam" },
@@ -15,9 +16,6 @@ export const PROPERTY_REPORT_REASONS = [
   { value: "DUPLICATE", label: "Duplicate" },
   { value: "OTHER", label: "Other" },
 ] as const;
-
-export type PropertyReportReason =
-  (typeof PROPERTY_REPORT_REASONS)[number]["value"];
 
 type Props = {
   visible: boolean;
@@ -28,6 +26,8 @@ type Props = {
     description?: string;
   }) => Promise<unknown>;
 };
+
+export type { PropertyReportReason } from "@/lib/validation/property-report";
 
 export function PropertyReportModal({
   visible,

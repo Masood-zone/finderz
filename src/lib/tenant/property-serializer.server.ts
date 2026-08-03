@@ -353,7 +353,14 @@ export async function findTenantVisiblePropertiesByIds(
     with: { images: true },
   });
 
-  return serializeProperties(rows, userId);
+  const serialized = await serializeProperties(rows, userId);
+  const propertiesById = new Map(
+    serialized.map((property) => [property.id, property]),
+  );
+
+  return propertyIds
+    .map((propertyId) => propertiesById.get(propertyId))
+    .filter((property): property is TenantProperty => Boolean(property));
 }
 
 export async function countTenantVisibleFavourites(userId: string) {

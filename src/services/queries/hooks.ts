@@ -401,6 +401,7 @@ export function useSuperAdminReportAction() {
       queryClient.invalidateQueries({ queryKey: queryKeys.superAdminDashboard });
       queryClient.invalidateQueries({ queryKey: ["super-admin-reports"] });
       queryClient.invalidateQueries({ queryKey: ["super-admin-approvals"] });
+      queryClient.invalidateQueries({ queryKey: ["super-admin-users"] });
     },
   });
 }

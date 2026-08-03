@@ -1,5 +1,4 @@
 import { and, eq, inArray } from "drizzle-orm";
-import { z } from "zod";
 import { db } from "@/db";
 import { propertyReports } from "@/db/schema";
 import {
@@ -12,38 +11,12 @@ import {
 import { guardErrorResponse, requireTenant } from "@/lib/auth-guards.server";
 import { notifySuperAdmins } from "@/lib/notifications/dispatcher.server";
 import { findTenantPropertyById } from "@/lib/tenant/property-serializer.server";
-
-const reportSchema = z
-  .object({
-    propertyId: z.string().min(1),
-    reason: z.enum([
-      "SCAM",
-      "MISLEADING",
-      "UNAVAILABLE",
-      "DUPLICATE",
-      "OTHER",
-    ]),
-    description: z
-      .string()
-      .trim()
-      .max(1000, "Use 1,000 characters or fewer.")
-      .optional()
-      .transform((value) => value || undefined),
-  })
-  .superRefine((value, context) => {
-    if (value.reason === "OTHER" && !value.description) {
-      context.addIssue({
-        code: "custom",
-        path: ["description"],
-        message: "Describe what is wrong with this listing.",
-      });
-    }
-  });
+import { propertyReportSubmissionSchema } from "@/lib/validation/property-report";
 
 export async function POST(request: Request) {
   try {
     const context = await requireTenant(request);
-    const parsed = reportSchema.safeParse(await request.json());
+    const parsed = propertyReportSubmissionSchema.safeParse(await request.json());
 
     if (!parsed.success) {
       return validationErrorResponse(parsed.error);
@@ -94,7 +67,11 @@ export async function POST(request: Request) {
       relatedEntityType: "property_report",
       relatedEntityId: reportId,
       deduplicationKey: `report-created:${reportId}`,
-      data: { propertyId: property.id, reason: parsed.data.reason },
+      data: {
+        reportId,
+        propertyId: property.id,
+        reason: parsed.data.reason,
+      },
     });
 
     return successResponse(

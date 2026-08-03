@@ -93,45 +93,20 @@ export async function PATCH(request: Request, { reportId }: RouteParams) {
           ? "DISMISSED"
           : "RESOLVED";
 
-    await db.transaction(async (tx) => {
-      if (action === "suspend_listing" && report.property) {
-        await tx
-          .update(properties)
-          .set({
-            approvalStatus: "REJECTED",
-            isAvailable: false,
-            rejectionReason: reason,
-            updatedAt: new Date(),
-          })
-          .where(eq(properties.id, report.property.id));
-      }
-
-      if (action === "suspend_owner" && owner && ownerProfile) {
-        await tx
-          .update(user)
-          .set({ accountStatus: "SUSPENDED", updatedAt: new Date() })
-          .where(eq(user.id, owner.id));
-        await tx
-          .update(properties)
-          .set({ isAvailable: false, updatedAt: new Date() })
-          .where(eq(properties.landlordId, ownerProfile.id));
-      }
-
-      await tx
-        .update(propertyReports)
-        .set({
-          status: nextStatus,
-          reviewedBy: context.user.id,
-          reviewedAt: new Date(),
-        })
-        .where(
-          and(
-            eq(propertyReports.id, report.id),
-            inArray(propertyReports.status, ["OPEN", "REVIEWING"]),
-          ),
-        );
-
-      await tx.insert(adminAuditLogs).values({
+    const reportUpdate = db
+      .update(propertyReports)
+      .set({
+        status: nextStatus,
+        reviewedBy: context.user.id,
+        reviewedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(propertyReports.id, report.id),
+          inArray(propertyReports.status, ["OPEN", "REVIEWING"]),
+        ),
+      );
+    const auditInsert = db.insert(adminAuditLogs).values({
         id: crypto.randomUUID(),
         administratorId: context.user.id,
         action: `REPORT_${action.toUpperCase()}`,
@@ -154,7 +129,37 @@ export async function PATCH(request: Request, { reportId }: RouteParams) {
           })),
         },
       });
-    });
+
+    if (action === "suspend_listing" && report.property) {
+      await db.batch([
+        db
+          .update(properties)
+          .set({
+            approvalStatus: "REJECTED",
+            isAvailable: false,
+            rejectionReason: reason,
+            updatedAt: new Date(),
+          })
+          .where(eq(properties.id, report.property.id)),
+        reportUpdate,
+        auditInsert,
+      ]);
+    } else if (action === "suspend_owner" && owner && ownerProfile) {
+      await db.batch([
+        db
+          .update(user)
+          .set({ accountStatus: "SUSPENDED", updatedAt: new Date() })
+          .where(eq(user.id, owner.id)),
+        db
+          .update(properties)
+          .set({ isAvailable: false, updatedAt: new Date() })
+          .where(eq(properties.landlordId, ownerProfile.id)),
+        reportUpdate,
+        auditInsert,
+      ]);
+    } else {
+      await db.batch([reportUpdate, auditInsert]);
+    }
 
     const updated = await db.query.propertyReports.findFirst({
       where: eq(propertyReports.id, report.id),

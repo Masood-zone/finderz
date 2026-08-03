@@ -32,7 +32,7 @@ async function dispatchNotificationInternal(input: DispatchInput) {
     const defaultSmsEnabled = input.category === "ACCOUNT";
     const channels = [
       preference?.emailEnabled ?? true ? "EMAIL" : null,
-      preference?.smsEnabled ?? defaultSmsEnabled ? "SMS" : null,
+      (preference?.smsEnabled ?? defaultSmsEnabled) ? "SMS" : null,
       preference?.pushEnabled ?? true ? "PUSH" : null,
     ].filter(Boolean) as ("EMAIL" | "SMS" | "PUSH")[];
     if (channels.length) await db.insert(notificationDeliveries).values(channels.map((channel) => ({ id: crypto.randomUUID(), notificationId: id, channel })));

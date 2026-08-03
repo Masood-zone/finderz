@@ -1,6 +1,6 @@
 import { and, asc, count, desc, eq, ilike, or, type SQL } from "drizzle-orm";
 import { db } from "@/db";
-import { enquiries, favourites, properties } from "@/db/schema";
+import { enquiries, properties } from "@/db/schema";
 import { ghanaSampleLocations, propertyTypes } from "@/db/seed-data";
 import { internalServerErrorResponse, successResponse } from "@/lib/api-response";
 import { guardErrorResponse, requireTenant } from "@/lib/auth-guards.server";

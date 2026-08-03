@@ -47,23 +47,12 @@ export async function PATCH(request: Request, { userId }: RouteParams) {
           where: eq(properties.landlordId, existing.landlordProfile.id),
         })
       : [];
-    let updated: typeof user.$inferSelect | undefined;
-
-    await db.transaction(async (tx) => {
-      [updated] = await tx
-        .update(user)
-        .set({ accountStatus, updatedAt: new Date() })
-        .where(eq(user.id, existing.id))
-        .returning();
-
-      if (parsed.data.action === "suspend" && existing.landlordProfile) {
-        await tx
-          .update(properties)
-          .set({ isAvailable: false, updatedAt: new Date() })
-          .where(eq(properties.landlordId, existing.landlordProfile.id));
-      }
-
-      await tx.insert(adminAuditLogs).values({
+    const updateUser = db
+      .update(user)
+      .set({ accountStatus, updatedAt: new Date() })
+      .where(eq(user.id, existing.id))
+      .returning();
+    const insertAudit = db.insert(adminAuditLogs).values({
         id: crypto.randomUUID(),
         administratorId: context.user.id,
         action: `USER_${parsed.data.action.toUpperCase()}`,
@@ -87,7 +76,22 @@ export async function PATCH(request: Request, { userId }: RouteParams) {
               : [],
         },
       });
-    });
+    let updated: typeof user.$inferSelect | undefined;
+
+    if (parsed.data.action === "suspend" && existing.landlordProfile) {
+      const [updatedRows] = await db.batch([
+        updateUser,
+        db
+          .update(properties)
+          .set({ isAvailable: false, updatedAt: new Date() })
+          .where(eq(properties.landlordId, existing.landlordProfile.id)),
+        insertAudit,
+      ]);
+      [updated] = updatedRows;
+    } else {
+      const [updatedRows] = await db.batch([updateUser, insertAudit]);
+      [updated] = updatedRows;
+    }
 
     if (!updated) {
       return internalServerErrorResponse();
